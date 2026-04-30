@@ -1,149 +1,157 @@
-# 🚀 115 Cookie Extractor
+# 🚀 115 Cookie 获取工具
 
-<p align="center">
-  <b>扫码即得 Cookie · 无抓包 · 自动化 · 稳定可复用</b>
-</p>
-
-<p align="center">
-  <img src="https://img.shields.io/badge/Python-3.8%2B-blue.svg">
-  <img src="https://img.shields.io/badge/Playwright-Chromium-green.svg">
-  <img src="https://img.shields.io/badge/Platform-Linux%20%7C%20Ubuntu-lightgrey.svg">
-  <img src="https://img.shields.io/badge/License-MIT-orange.svg">
-  <img src="https://img.shields.io/badge/Status-Active-success.svg">
-</p>
+一个基于 Playwright 的自动化脚本，用于快速获取 115 网盘登录 Cookie，支持扫码登录，适用于 Alist、自动化脚本等场景。
 
 ---
 
-## ✨ 特性
+## 📌 项目简介
 
-- 📷 自动生成 115 登录二维码  
-- 📱 手机扫码登录（官方流程，无需抓包）  
-- 🍪 输出完整 Cookie（可直接复用）  
-- ⚡ 轻量、快速、稳定  
-- 🧩 适配 Alist / 自动化脚本 / API 调用  
+本工具通过浏览器自动化打开 115 登录页面，生成二维码，并在扫码登录后自动提取完整 Cookie。
 
----
+适合以下用户：
 
-## 🎬 演示（示意）
-
-> 将下面图片替换为你实际截图（文件名保持一致即可）
-
-<p align="center">
-  <img src="./assets/preview.png" width="720" alt="preview">
-</p>
-
-<p align="center">
-  <img src="./assets/qr.png" width="360" alt="qr">
-</p>
+- 使用 Alist 挂载 115 网盘
+- 编写自动化脚本
+- 需要长期维护 Cookie 的用户
 
 ---
 
-## 📦 快速开始
+## ✨ 功能特性
 
-### 1️⃣ 安装环境
-
-bash id="b9r1xk" apt update apt install -y python3-pip python3-venv  python3 -m venv venv source venv/bin/activate  pip install playwright playwright install --with-deps chromium 
-
----
-
-### 2️⃣ 运行脚本
-
-bash id="g6x3mp" python3 get_115_cookie.py 
+- 📷 自动生成登录二维码
+- 📱 支持手机扫码登录
+- 🍪 自动提取完整 Cookie（非精简版）
+- ⚡ 无需手动抓包
+- 🧩 可直接用于多种工具
 
 ---
 
-### 3️⃣ 扫码登录
+## 🖥️ 运行环境
 
-浏览器打开：
-
-bash id="3i2q7v" http://你的服务器IP:8899/qr.png 
-
-使用 115 App 扫码并确认登录。
+- Linux / Ubuntu（推荐）
+- Python 3.8+
+- 服务器需可访问公网
 
 ---
 
-### 4️⃣ 获取 Cookie
+## 📦 安装步骤
 
-终端输出示例：
+### 1️⃣ 安装基础环境
 
-text id="3w8y0p" UID=xxx; CID=xxx; SEID=xxx; ... 
+bash apt update apt install -y python3-pip python3-venv 
+
+### 2️⃣ 创建虚拟环境
+
+bash python3 -m venv venv source venv/bin/activate 
+
+### 3️⃣ 安装依赖
+
+bash pip install playwright playwright install --with-deps chromium 
 
 ---
 
-## 📌 使用场景
+## 🚀 使用方法
 
-- 🗂 挂载 Alist  
-- 🤖 自动化脚本（转存 / 下载 / 同步）  
-- 🔌 API 请求认证  
-- 🧠 自建工具集成  
+bash python3 get_115_cookie.py 
+
+运行后：
+
+### ① 打开二维码
+
+浏览器访问：
+
+bash http://你的服务器IP:8899/qr.png 
+
+### ② 使用 115 App 扫码
+
+- 打开 115 App
+- 扫描二维码
+- 确认登录
+
+### ③ 获取 Cookie
+
+终端会输出：
+
+text UID=xxx; CID=xxx; SEID=xxx; ... 
+
+---
+
+## 📌 Cookie 用途
+
+获取的 Cookie 可用于：
+
+- 挂载 Alist
+- 自动化下载 / 转存脚本
+- API 请求认证
 
 ---
 
 ## 📁 项目结构
 
-bash id="2s4l9n" . ├── get_115_cookie.py   # 主程序 ├── install.sh          # 一键安装（可选） ├── assets/ │   ├── preview.png     # 展示图（自行替换） │   └── qr.png          # 示例二维码 └── README.md 
+bash . ├── get_115_cookie.py   # 主脚本 ├── install.sh          # 一键安装（可选） ├── qr.png              # 临时二维码 └── README.md 
 
 ---
 
-## ⚙️ 可选：一键安装
+## ⚠️ 注意事项
 
-bash id="0qz7y6" bash install.sh 
+- Cookie 属于敏感信息，请勿泄露
+- 登录状态可能失效，需要重新获取
+- 建议在私人服务器运行
+- 若无法访问二维码，请检查端口（默认 8899）
 
 ---
 
 ## 🔧 常见问题
 
-### ❓ 无法访问二维码？
+### ❓ 无法打开二维码？
 
-bash id="1c4u8t" ufw allow 8899 
+检查端口是否开放：
 
-确保服务器端口已开放。
-
----
-
-### ❓ 扫码后无输出？
-
-- 确认手机已点击“确认登录”  
-- 等待 3–10 秒（Cookie 写入有延迟）  
-- 重新运行脚本再试  
+bash ufw allow 8899 
 
 ---
 
-### ❓ 浏览器依赖安装失败？
+### ❓ 扫码后没有反应？
 
-bash id="q2d9me" playwright install chromium 
+- 确认手机已点击“确认登录”
+- 等待几秒（Cookie 有延迟）
+- 可重新运行脚本
+
+---
+
+### ❓ 浏览器安装失败？
+
+尝试重新执行：
+
+bash playwright install chromium 
 
 ---
 
 ## 🔒 安全说明
 
-- Cookie 属于敏感凭证，请勿泄露  
-- 建议仅在私人服务器运行  
-- 登录失效需重新获取  
-
----
-
-## 🚀 Roadmap
-
-- [ ] 自动保存 Cookie 到文件  
-- [ ] 定时刷新（防过期）  
-- [ ] Web 面板（扫码即用）  
-- [ ] 多账号管理  
-
----
-
-## 🤝 贡献
-
-欢迎提交 Issue / PR 改进脚本或补充场景。
-
----
-
-## ⭐ Star History
-
-如果这个项目对你有帮助，点个 ⭐ 支持一下。
+本工具不会上传任何数据，所有操作均在本地/服务器完成。
 
 ---
 
 ## 📄 License
 
-MIT
+MIT License
+
+---
+
+## ⭐ 使用建议
+
+建议搭配：
+
+- Alist 使用
+- 定时脚本（自动更新 Cookie）
+- 多账号管理
+
+---
+
+## 🚀 后续可扩展
+
+- 自动保存 Cookie 到文件
+- 定时刷新登录
+- Web 面板版本
+- API 接口封
