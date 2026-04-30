@@ -24,3 +24,5 @@ source venv/bin/activate
 
 pip install playwright
 playwright install --with-deps chromium
+
+python3 get_115_cookie.py
