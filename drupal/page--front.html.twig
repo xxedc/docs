@@ -1,0 +1,209 @@
+{# 
+  文件：page--front.html.twig
+  作用：高颜值“美女写真+视频+图文”综合聚合站首页
+#}
+<div class="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 font-sans selection:bg-pink-500 selection:text-white">
+
+  {# 隐藏滚动条的专属样式 #}
+  <style>
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+
+  {# ========================================== #}
+  {# 1. 顶部导航 (半透明 + 毛玻璃 + 固定顶部) #}
+  {# ========================================== #}
+  <header class="sticky top-0 z-50 w-full border-b border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/70 backdrop-blur-lg">
+    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+      {# 左侧：Logo #}
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-pink-500/20">M</div>
+        <span class="text-xl font-extrabold tracking-tight">XXEDC</span>
+      </div>
+
+      {# 中间：分类导航 (PC端显示) #}
+      <nav class="hidden md:flex items-center gap-8 font-medium text-sm">
+        <a href="/" class="text-pink-600 dark:text-pink-400 font-semibold">推荐</a>
+        <a href="#" class="hover:text-pink-600 transition-colors">最新图集</a>
+        <a href="#" class="hover:text-pink-600 transition-colors">精选视频</a>
+        <a href="#" class="hover:text-pink-600 transition-colors">专栏文章</a>
+      </nav>
+
+      {# 右侧：搜索与登录 #}
+      <div class="flex items-center gap-3">
+        <button class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+        </button>
+        <a href="/user" class="hidden sm:inline-flex items-center justify-center rounded-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-5 py-2 text-sm font-semibold hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-all shadow-sm hover:scale-105">
+          登录 / 注册
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="pb-24">
+    
+    {# ========================================== #}
+    {# 2. Hero 推荐区 (Alpine.js 自动大图轮播) #}
+    {# ========================================== #}
+    <section class="max-w-7xl mx-auto px-4 py-6"
+             x-data="{ active: 0, timer: null }"
+             x-init="timer = setInterval(() => active = (active === 2 ? 0 : active + 1), 5000)">
+      
+      <div class="relative w-full aspect-[21/9] md:aspect-[21/8] lg:aspect-[21/7] overflow-hidden rounded-2xl shadow-2xl group bg-zinc-900">
+        
+        {# 轮播项目 1 #}
+        <div x-show="active === 0" x-transition.opacity.duration.700ms class="absolute inset-0">
+          <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=1600&auto=format&fit=crop" class="w-full h-full object-cover" alt="Hero 1">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-6 md:p-12">
+            <span class="bg-pink-500 text-white text-xs font-bold px-3 py-1 rounded-full w-max mb-3">独家首发</span>
+            <h2 class="text-2xl md:text-4xl font-extrabold text-white mb-2 leading-tight">仲夏夜之梦：海边情绪写真合集</h2>
+            <p class="text-white/80 text-sm max-w-xl line-clamp-2">感受最纯粹的光影与海风，本期特邀人气模特展现夏日绝美瞬间。</p>
+          </div>
+        </div>
+
+        {# 轮播项目 2 #}
+        <div x-show="active === 1" x-transition.opacity.duration.700ms class="absolute inset-0" style="display: none;">
+          <img src="https://images.unsplash.com/photo-1516726817505-f5ed825624d8?q=80&w=1600&auto=format&fit=crop" class="w-full h-full object-cover" alt="Hero 2">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-6 md:p-12">
+            <span class="bg-purple-500 text-white text-xs font-bold px-3 py-1 rounded-full w-max mb-3">热门图集</span>
+            <h2 class="text-2xl md:text-4xl font-extrabold text-white mb-2 leading-tight">日系制服少女纯美街拍</h2>
+            <p class="text-white/80 text-sm max-w-xl line-clamp-2">漫步在东京街头的樱花树下，治愈系满分的高清写真集。</p>
+          </div>
+        </div>
+
+        {# 轮播项目 3 #}
+        <div x-show="active === 2" x-transition.opacity.duration.700ms class="absolute inset-0" style="display: none;">
+          <img src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?q=80&w=1600&auto=format&fit=crop" class="w-full h-full object-cover" alt="Hero 3">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-6 md:p-12">
+            <span class="bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-full w-max mb-3">限时免费</span>
+            <h2 class="text-2xl md:text-4xl font-extrabold text-white mb-2 leading-tight">赛博朋克霓虹夜景人像</h2>
+            <p class="text-white/80 text-sm max-w-xl line-clamp-2">未来都市的绚丽色彩，高清无水印原图开放下载。</p>
+          </div>
+        </div>
+
+        {# 轮播控制按钮 (悬浮显示) #}
+        <button @click="active = active === 0 ? 2 : active - 1; clearInterval(timer)" class="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-pink-500 hover:scale-110">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+        </button>
+        <button @click="active = active === 2 ? 0 : active + 1; clearInterval(timer)" class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-pink-500 hover:scale-110">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </button>
+      </div>
+    </section>
+
+    {# ========================================== #}
+    {# 6. 分类浏览区 (横向滑动小卡片) #}
+    {# ========================================== #}
+    <section class="max-w-7xl mx-auto px-4 py-2">
+      <div class="flex gap-3 overflow-x-auto pb-4 snap-x hide-scrollbar">
+        {% set cats = ['🔥 站长推荐', '🎀 清纯少女', '💋 性感诱惑', '👗 绝美制服', '👘 唯美古风', '🎌 日系JK', '🎬 视频专区'] %}
+        {% for cat in cats %}
+          <a href="#" class="shrink-0 snap-start px-5 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-sm font-semibold hover:border-pink-500 hover:text-pink-600 dark:hover:text-pink-400 transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5">
+            {{ cat }}
+          </a>
+        {% endfor %}
+      </div>
+    </section>
+
+    {# ========================================== #}
+    {# 3. 最新图集 (核心模块：Pinterest 响应式网格) #}
+    {# ========================================== #}
+    <section class="max-w-7xl mx-auto px-4 py-8">
+      <div class="flex items-end justify-between mb-6">
+        <h3 class="text-2xl font-extrabold tracking-tight">最新图集</h3>
+        <a href="#" class="text-sm font-medium text-zinc-500 hover:text-pink-600 transition-colors flex items-center">查看全部 <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></a>
+      </div>
+      
+      {# 手机 2列, 平板 3列, 电脑 4-5列 #}
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-5">
+        {% for i in 1..10 %}
+        <a href="#" class="group block relative rounded-xl overflow-hidden bg-zinc-100 dark:bg-zinc-800 aspect-[3/4] shadow-sm hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+          {# 大封面图，带极慢的放大特效 #}
+          <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=400&auto=format&fit=crop&sig={{ i }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Gallery Cover">
+          
+          {# 底部暗色渐变信息区 #}
+          <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/10 to-transparent flex flex-col justify-end p-3 opacity-90 group-hover:opacity-100 transition-opacity">
+            <h4 class="text-white font-bold text-sm md:text-base leading-snug line-clamp-2 mb-1.5 shadow-black drop-shadow-md">极品模特私房写真 108P</h4>
+            <div class="flex items-center justify-between text-white/70 text-[11px] md:text-xs font-medium">
+              <span class="flex items-center"><svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg> 2.1w</span>
+              <span>2026-05-02</span>
+            </div>
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+    </section>
+
+    {# ========================================== #}
+    {# 4. 热门视频 (横向滑动 + 悬浮播放指示) #}
+    {# ========================================== #}
+    <section class="max-w-7xl mx-auto px-4 py-8 bg-zinc-100 dark:bg-zinc-900/50 rounded-3xl mt-4">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-2xl font-extrabold tracking-tight">精选视频</h3>
+      </div>
+      
+      <div class="flex overflow-x-auto gap-4 md:gap-5 pb-6 snap-x hide-scrollbar">
+        {% for i in 1..5 %}
+        <a href="#" class="group relative shrink-0 snap-start w-[280px] md:w-[400px] aspect-video rounded-xl overflow-hidden bg-black shadow-md hover:shadow-xl transition-all">
+          <img src="https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=600&auto=format&fit=crop&sig={{ i }}" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" alt="Video">
+          
+          {# 居中播放按钮 #}
+          <div class="absolute inset-0 flex items-center justify-center">
+            <div class="w-12 h-12 md:w-14 md:h-14 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/40 group-hover:bg-pink-500 group-hover:border-pink-500 group-hover:scale-110 transition-all duration-300 shadow-[0_0_20px_rgba(0,0,0,0.3)]">
+              <svg class="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+          </div>
+          
+          <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/95 to-transparent p-4">
+             <h4 class="text-white font-medium text-sm line-clamp-1 drop-shadow-md">4K 沉浸式：街头时尚抓拍实录合集</h4>
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+    </section>
+
+    {# ========================================== #}
+    {# 5. 推荐文章 (左图右文，干货资讯排版) #}
+    {# ========================================== #}
+    <section class="max-w-7xl mx-auto px-4 py-12">
+      <h3 class="text-2xl font-extrabold tracking-tight mb-6">推荐专栏</h3>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {% for i in 1..4 %}
+        <a href="#" class="group flex gap-4 md:gap-6 bg-white dark:bg-zinc-900 p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+          {# 左侧：圆角配图 #}
+          <div class="w-28 h-28 md:w-40 md:h-32 shrink-0 overflow-hidden rounded-xl bg-zinc-100 dark:bg-zinc-800">
+            <img src="https://images.unsplash.com/photo-1542385151-efd9000785a0?q=80&w=400&auto=format&fit=crop&sig={{ i }}" class="w-full h-full object-cover group-hover:scale-105 transition-duration-500" alt="Article">
+          </div>
+          {# 右侧：干货文本 #}
+          <div class="flex flex-col justify-center py-1">
+            <h4 class="text-base md:text-lg font-bold text-zinc-900 dark:text-zinc-100 leading-snug mb-2 group-hover:text-pink-600 transition-colors line-clamp-2">2026年最新人像摄影布光教程：如何拍出高级通透感</h4>
+            <p class="text-xs md:text-sm text-zinc-500 dark:text-zinc-400 line-clamp-2 mb-3">不需要昂贵的器材，教你利用自然光和一块反光板，拍出绝美写真。</p>
+            <div class="mt-auto text-xs font-medium text-zinc-400 flex items-center gap-2">
+              <span class="bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded text-zinc-600 dark:text-zinc-300">摄影干货</span>
+              <span>2026-05-02</span>
+            </div>
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+    </section>
+
+  </main>
+
+  {# ========================================== #}
+  {# 7. 底部 Footer (极简) #}
+  {# ========================================== #}
+  <footer class="border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 py-10 mt-10">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <div class="flex justify-center gap-6 mb-6 text-sm font-medium text-zinc-500 dark:text-zinc-400">
+        <a href="#" class="hover:text-pink-600 transition-colors">关于本站</a>
+        <a href="#" class="hover:text-pink-600 transition-colors">发布规则</a>
+        <a href="#" class="hover:text-pink-600 transition-colors">隐私政策</a>
+        <a href="#" class="hover:text-pink-600 transition-colors">联系合作</a>
+      </div>
+      <p class="text-zinc-400 dark:text-zinc-600 text-xs">© 2026 XXEDC Content Hub. All rights reserved. 仅供学习与分享。</p>
+    </div>
+  </footer>
+
+</div>
