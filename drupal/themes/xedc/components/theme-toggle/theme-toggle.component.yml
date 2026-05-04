@@ -1,0 +1,13 @@
+$schema: 'https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json'
+name: ThemeToggle
+status: experimental
+description: '主题切换器组件（日间/夜间/深夜/跟随系统）'
+group: XEDC
+
+props:
+  type: object
+  properties:
+    compact:
+      type: boolean
+      title: '紧凑模式（只显示图标，不显示文字）'
+      default: true
