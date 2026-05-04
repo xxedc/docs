@@ -1,0 +1,46 @@
+{#
+  input.twig — 文本输入框组件
+#}
+
+{% set field_id = id|default('input-' ~ random()) %}
+{% set has_error = error is not empty %}
+
+<div class="xedc-field{% if has_error %} xedc-field--error{% endif %}{% if disabled %} xedc-field--disabled{% endif %}">
+
+  {# 标签 #}
+  {% if label %}
+    <label for="{{ field_id }}" class="xedc-field__label">
+      {{ label }}
+      {% if required %}
+        <span class="xedc-field__required" aria-hidden="true">*</span>
+      {% endif %}
+    </label>
+  {% endif %}
+
+  {# 输入框包裹（支持左图标）#}
+  <div class="xedc-field__control{% if icon_left %} xedc-field__control--has-icon{% endif %}">
+    {% if icon_left %}
+      <span class="xedc-field__icon-left" aria-hidden="true">{{ icon_left|raw }}</span>
+    {% endif %}
+
+    <input
+      type="{{ type_attr|default('text') }}"
+      id="{{ field_id }}"
+      name="{{ name|default(field_id) }}"
+      class="xedc-input"
+      {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}
+      {% if value %}value="{{ value }}"{% endif %}
+      {% if disabled %}disabled{% endif %}
+      {% if required %}required aria-required="true"{% endif %}
+      {% if has_error %}aria-invalid="true" aria-describedby="{{ field_id }}-error"{% endif %}
+    />
+  </div>
+
+  {# 错误信息 #}
+  {% if has_error %}
+    <p id="{{ field_id }}-error" class="xedc-field__error" role="alert">{{ error }}</p>
+  {% elseif helper %}
+    <p class="xedc-field__helper">{{ helper }}</p>
+  {% endif %}
+
+</div>
