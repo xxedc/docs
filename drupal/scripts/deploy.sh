@@ -137,13 +137,12 @@ log_info "步骤 7/10：执行数据库更新..."
 run "$DRUSH" -r "$WEB_ROOT" updb -y
 log_success "数据库更新完成"
 
-# ── 步骤 8：导入配置（失败给警告但继续）──
 # ── 步骤 8：导入配置（config/sync 为空时跳过）──
 log_info "步骤 8/10：导入配置..."
 CONFIG_SYNC="${DRUPAL_ROOT}/config/sync"
 CONFIG_COUNT=$(find "$CONFIG_SYNC" -name "*.yml" 2>/dev/null | wc -l)
 if [ "$CONFIG_COUNT" -lt 5 ]; then
-    log_warn "config/sync/ 文件数不足（${CONFIG_COUNT} 个），跳过 cim，阶段2后再导入"
+    log_warn "config/sync/ 文件不足（${CONFIG_COUNT} 个），跳过 cim"
 else
     if ! run "$DRUSH" -r "$WEB_ROOT" cim -y 2>> "$LOG_FILE"; then
         log_warn "配置导入有警告，请检查日志"
@@ -151,6 +150,7 @@ else
         log_success "配置导入完成"
     fi
 fi
+
 
 
 # ── 步骤 9：清除缓存 ──
