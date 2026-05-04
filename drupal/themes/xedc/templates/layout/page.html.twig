@@ -1,0 +1,62 @@
+{# 
+/**
+ * @file
+ * 页面核心框架 (page.html.twig)
+ * 严格遵循 Twig Tweak 最佳实践，避免大量 Block 放置。
+ */
+#}
+
+<div class="xedc-layout min-h-screen flex flex-col bg-background text-foreground">
+  
+  {# 1. 顶部 Header 区 #}
+  <header class="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur">
+    <div class="container flex h-14 items-center justify-between px-4 md:px-8">
+      <div class="flex items-center gap-4">
+        {# Logo 可以放这里 #}
+        <a href="/" class="font-bold text-xl tracking-tight text-primary">XEDC</a>
+        
+        {# 主导航: 使用 Twig Tweak 渲染 #}
+        <nav class="hidden md:flex">
+          {{ drupal_menu('main') }}
+        </nav>
+      </div>
+
+      <div class="flex items-center gap-4">
+        {# 头像 / 登录状态 #}
+        {% if logged_in %}
+          {# 这里之后可以使用 SDC Avatar #}
+          <div class="user-menu-trigger">已登录</div>
+        {% else %}
+          {{ drupal_block('user_login_block') }}
+        {% endif %}
+
+        {# 引入主题切换器 SDC #}
+        {% include 'xedc:theme-toggle' ignore missing %}
+      </div>
+    </div>
+  </header>
+
+  {# 2. 页面主体 #}
+  <main class="flex-1 container mx-auto px-4 md:px-8 py-6 flex gap-6">
+    {# 左侧主内容区 #}
+    <div class="main-content flex-1 min-w-0">
+      {{ page.content }}
+    </div>
+
+    {# 右侧边栏: PC 端显示 (阶段 2 建这个 view) #}
+    <aside class="hidden lg:block w-80 shrink-0">
+      <div class="sticky top-20">
+        {{ drupal_view('front_recommend', 'block_hot') }}
+      </div>
+    </aside>
+  </main>
+
+  {# 3. 页脚区 #}
+  <footer class="border-t border-border bg-muted/40 py-6">
+    <div class="container mx-auto px-4 md:px-8 text-center text-sm text-muted-foreground">
+      {{ drupal_menu('footer') }}
+      <p class="mt-4">&copy; {{ 'now'|date('Y') }} XEDC. All rights reserved.</p>
+    </div>
+  </footer>
+
+</div>
