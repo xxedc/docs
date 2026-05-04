@@ -1,0 +1,68 @@
+{#
+  card.twig — 内容卡片组件
+  变体：default / featured / horizontal
+  使用示例：
+    {% include 'xedc:card' with {
+      title: '文章标题',
+      description: '摘要内容',
+      url: '/article/xxx'
+    } %}
+#}
+
+{% set variant = variant|default('default') %}
+{% set base_class = 'xedc-card xedc-card--' ~ variant %}
+{% if extra_classes %}
+  {% set base_class = base_class ~ ' ' ~ extra_classes %}
+{% endif %}
+
+<article class="{{ base_class }}">
+
+  {# 封面图区域 #}
+  {% if cover %}
+    <div class="xedc-card__cover">
+      {% if url %}
+        <a href="{{ url }}" class="xedc-card__cover-link" tabindex="-1" aria-hidden="true">
+          {{ cover }}
+        </a>
+      {% else %}
+        {{ cover }}
+      {% endif %}
+    </div>
+  {% endif %}
+
+  {# 卡片主体 #}
+  <div class="xedc-card__body">
+
+    {# 头部插槽（自定义头部内容）#}
+    {% if header %}
+      <div class="xedc-card__header">{{ header }}</div>
+    {% endif %}
+
+    {# 标题 #}
+    {% if title %}
+      <h3 class="xedc-card__title">
+        {% if url %}
+          <a href="{{ url }}" class="xedc-card__title-link">{{ title }}</a>
+        {% else %}
+          {{ title }}
+        {% endif %}
+      </h3>
+    {% endif %}
+
+    {# 描述 #}
+    {% if description %}
+      <p class="xedc-card__description xedc-line-clamp-2">{{ description }}</p>
+    {% endif %}
+
+    {# 内容插槽 #}
+    {% if content %}
+      <div class="xedc-card__content">{{ content }}</div>
+    {% endif %}
+
+    {# 底部插槽 #}
+    {% if footer %}
+      <div class="xedc-card__footer">{{ footer }}</div>
+    {% endif %}
+
+  </div>
+</article>
