@@ -1,0 +1,56 @@
+{#
+  theme-toggle.twig — 主题切换器 SDC 组件
+  在 page.html.twig 中用：{% include 'xedc:theme-toggle' %}
+  交互逻辑由 theme-toggle.js 处理
+#}
+
+<div class="xedc-theme-toggle" data-xedc-theme-toggle>
+
+  {# 图标按钮 #}
+  <button
+    class="xedc-navbar__icon-btn"
+    data-xedc-theme-icon
+    aria-label="切换主题"
+    aria-haspopup="true"
+    aria-expanded="false"
+    title="切换主题模式"
+  >🌙</button>
+
+  {# 下拉菜单 #}
+  <div
+    class="xedc-theme-dropdown"
+    data-xedc-theme-dropdown
+    role="menu"
+    aria-hidden="true"
+    aria-label="主题模式选择"
+  >
+    <button
+      class="xedc-theme-dropdown__item"
+      data-xedc-theme-option="system"
+      role="menuitemradio"
+      aria-checked="false"
+    >🖥️ 跟随系统</button>
+
+    <button
+      class="xedc-theme-dropdown__item"
+      data-xedc-theme-option="light"
+      role="menuitemradio"
+      aria-checked="false"
+    >☀️ 日间</button>
+
+    <button
+      class="xedc-theme-dropdown__item"
+      data-xedc-theme-option="dark"
+      role="menuitemradio"
+      aria-checked="false"
+    >🌙 夜间</button>
+
+    <button
+      class="xedc-theme-dropdown__item"
+      data-xedc-theme-option="midnight"
+      role="menuitemradio"
+      aria-checked="false"
+    >⚫ 深夜</button>
+  </div>
+
+</div>
