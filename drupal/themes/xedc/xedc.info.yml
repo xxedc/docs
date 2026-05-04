@@ -1,20 +1,38 @@
-name: xedc
+name: XEDC
 type: theme
-description: '基于 shadcn/ui 与 OKLCH 的三色模式综合内容主题。'
-core_version_requirement: ^11
-base theme: starterkit_theme
+description: 'XEDC 综合内容网站主题，支持 light/dark/midnight 三色模式，基于 shadcn/ui 设计语言'
+package: XEDC
+core_version_requirement: ^10 || ^11
+base theme: false
 
-# 开启组件支持 (SDC)
-experimental:
-  components: true
-
-libraries:
-  - xedc/global-styling
-  - xedc/global-scripts
-
+# 主题区域定义
 regions:
-  header: 'Header (顶部导航)'
-  primary_menu: 'Primary menu (主菜单)'
-  content: 'Content (主内容区)'
-  sidebar: 'Sidebar (侧边栏)'
-  footer: 'Footer (页脚)'
+  header: '顶部导航'
+  header_top: '顶部通知条'
+  primary_menu: '主导航菜单'
+  breadcrumb: '面包屑'
+  highlighted: '高亮提示'
+  content: '主内容区'
+  sidebar_first: '左侧边栏'
+  sidebar_second: '右侧边栏'
+  content_bottom: '内容底部'
+  footer_first: 'Footer 第一列'
+  footer_second: 'Footer 第二列'
+  footer_third: 'Footer 第三列'
+  footer_bottom: 'Footer 底部版权'
+
+# 功能开关
+features:
+  - comment_user_picture
+  - comment_user_verification
+  - favicon
+  - logo
+  - node_user_picture
+
+# favicon
+favicon:
+  url: images/favicon.svg
+  mimetype: image/svg+xml
+
+# 截图
+screenshot: screenshot.png
