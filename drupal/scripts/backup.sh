@@ -1,45 +1,101 @@
 #!/bin/bash
-# 作用：打包当前数据库、用户上传的文件以及自定义代码
+# =============================================================
+# backup.sh — 部署前自动备份（保留最近7天）
+# 用法：bash backup.sh
+# =============================================================
 set -euo pipefail
 
+# ── 变量 ──
 DRUPAL_ROOT="/var/www/html/drupal11"
 BACKUP_DIR="/var/backups/drupal11"
 TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-BACKUP_NAME="backup-${TIMESTAMP}.tar.gz"
+BACKUP_NAME="backup-${TIMESTAMP}"
 BACKUP_PATH="${BACKUP_DIR}/${BACKUP_NAME}"
+KEEP_DAYS=7
 
-# 动态判断 web 目录
+# 自动检测 web/ 子目录
 if [ -d "${DRUPAL_ROOT}/web" ]; then
     WEB_ROOT="${DRUPAL_ROOT}/web"
 else
     WEB_ROOT="${DRUPAL_ROOT}"
 fi
 
-# 判断 drush 路径
+# 自动检测 drush
 if [ -f "${DRUPAL_ROOT}/vendor/bin/drush" ]; then
     DRUSH="${DRUPAL_ROOT}/vendor/bin/drush"
+elif command -v drush &> /dev/null; then
+    DRUSH=$(command -v drush)
 else
-    DRUSH="drush"
+    echo "❌ 找不到 drush" && exit 1
 fi
 
-echo "💾 开始打包备份..."
+# ── 颜色 ──
+GREEN='\033[0;32m'; YELLOW='\033[1;33m'; RED='\033[0;31m'; BLUE='\033[0;34m'; NC='\033[0m'
+log_info()    { echo -e "${BLUE}ℹ️  $1${NC}"; }
+log_success() { echo -e "${GREEN}✅ $1${NC}"; }
+log_warn()    { echo -e "${YELLOW}⚠️  $1${NC}"; }
 
-# 临时目录存数据库导出
-TMP_DB="/tmp/drupal_db_${TIMESTAMP}.sql"
-$DRUSH -r "$WEB_ROOT" sql-dump --result-file="$TMP_DB"
+mkdir -p "$BACKUP_DIR"
+mkdir -p "$BACKUP_PATH"
 
-# 打包数据库、文件、主题、模块、配置
-tar -czf "$BACKUP_PATH" \
-    -C /tmp "drupal_db_${TIMESTAMP}.sql" \
-    -C "$WEB_ROOT" "sites/default/files" "themes/custom" "modules/custom" \
-    -C "$DRUPAL_ROOT" "config" 2>/dev/null || true
+log_info "开始备份：${BACKUP_NAME}"
 
-# 清理临时的 sql 文件
-rm -f "$TMP_DB"
+# ── 1. 备份数据库 ──
+log_info "备份数据库..."
+"$DRUSH" -r "$WEB_ROOT" sql:dump \
+    --result-file="${BACKUP_PATH}/database.sql" \
+    --gzip 2>/dev/null \
+    || "$DRUSH" -r "$WEB_ROOT" sql-dump > "${BACKUP_PATH}/database.sql"
+log_success "数据库备份完成"
 
-echo "✅ 备份完成：${BACKUP_PATH}"
+# ── 2. 备份上传文件（仅最近修改的，加快速度）──
+log_info "备份 files/ 目录..."
+if [ -d "${WEB_ROOT}/sites/default/files" ]; then
+    rsync -a --quiet \
+        --exclude="*.tmp" \
+        --exclude="css/" \
+        --exclude="js/" \
+        --exclude="php/" \
+        "${WEB_ROOT}/sites/default/files/" \
+        "${BACKUP_PATH}/files/"
+    log_success "files/ 备份完成"
+else
+    log_warn "files/ 目录不存在，跳过"
+fi
 
-# 清理旧备份，只保留最近 7 天的
-echo "🧹 清理 7 天前的历史备份..."
-find "$BACKUP_DIR" -type f -name "backup-*.tar.gz" -mtime +7 -exec rm -f {} \;
-echo "✅ 清理完成！"
+# ── 3. 备份配置 ──
+log_info "备份配置..."
+if [ -d "${DRUPAL_ROOT}/config/sync" ]; then
+    cp -r "${DRUPAL_ROOT}/config/sync" "${BACKUP_PATH}/config-sync"
+    log_success "配置备份完成"
+else
+    log_warn "config/sync/ 不存在，跳过"
+fi
+
+# ── 4. 备份自定义主题 ──
+log_info "备份自定义主题..."
+if [ -d "${WEB_ROOT}/themes/custom" ]; then
+    cp -r "${WEB_ROOT}/themes/custom" "${BACKUP_PATH}/themes-custom"
+    log_success "主题备份完成"
+fi
+
+# ── 5. 备份自定义模块 ──
+log_info "备份自定义模块..."
+if [ -d "${WEB_ROOT}/modules/custom" ]; then
+    cp -r "${WEB_ROOT}/modules/custom" "${BACKUP_PATH}/modules-custom"
+    log_success "模块备份完成"
+fi
+
+# ── 6. 打包 ──
+log_info "打包备份文件..."
+cd "$BACKUP_DIR"
+tar -czf "${BACKUP_NAME}.tar.gz" "${BACKUP_NAME}/"
+rm -rf "${BACKUP_PATH}"
+BACKUP_SIZE=$(du -sh "${BACKUP_DIR}/${BACKUP_NAME}.tar.gz" | cut -f1)
+log_success "备份包：${BACKUP_DIR}/${BACKUP_NAME}.tar.gz（大小：${BACKUP_SIZE}）"
+
+# ── 7. 清理超过7天的备份 ──
+log_info "清理 ${KEEP_DAYS} 天前的备份..."
+find "$BACKUP_DIR" -name "backup-*.tar.gz" -mtime "+${KEEP_DAYS}" -delete
+REMAINING=$(find "$BACKUP_DIR" -name "backup-*.tar.gz" | wc -l)
+log_success "清理完成，当前保留 ${REMAINING} 个备份"
