@@ -140,7 +140,10 @@ log_success "数据库更新完成"
 # ── 步骤 8：导入配置（config/sync 为空时跳过）──
 log_info "步骤 8/10：导入配置..."
 CONFIG_SYNC="${DRUPAL_ROOT}/config/sync"
-CONFIG_COUNT=$(find "$CONFIG_SYNC" -name "*.yml" 2>/dev/null | wc -l)
+CONFIG_COUNT=0
+if [ -d "$CONFIG_SYNC" ]; then
+    CONFIG_COUNT=$(find "$CONFIG_SYNC" -name "*.yml" | wc -l)
+fi
 if [ "$CONFIG_COUNT" -lt 5 ]; then
     log_warn "config/sync/ 文件不足（${CONFIG_COUNT} 个），跳过 cim"
 else
