@@ -1,0 +1,20 @@
+name: xedc
+type: theme
+description: '基于 shadcn/ui 与 OKLCH 的三色模式综合内容主题。'
+core_version_requirement: ^11
+base theme: starterkit_theme
+
+# 开启组件支持 (SDC)
+experimental:
+  components: true
+
+libraries:
+  - xedc/global-styling
+  - xedc/global-scripts
+
+regions:
+  header: 'Header (顶部导航)'
+  primary_menu: 'Primary menu (主菜单)'
+  content: 'Content (主内容区)'
+  sidebar: 'Sidebar (侧边栏)'
+  footer: 'Footer (页脚)'
