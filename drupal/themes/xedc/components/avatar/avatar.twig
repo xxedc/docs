@@ -1,0 +1,44 @@
+{#
+  avatar.twig — 用户头像组件
+  有图片显示图片，无图片显示用户名首字母
+#}
+
+{% set size = size|default('md') %}
+{% set classes = 'xedc-avatar xedc-avatar--' ~ size %}
+{% if extra_classes %}{% set classes = classes ~ ' ' ~ extra_classes %}{% endif %}
+
+{# 取首字母作为 fallback #}
+{% set fallback = '' %}
+{% if name %}
+  {% set fallback = name|slice(0, 1)|upper %}
+{% endif %}
+
+{# 有链接则包裹 <a> #}
+{% if url %}
+  <a href="{{ url }}" class="{{ classes }}" aria-label="{{ name|default('用户头像') }}">
+{% else %}
+  <span class="{{ classes }}" aria-label="{{ name|default('用户头像') }}">
+{% endif %}
+
+  {% if src %}
+    <img
+      src="{{ src }}"
+      alt="{{ alt|default(name) }}"
+      class="xedc-avatar__img"
+      loading="lazy"
+      onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
+    />
+    <span class="xedc-avatar__fallback" style="display:none;" aria-hidden="true">
+      {{ fallback }}
+    </span>
+  {% else %}
+    <span class="xedc-avatar__fallback" aria-hidden="true">
+      {{ fallback }}
+    </span>
+  {% endif %}
+
+{% if url %}
+  </a>
+{% else %}
+  </span>
+{% endif %}
