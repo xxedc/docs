@@ -1,27 +1,160 @@
-/* 预留本地字体声明位置 (后续分支在 fonts 目录补充) */
-@font-face {
-  font-family: 'Inter';
-  src: url('../../fonts/Inter-VariableFont_slnt,wght.woff2') format('woff2');
-  font-weight: 100 900;
-  font-display: swap;
-  font-style: normal;
-}
+/* ================================================================
+   typography.css — 排版系统
+   ================================================================ */
 
-@font-face {
-  font-family: 'Noto Sans SC';
-  src: url('../../fonts/NotoSansSC-VariableFont_wght.woff2') format('woff2');
-  font-weight: 100 900;
-  font-display: swap;
-  font-style: normal;
-}
-
-body {
-  font-family: 'Inter', 'Noto Sans SC', ui-sans-serif, system-ui, sans-serif;
-  font-feature-settings: 'cv11', 'ss01';
-}
-
+/* ── 标题 ── */
 h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
-  letter-spacing: -0.025em;
+  line-height: var(--leading-tight);
   color: var(--foreground);
+  letter-spacing: -0.01em;
+}
+
+h1 { font-size: var(--text-4xl); }
+h2 { font-size: var(--text-3xl); }
+h3 { font-size: var(--text-2xl); }
+h4 { font-size: var(--text-xl); }
+h5 { font-size: var(--text-lg); }
+h6 { font-size: var(--text-base); }
+
+/* ── 段落 ── */
+p {
+  line-height: var(--leading-relaxed);
+  color: var(--foreground);
+}
+
+/* ── 链接 ── */
+a {
+  color: var(--primary);
+  transition: color var(--transition-fast),
+              opacity var(--transition-fast);
+}
+a:hover {
+  opacity: 0.8;
+}
+
+/* ── 行内代码 ── */
+code {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  background-color: var(--muted);
+  color: var(--foreground);
+  padding: 0.1em 0.3em;
+  border-radius: calc(var(--radius) * 0.5);
+  border: 1px solid var(--border);
+}
+
+/* ── 代码块 ── */
+pre {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-4);
+  overflow-x: auto;
+  line-height: var(--leading-relaxed);
+}
+
+pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: inherit;
+}
+
+/* ── midnight 模式代码块更深背景 ── */
+[data-theme="midnight"] pre {
+  background-color: oklch(0.05 0 0);
+}
+
+/* ── 引用块 ── */
+blockquote {
+  border-left: 3px solid var(--primary);
+  padding: var(--space-3) var(--space-4);
+  margin: var(--space-4) 0;
+  background-color: var(--muted);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  color: var(--muted-foreground);
+  font-style: italic;
+}
+
+/* ── 分割线 ── */
+hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: var(--space-6) 0;
+}
+
+/* ── 表格 ── */
+table {
+  width: 100%;
+  font-size: var(--text-sm);
+}
+
+th {
+  text-align: left;
+  font-weight: 600;
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 2px solid var(--border);
+  color: var(--foreground);
+}
+
+td {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--border);
+  color: var(--muted-foreground);
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+/* ── 文章正文阅读排版 ── */
+.xedc-article__body {
+  max-width: var(--max-width-content);
+  margin: 0 auto;
+  font-size: var(--text-base);
+  line-height: var(--leading-loose);
+  color: var(--foreground);
+}
+
+.xedc-article__body h2 {
+  font-size: var(--text-2xl);
+  margin-top: var(--space-10);
+  margin-bottom: var(--space-4);
+}
+
+.xedc-article__body h3 {
+  font-size: var(--text-xl);
+  margin-top: var(--space-8);
+  margin-bottom: var(--space-3);
+}
+
+.xedc-article__body p {
+  margin-bottom: var(--space-4);
+}
+
+.xedc-article__body img {
+  border-radius: var(--radius);
+  margin: var(--space-6) auto;
+}
+
+.xedc-article__body ul,
+.xedc-article__body ol {
+  padding-left: var(--space-6);
+  margin-bottom: var(--space-4);
+}
+
+.xedc-article__body ul {
+  list-style: disc;
+}
+
+.xedc-article__body ol {
+  list-style: decimal;
+}
+
+.xedc-article__body li {
+  margin-bottom: var(--space-2);
+  line-height: var(--leading-relaxed);
 }
