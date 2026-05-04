@@ -1,0 +1,110 @@
+/* ================================================================
+   input.css — 输入框组件
+   ================================================================ */
+
+/* ── 字段容器 ── */
+.xedc-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+/* ── 标签 ── */
+.xedc-field__label {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--foreground);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.xedc-field__required {
+  color: var(--destructive);
+}
+
+/* ── 控件包裹 ── */
+.xedc-field__control {
+  position: relative;
+}
+
+.xedc-field__icon-left {
+  position: absolute;
+  left: var(--space-3);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted-foreground);
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+
+.xedc-field__icon-left svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ── 输入框 ── */
+.xedc-input {
+  width: 100%;
+  height: 40px;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  font-family: var(--font-sans);
+  color: var(--foreground);
+  background-color: var(--background);
+  border: 1px solid var(--input);
+  border-radius: var(--radius);
+  outline: none;
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.xedc-field__control--has-icon .xedc-input {
+  padding-left: calc(var(--space-3) + 16px + var(--space-2));
+}
+
+.xedc-input::placeholder {
+  color: var(--muted-foreground);
+}
+
+.xedc-input:hover {
+  border-color: oklch(from var(--input) calc(l - 0.1) c h);
+}
+
+.xedc-input:focus {
+  border-color: var(--ring);
+  box-shadow: 0 0 0 2px oklch(from var(--ring) l c h / 0.2);
+}
+
+/* ── 错误状态 ── */
+.xedc-field--error .xedc-input {
+  border-color: var(--destructive);
+}
+
+.xedc-field--error .xedc-input:focus {
+  border-color: var(--destructive);
+  box-shadow: 0 0 0 2px oklch(from var(--destructive) l c h / 0.2);
+}
+
+/* ── 禁用状态 ── */
+.xedc-field--disabled .xedc-input,
+.xedc-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: var(--muted);
+}
+
+/* ── 帮助文字 / 错误文字 ── */
+.xedc-field__helper {
+  font-size: var(--text-xs);
+  color: var(--muted-foreground);
+}
+
+.xedc-field__error {
+  font-size: var(--text-xs);
+  color: var(--destructive);
+}
