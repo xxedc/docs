@@ -1,30 +1,39 @@
 xedc.sm:
-  label: sm
-  mediaQuery: '(min-width: 640px)'
-  weight: 0
-  multipliers:
-    - 1x
-xedc.md:
-  label: md
-  mediaQuery: '(min-width: 768px)'
+  label: 'Small (640px)'
+  mediaQuery: 'all and (min-width: 640px)'
   weight: 1
   multipliers:
     - 1x
-xedc.lg:
-  label: lg
-  mediaQuery: '(min-width: 1024px)'
+    - 2x
+
+xedc.md:
+  label: 'Medium (768px)'
+  mediaQuery: 'all and (min-width: 768px)'
   weight: 2
   multipliers:
     - 1x
-xedc.xl:
-  label: xl
-  mediaQuery: '(min-width: 1280px)'
+    - 2x
+
+xedc.lg:
+  label: 'Large (1024px)'
+  mediaQuery: 'all and (min-width: 1024px)'
   weight: 3
   multipliers:
     - 1x
-xedc.2xl:
-  label: 2xl
-  mediaQuery: '(min-width: 1536px)'
+    - 2x
+
+xedc.xl:
+  label: 'Extra Large (1280px)'
+  mediaQuery: 'all and (min-width: 1280px)'
   weight: 4
   multipliers:
     - 1x
+    - 2x
+
+xedc.2xl:
+  label: '2X Large (1536px)'
+  mediaQuery: 'all and (min-width: 1536px)'
+  weight: 5
+  multipliers:
+    - 1x
+    - 2x
