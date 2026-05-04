@@ -1,0 +1,18 @@
+{# paragraph--quote-block.html.twig — 引用块 #}
+<figure{{ attributes.addClass('xedc-paragraph', 'xedc-paragraph--quote') }}>
+  <blockquote class="xedc-quote">
+    {{ content.field_quote }}
+  </blockquote>
+  {% if paragraph.field_author.value or paragraph.field_source_url.uri %}
+    <figcaption class="xedc-quote__caption">
+      {% if paragraph.field_author.value %}
+        <span class="xedc-quote__author">— {{ paragraph.field_author.value }}</span>
+      {% endif %}
+      {% if paragraph.field_source_url.uri %}
+        <a href="{{ paragraph.field_source_url.uri }}" class="xedc-quote__source xedc-text-xs" target="_blank" rel="noopener">
+          来源
+        </a>
+      {% endif %}
+    </figcaption>
+  {% endif %}
+</figure>
