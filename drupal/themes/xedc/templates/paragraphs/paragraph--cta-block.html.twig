@@ -1,0 +1,22 @@
+{#
+  paragraph--cta-block.html.twig — 号召性按钮区
+  按 field_style 切换 primary / secondary / gradient
+#}
+{% set style = paragraph.field_style.value|default('primary') %}
+
+<div{{ attributes.addClass('xedc-paragraph', 'xedc-paragraph--cta', 'xedc-cta--' ~ style) }}>
+  {% if paragraph.field_title.value %}
+    <h3 class="xedc-cta__title">{{ paragraph.field_title.value }}</h3>
+  {% endif %}
+
+  {% if paragraph.field_description.value %}
+    <div class="xedc-cta__desc">{{ content.field_description }}</div>
+  {% endif %}
+
+  {% if paragraph.field_button_url.uri %}
+    <a href="{{ paragraph.field_button_url.uri }}"
+       class="xedc-btn xedc-cta__btn {% if style == 'primary' %}xedc-btn--default{% else %}xedc-btn--outline{% endif %} xedc-btn--lg">
+      {{ paragraph.field_button_text.value|default('了解更多') }}
+    </a>
+  {% endif %}
+</div>
