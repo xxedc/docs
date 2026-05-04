@@ -1,0 +1,30 @@
+xedc.sm:
+  label: sm
+  mediaQuery: '(min-width: 640px)'
+  weight: 0
+  multipliers:
+    - 1x
+xedc.md:
+  label: md
+  mediaQuery: '(min-width: 768px)'
+  weight: 1
+  multipliers:
+    - 1x
+xedc.lg:
+  label: lg
+  mediaQuery: '(min-width: 1024px)'
+  weight: 2
+  multipliers:
+    - 1x
+xedc.xl:
+  label: xl
+  mediaQuery: '(min-width: 1280px)'
+  weight: 3
+  multipliers:
+    - 1x
+xedc.2xl:
+  label: 2xl
+  mediaQuery: '(min-width: 1536px)'
+  weight: 4
+  multipliers:
+    - 1x
