@@ -9,6 +9,7 @@ global-styles:
       css/base/utilities.css: { weight: -170 }
       component:
       css/components/theme-toggle.css: { weight: -100 }
+      css/components/paragraphs.css: { weight: -90 }
 
 # ── 全局脚本 ──
 global-scripts:
