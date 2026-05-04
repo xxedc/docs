@@ -1,0 +1,56 @@
+{#
+  skeleton.twig — 骨架屏占位组件
+  type: card / text / avatar / banner / list
+#}
+
+{% set type = type|default('card') %}
+{% set count = count|default(1) %}
+{% set rows = rows|default(3) %}
+
+{# ── 卡片骨架 ── #}
+{% if type == 'card' %}
+  {% for i in 1..count %}
+    <div class="xedc-skeleton-card" aria-hidden="true">
+      <div class="xedc-skeleton xedc-skeleton-card__cover"></div>
+      <div class="xedc-skeleton-card__body">
+        <div class="xedc-skeleton xedc-skeleton-card__title"></div>
+        <div class="xedc-skeleton xedc-skeleton-card__title xedc-skeleton--short"></div>
+        <div class="xedc-skeleton xedc-skeleton-card__meta"></div>
+      </div>
+    </div>
+  {% endfor %}
+
+{# ── 文字骨架 ── #}
+{% elseif type == 'text' %}
+  <div class="xedc-skeleton-text" aria-hidden="true">
+    {% for i in 1..rows %}
+      <div class="xedc-skeleton xedc-skeleton-text__row{% if i == rows %} xedc-skeleton--short{% endif %}"></div>
+    {% endfor %}
+  </div>
+
+{# ── 头像骨架 ── #}
+{% elseif type == 'avatar' %}
+  <div class="xedc-skeleton-user" aria-hidden="true">
+    <div class="xedc-skeleton xedc-skeleton-user__avatar"></div>
+    <div class="xedc-skeleton-user__info">
+      <div class="xedc-skeleton xedc-skeleton-user__name"></div>
+      <div class="xedc-skeleton xedc-skeleton-user__sub"></div>
+    </div>
+  </div>
+
+{# ── Banner 骨架 ── #}
+{% elseif type == 'banner' %}
+  <div class="xedc-skeleton xedc-skeleton-banner" aria-hidden="true"></div>
+
+{# ── 列表骨架 ── #}
+{% elseif type == 'list' %}
+  {% for i in 1..count %}
+    <div class="xedc-skeleton-list-item" aria-hidden="true">
+      <div class="xedc-skeleton xedc-skeleton-list-item__thumb"></div>
+      <div class="xedc-skeleton-list-item__content">
+        <div class="xedc-skeleton xedc-skeleton-list-item__title"></div>
+        <div class="xedc-skeleton xedc-skeleton-list-item__sub"></div>
+      </div>
+    </div>
+  {% endfor %}
+{% endif %}
