@@ -1,0 +1,27 @@
+/* 预留本地字体声明位置 (后续分支在 fonts 目录补充) */
+@font-face {
+  font-family: 'Inter';
+  src: url('../../fonts/Inter-VariableFont_slnt,wght.woff2') format('woff2');
+  font-weight: 100 900;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Noto Sans SC';
+  src: url('../../fonts/NotoSansSC-VariableFont_wght.woff2') format('woff2');
+  font-weight: 100 900;
+  font-display: swap;
+  font-style: normal;
+}
+
+body {
+  font-family: 'Inter', 'Noto Sans SC', ui-sans-serif, system-ui, sans-serif;
+  font-feature-settings: 'cv11', 'ss01';
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  color: var(--foreground);
+}
