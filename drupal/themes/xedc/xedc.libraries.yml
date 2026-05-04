@@ -7,6 +7,8 @@ global-styles:
       css/base/reset.css: { weight: -190 }
       css/base/typography.css: { weight: -180 }
       css/base/utilities.css: { weight: -170 }
+      component:
+      css/components/theme-toggle.css: { weight: -100 }
 
 # ── 全局脚本 ──
 global-scripts:
