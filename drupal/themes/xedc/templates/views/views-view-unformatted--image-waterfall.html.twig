@@ -1,0 +1,59 @@
+{#
+  views-view-unformatted--image-waterfall.html.twig — 图片瀑布流视图
+#}
+<div class="xedc-image-waterfall">
+
+  {# 顶部工具栏 #}
+  <div class="xedc-list-toolbar xedc-flex xedc-flex-between">
+    <div class="xedc-waterfall-controls xedc-flex xedc-items-center xedc-gap-3">
+      {# 列数控制 #}
+      <div class="xedc-col-control xedc-flex xedc-items-center xedc-gap-2">
+        <span class="xedc-text-sm xedc-text-muted">列数</span>
+        <button class="xedc-col-btn" data-cols="2" aria-label="2列">2</button>
+        <button class="xedc-col-btn is-active" data-cols="3" aria-label="3列">3</button>
+        <button class="xedc-col-btn" data-cols="4" aria-label="4列">4</button>
+        <button class="xedc-col-btn" data-cols="5" aria-label="5列">5</button>
+      </div>
+    </div>
+
+    {# 批量操作 #}
+    <div class="xedc-batch-toolbar xedc-flex xedc-items-center xedc-gap-2">
+      <button class="xedc-btn xedc-btn--outline xedc-btn--sm" id="xedc-select-toggle">
+        多选
+      </button>
+      <div class="xedc-batch-actions" style="display:none;">
+        <button class="xedc-btn xedc-btn--default xedc-btn--sm" id="xedc-batch-download">批量下载</button>
+        <button class="xedc-btn xedc-btn--outline xedc-btn--sm" id="xedc-batch-collect">批量收藏</button>
+        <span class="xedc-text-sm xedc-text-muted" id="xedc-select-count">已选 0 张</span>
+      </div>
+    </div>
+  </div>
+
+  {# 瀑布流容器 #}
+  {% if rows %}
+    <div class="xedc-masonry" id="xedc-masonry" data-cols="3">
+      {% for row in rows %}
+        <div class="xedc-masonry__item" data-index="{{ loop.index }}">
+          {{ row.content }}
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="xedc-empty-state">
+      <div class="xedc-empty-state__icon">🖼️</div>
+      <h3 class="xedc-empty-state__title">暂无图片</h3>
+      <p class="xedc-text-sm xedc-text-muted">还没有图片内容</p>
+    </div>
+  {% endif %}
+
+  {# 加载更多 #}
+  {% if pager %}
+    <div class="xedc-pager">{{ pager }}</div>
+  {% endif %}
+
+  <button class="xedc-back-to-top" id="xedc-back-to-top" aria-label="回到顶部">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="18 15 12 9 6 15"/>
+    </svg>
+  </button>
+</div>
