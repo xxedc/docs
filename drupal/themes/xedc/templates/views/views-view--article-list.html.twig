@@ -1,0 +1,63 @@
+{#
+  views-view--article-list.html.twig — 文章列表页（掘金风格）
+#}
+<div class="xedc-article-list">
+
+  {# 分类导航 Tab #}
+  <div class="xedc-article-list__tabs" role="tablist">
+    <a href="/articles" class="xedc-tab is-active" role="tab">全部</a>
+    <a href="/articles?category=tech" class="xedc-tab" role="tab">技术</a>
+    <a href="/articles?category=life" class="xedc-tab" role="tab">生活</a>
+    <a href="/articles?category=finance" class="xedc-tab" role="tab">财经</a>
+  </div>
+
+  {# 排序栏 #}
+  <div class="xedc-article-list__sort xedc-flex xedc-items-center xedc-gap-3">
+    {% if exposed %}{{ exposed }}{% endif %}
+    <div class="xedc-sort-btns xedc-flex xedc-gap-2">
+      <button class="xedc-sort-btn is-active" data-sort="hot">最热</button>
+      <button class="xedc-sort-btn" data-sort="new">最新</button>
+    </div>
+  </div>
+
+  {# 文章列表 + 侧边栏双栏布局 #}
+  <div class="xedc-article-list__layout">
+
+    {# 文章列表 #}
+    <main class="xedc-article-list__main">
+      {% if rows %}
+        <div class="xedc-article-feed" data-view-container="article-list">
+          {{ rows }}
+        </div>
+      {% else %}
+        <div class="xedc-empty-state">
+          <div class="xedc-empty-state__icon">📝</div>
+          <h3 class="xedc-empty-state__title">暂无文章</h3>
+          <p class="xedc-text-sm xedc-text-muted">快来发布第一篇文章吧</p>
+        </div>
+      {% endif %}
+      {% if pager %}<div class="xedc-pager">{{ pager }}</div>{% endif %}
+    </main>
+
+    {# 右侧边栏 #}
+    <aside class="xedc-article-list__sidebar">
+      <div class="xedc-sidebar__widget">
+        <h3 class="xedc-sidebar__title">🔥 热门文章</h3>
+        {{ drupal_view('hot_rank', 'block_1') }}
+      </div>
+      {% if not is_logged_in %}
+        <div class="xedc-sidebar__widget">
+          <p class="xedc-text-sm xedc-text-muted" style="margin-bottom:var(--space-3);">登录后查看个性化推荐</p>
+          <a href="/user/login" class="xedc-btn xedc-btn--default xedc-btn--sm">立即登录</a>
+        </div>
+      {% endif %}
+    </aside>
+
+  </div>
+
+  <button class="xedc-back-to-top" id="xedc-back-to-top" aria-label="回到顶部">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="18 15 12 9 6 15"/>
+    </svg>
+  </button>
+</div>
