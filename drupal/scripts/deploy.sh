@@ -1,107 +1,173 @@
 #!/bin/bash
-# 作用：一键自动化部署最新代码到生产环境
+# =============================================================
+# deploy.sh — 核心部署脚本
+# 用法：bash deploy.sh [-n 干跑模式]
+# =============================================================
 set -euo pipefail
 
-# --- 变量定义区 ---
+# ── 顶部变量（所有路径在此定义）──
 DRUPAL_ROOT="/var/www/html/drupal11"
 REPO_DIR="/opt/dc-repo/drupal"
-LOG_FILE="/var/log/drupal_deploy_$(date +%Y%m%d).log"
+LOG_DIR="/var/log/drupal-deploy"
+LOG_FILE="${LOG_DIR}/deploy-$(date +%Y%m%d-%H%M%S).log"
 START_TIME=$(date +%s)
 
-# 颜色定义
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-RED='\033[0;31m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
-
-# 检测 Web 根目录是否带 web 子目录
+# 自动检测 web/ 子目录
 if [ -d "${DRUPAL_ROOT}/web" ]; then
     WEB_ROOT="${DRUPAL_ROOT}/web"
 else
     WEB_ROOT="${DRUPAL_ROOT}"
 fi
 
-# 自动检测 Drush 路径
+# 自动检测 drush 路径
 if [ -f "${DRUPAL_ROOT}/vendor/bin/drush" ]; then
     DRUSH="${DRUPAL_ROOT}/vendor/bin/drush"
 elif command -v drush &> /dev/null; then
-    DRUSH="drush"
+    DRUSH=$(command -v drush)
 else
-    echo -e "${RED}❌ 找不到 Drush 命令，部署中止！${NC}"
+    echo "❌ 找不到 drush，请检查安装" && exit 1
+fi
+
+# ── 颜色输出 ──
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+log_info()    { echo -e "${BLUE}ℹ️  $1${NC}" | tee -a "$LOG_FILE"; }
+log_success() { echo -e "${GREEN}✅ $1${NC}" | tee -a "$LOG_FILE"; }
+log_warn()    { echo -e "${YELLOW}⚠️  $1${NC}" | tee -a "$LOG_FILE"; }
+log_error()   { echo -e "${RED}❌ $1${NC}" | tee -a "$LOG_FILE"; }
+
+# ── 干跑模式检测 ──
+DRY_RUN=false
+if [[ "${1:-}" == "-n" ]]; then
+    DRY_RUN=true
+    echo -e "${YELLOW}🔍 干跑模式：不实际执行任何操作${NC}"
+fi
+
+run() {
+    if [ "$DRY_RUN" = true ]; then
+        echo -e "${YELLOW}[干跑] $*${NC}"
+    else
+        "$@"
+    fi
+}
+
+# ── 创建日志目录 ──
+mkdir -p "$LOG_DIR"
+
+# ── 失败时自动回滚 ──
+on_error() {
+    log_error "部署失败！正在自动回滚..."
+    run "$REPO_DIR/scripts/rollback.sh" -y 2>/dev/null || true
+    run "$DRUSH" -r "$WEB_ROOT" sset system.maintenance_mode 0 -y 2>/dev/null || true
+    log_error "回滚完成，请检查日志：$LOG_FILE"
+    exit 1
+}
+trap on_error ERR
+
+# ── 开始部署 ──
+echo "" | tee -a "$LOG_FILE"
+log_info "============================================"
+log_info "  XEDC Drupal 部署开始 $(date '+%Y-%m-%d %H:%M:%S')"
+log_info "  Drupal 根：${WEB_ROOT}"
+log_info "  仓库目录：${REPO_DIR}"
+log_info "  Drush：${DRUSH}"
+log_info "============================================"
+echo "" | tee -a "$LOG_FILE"
+
+# ── 步骤 1：开启维护模式 ──
+log_info "步骤 1/10：开启维护模式..."
+run "$DRUSH" -r "$WEB_ROOT" sset system.maintenance_mode 1 -y
+log_success "维护模式已开启"
+
+# ── 步骤 2：备份（失败则中止）──
+log_info "步骤 2/10：执行备份..."
+if ! run bash "${REPO_DIR}/scripts/backup.sh"; then
+    log_error "备份失败，部署中止！"
+    run "$DRUSH" -r "$WEB_ROOT" sset system.maintenance_mode 0 -y
     exit 1
 fi
+log_success "备份完成"
 
-# 支持 -n 干跑模式参数
-DRY_RUN_ARG=""
-if [[ "${1:-}" == "-n" ]]; then
-    DRY_RUN_ARG="--dry-run"
-    echo -e "${YELLOW}⚠️ 当前为干跑(Dry-Run)模式，不会实际覆盖文件和数据库！${NC}"
+# ── 步骤 3：拉取最新代码 ──
+log_info "步骤 3/10：拉取最新代码..."
+cd "${REPO_DIR}/.."
+run git pull origin main
+COMMIT_HASH=$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")
+log_success "代码已更新，当前 commit：${COMMIT_HASH}"
+
+# ── 步骤 4：同步主题文件 ──
+log_info "步骤 4/10：同步主题文件..."
+if [ -d "${REPO_DIR}/themes" ]; then
+    run rsync -av --delete \
+        "${REPO_DIR}/themes/" \
+        "${WEB_ROOT}/themes/custom/"
+    log_success "主题文件同步完成"
+else
+    log_warn "themes/ 目录不存在，跳过"
 fi
 
-echo -e "${BLUE}📦 开始执行 Drupal 自动部署任务...${NC}" | tee -a "$LOG_FILE"
-
-# 错误捕获：任何一步失败，自动调用回滚脚本（非干跑模式下）
-trap 'if [[ "$DRY_RUN_ARG" != "--dry-run" ]]; then echo -e "${RED}❌ 部署过程发生严重错误，准备触发回滚...${NC}"; bash ${REPO_DIR}/scripts/rollback.sh -y; fi' ERR
-
-# 1. 开启维护模式
-echo "🚧 开启网站维护模式..." | tee -a "$LOG_FILE"
-if [[ "$DRY_RUN_ARG" != "--dry-run" ]]; then
-    $DRUSH -r "$WEB_ROOT" sset system.maintenance_mode 1 -y
+# ── 步骤 5：同步模块文件 ──
+log_info "步骤 5/10：同步模块文件..."
+if [ -d "${REPO_DIR}/modules" ]; then
+    run rsync -av --delete \
+        "${REPO_DIR}/modules/" \
+        "${WEB_ROOT}/modules/custom/"
+    log_success "模块文件同步完成"
+else
+    log_warn "modules/ 目录不存在，跳过"
 fi
 
-# 2. 执行备份（只有真跑才备份）
-if [[ "$DRY_RUN_ARG" != "--dry-run" ]]; then
-    echo "💾 正在执行部署前全量备份..." | tee -a "$LOG_FILE"
-    bash "${REPO_DIR}/scripts/backup.sh" || { echo -e "${RED}❌ 备份失败，中止部署以防万一！${NC}"; exit 1; }
+# ── 步骤 6：同步配置文件 ──
+log_info "步骤 6/10：同步配置文件..."
+if [ -d "${REPO_DIR}/config/sync" ]; then
+    run rsync -av \
+        "${REPO_DIR}/config/sync/" \
+        "${DRUPAL_ROOT}/config/sync/"
+    log_success "配置文件同步完成"
+else
+    log_warn "config/sync/ 目录不存在，跳过"
 fi
 
-# 3. 更新 Git 仓库代码
-echo "📥 从 GitHub 拉取最新代码..." | tee -a "$LOG_FILE"
-cd /opt/dc-repo
-git pull origin main
+# ── 步骤 7：数据库更新 ──
+log_info "步骤 7/10：执行数据库更新..."
+run "$DRUSH" -r "$WEB_ROOT" updb -y
+log_success "数据库更新完成"
 
-# 4. Rsync 同步主题、模块、配置
-echo "🔄 开始同步代码和配置..." | tee -a "$LOG_FILE"
-# 同步主题
-rsync -av --delete $DRY_RUN_ARG "${REPO_DIR}/themes/" "${WEB_ROOT}/themes/custom/" | tee -a "$LOG_FILE"
-# 同步模块
-rsync -av --delete $DRY_RUN_ARG "${REPO_DIR}/modules/" "${WEB_ROOT}/modules/custom/" | tee -a "$LOG_FILE"
-# 同步配置 (如果有的话)
-if [ -d "${REPO_DIR}/config/sync/" ]; then
-    rsync -av $DRY_RUN_ARG "${REPO_DIR}/config/sync/" "${DRUPAL_ROOT}/config/sync/" | tee -a "$LOG_FILE"
+# ── 步骤 8：导入配置（失败给警告但继续）──
+log_info "步骤 8/10：导入配置..."
+if ! run "$DRUSH" -r "$WEB_ROOT" cim -y 2>> "$LOG_FILE"; then
+    log_warn "配置导入有警告，但继续执行（请检查日志）"
+else
+    log_success "配置导入完成"
 fi
 
-# 5. 执行数据库更新和配置导入
-if [[ "$DRY_RUN_ARG" != "--dry-run" ]]; then
-    echo "🛠️ 正在执行数据库更新 (updb)..." | tee -a "$LOG_FILE"
-    $DRUSH -r "$WEB_ROOT" updb -y
+# ── 步骤 9：清除缓存 ──
+log_info "步骤 9/10：清除缓存..."
+run "$DRUSH" -r "$WEB_ROOT" cr
+log_success "缓存已清除"
 
-    echo "⚙️ 正在导入 Drupal 核心配置 (cim)..." | tee -a "$LOG_FILE"
-    # 配置导入偶尔会因为依赖问题报错，所以这里加了 || true 允许继续，但给警告
-    $DRUSH -r "$WEB_ROOT" cim -y || echo -e "${YELLOW}⚠️ 配置导入遇到问题，请稍后手动排查，部署将继续。${NC}" | tee -a "$LOG_FILE"
+# ── 步骤 10：关闭维护模式 ──
+log_info "步骤 10/10：关闭维护模式..."
+run "$DRUSH" -r "$WEB_ROOT" sset system.maintenance_mode 0 -y
+log_success "维护模式已关闭"
 
-    echo "🧹 清理所有缓存 (cr)..." | tee -a "$LOG_FILE"
-    $DRUSH -r "$WEB_ROOT" cr
-fi
+# ── 部署后钩子 ──
+log_info "执行部署后钩子..."
+run bash "${REPO_DIR}/scripts/post-deploy-hooks.sh" 2>> "$LOG_FILE" || log_warn "钩子执行有警告"
 
-# 6. 关闭维护模式
-echo "🟢 关闭网站维护模式..." | tee -a "$LOG_FILE"
-if [[ "$DRY_RUN_ARG" != "--dry-run" ]]; then
-    $DRUSH -r "$WEB_ROOT" sset system.maintenance_mode 0 -y
-fi
-
-# 7. 调用后续 Hook (暖站预热等)
-if [[ "$DRY_RUN_ARG" != "--dry-run" ]]; then
-    echo "🔗 执行部署后钩子脚本..." | tee -a "$LOG_FILE"
-    bash "${REPO_DIR}/scripts/post-deploy-hooks.sh"
-fi
-
+# ── 计算耗时 ──
 END_TIME=$(date +%s)
-COST_TIME=$((END_TIME - START_TIME))
-COMMIT_HASH=$(cd /opt/dc-repo && git rev-parse --short HEAD)
+ELAPSED=$((END_TIME - START_TIME))
 
-echo -e "${GREEN}✅ 部署成功完成！${NC}"
-echo -e "⏱️ 总耗时: ${COST_TIME} 秒"
-echo -e "🔖 当前版本: Git Hash [${COMMIT_HASH}]"
-echo -e "📝 日志存放于: ${LOG_FILE}"
+echo "" | tee -a "$LOG_FILE"
+log_success "============================================"
+log_success "  部署成功完成！🎉"
+log_success "  总耗时：${ELAPSED} 秒"
+log_success "  Commit：${COMMIT_HASH}"
+log_success "  日志：${LOG_FILE}"
+log_success "============================================"
+echo "" | tee -a "$LOG_FILE"
