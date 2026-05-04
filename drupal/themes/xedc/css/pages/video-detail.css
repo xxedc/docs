@@ -1,0 +1,117 @@
+/* ================================================================
+   video-detail.css — 视频详情页样式
+   ================================================================ */
+
+.xedc-video-detail { padding: var(--space-6) 0; }
+
+.xedc-video-detail__layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .xedc-video-detail__layout { grid-template-columns: 1fr; }
+  .xedc-video-detail__sidebar { display: none; }
+}
+
+/* ── 播放器 ── */
+.xedc-video-player {
+  background: oklch(0 0 0);
+  border-radius: var(--radius);
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  position: relative;
+}
+
+.xedc-video-player__video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.xedc-video-player__placeholder,
+.xedc-video-player__external {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted-foreground);
+  gap: var(--space-3);
+  cursor: pointer;
+}
+
+.xedc-video-player__no-video {
+  font-size: var(--text-sm);
+  color: var(--muted-foreground);
+}
+
+/* ── 视频信息 ── */
+.xedc-video-detail__info { padding: var(--space-4) 0; }
+
+.xedc-video-detail__title {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  line-height: var(--leading-snug);
+  margin-bottom: var(--space-3);
+}
+
+.xedc-video-detail__meta { margin-bottom: var(--space-4); }
+
+/* ── 互动按钮 ── */
+.xedc-video-detail__actions { margin-bottom: var(--space-4); }
+
+.xedc-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius);
+  background: var(--secondary);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: background-color var(--transition-fast),
+              color var(--transition-fast);
+}
+
+.xedc-action-btn:hover,
+.xedc-action-btn.is-active {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-color: var(--primary);
+}
+
+.xedc-action-btn__count,
+.xedc-action-btn__label { font-size: var(--text-xs); }
+
+/* ── 简介 ── */
+.xedc-video-detail__desc {
+  margin-top: var(--space-3);
+  background: var(--muted);
+  border-radius: var(--radius);
+  padding: var(--space-3);
+}
+
+.xedc-video-detail__desc summary {
+  cursor: pointer;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--muted-foreground);
+}
+
+.xedc-video-detail__desc-content {
+  margin-top: var(--space-2);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+}
+
+/* ── 评论区 ── */
+.xedc-comments { margin-top: var(--space-8); }
+.xedc-comments__title { font-size: var(--text-xl); margin-bottom: var(--space-4); }
+.xedc-comment-form textarea { width: 100%; }
