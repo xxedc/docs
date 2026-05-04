@@ -1,0 +1,25 @@
+$schema: 'https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json'
+name: Badge
+status: experimental
+description: '徽标/标签组件，用于内容类型、状态标记'
+group: XEDC
+
+props:
+  type: object
+  properties:
+    label:
+      type: string
+      title: '徽标文字'
+    variant:
+      type: string
+      title: '变体'
+      enum: [default, secondary, outline, destructive, success, warning]
+      default: default
+    url:
+      type: string
+      title: '可选链接'
+    icon:
+      type: string
+      title: '图标 SVG'
+    extra_classes:
+      type: string
