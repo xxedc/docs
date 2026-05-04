@@ -1,11 +1,4 @@
 
----
-
-### 文件 2/9: 服务器一次性初始化脚本
-- **GitHub 路径:** `drupal/scripts/init-server.sh`
-- **服务器路径:** `/opt/dc-repo/drupal/scripts/init-server.sh`
-
-```bash
 #!/bin/bash
 # =============================================================
 # init-server.sh — 服务器一次性初始化（只需执行一次）
