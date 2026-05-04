@@ -1,0 +1,39 @@
+$schema: 'https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json'
+name: Button
+status: experimental
+description: '通用按钮组件，支持多种变体和尺寸'
+group: XEDC
+
+props:
+  type: object
+  properties:
+    label:
+      type: string
+      title: '按钮文字'
+    url:
+      type: string
+      title: '链接地址（为空则渲染 <button>）'
+    variant:
+      type: string
+      title: '变体'
+      enum: [default, secondary, outline, ghost, destructive, link]
+      default: default
+    size:
+      type: string
+      title: '尺寸'
+      enum: [sm, md, lg, icon]
+      default: md
+    type_attr:
+      type: string
+      title: 'button type 属性'
+      default: button
+    disabled:
+      type: boolean
+      title: '禁用状态'
+      default: false
+    icon:
+      type: string
+      title: '图标 SVG 内联代码（可选）'
+    extra_classes:
+      type: string
+      title: '额外 CSS 类'
