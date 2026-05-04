@@ -1,0 +1,25 @@
+$schema: 'https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json'
+name: Dropdown
+status: experimental
+description: '通用下拉菜单组件'
+group: XEDC
+
+slots:
+  trigger:
+    title: '触发按钮内容'
+  items:
+    title: '菜单项列表'
+
+props:
+  type: object
+  properties:
+    id:
+      type: string
+      title: '唯一 ID'
+    align:
+      type: string
+      title: '对齐方式'
+      enum: [left, right]
+      default: left
+    extra_classes:
+      type: string
