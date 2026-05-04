@@ -1,26 +1,53 @@
-# 作用：告诉 Git 哪些文件不需要传到 GitHub（比如缓存、日志、敏感数据）
+# ── 日志文件 ──
+*.log
+*.log.*
 
-# 操作系统自动生成的文件
+# ── 备份文件 ──
+*.tar.gz
+*.zip
+*.sql
+*.sql.gz
+
+# ── 系统文件 ──
 .DS_Store
 Thumbs.db
+desktop.ini
+.Spotlight-V100
+.Trashes
 
-# 依赖库目录（由服务器端 Composer 和 Npm 独立管理）
-vendor/
-node_modules/
-
-# 临时文件和日志
-*.log
-*.tar.gz
-*.sql
-*.bak
-*.swp
-
-# IDE 和编辑器配置
+# ── 编辑器 ──
 .idea/
 .vscode/
-*.sublime-workspace
+*.swp
+*.swo
+*~
+*.orig
 
-# 前端构建的产物（假设未来如果用到 webpack/vite，其输出不要提交，直接在服务器构建）
+# ── Node / 前端 ──
+node_modules/
+npm-debug.log*
+yarn-error.log
+.pnpm-debug.log
 dist/
-build/
-.cache/
+.parcel-cache/
+
+# ── PHP / Composer ──
+vendor/
+composer.lock
+
+# ── Drupal 运行时文件 ──
+themes/xedc/css/*.min.css
+themes/xedc/js/*.min.js
+themes/xedc/.cache/
+
+# ── 环境配置（含密码，不提交）──
+*.env
+.env
+.env.local
+settings.local.php
+settings.php
+
+# ── 临时文件 ──
+*.tmp
+*.temp
+/tmp/
