@@ -32,7 +32,7 @@
 - Drupal 11 + PHP 8.3 + MariaDB + nginx
 - 服务器 Drupal 根:/var/www/html/drupal11/web
 - GitHub 仓库:github.com/xxedc/docs,Drupal 代码放 drupal/ 子目录
-- 主题名:xedc(放 themes/custom/xedc)
+- 主题名:xedc(放 themes/xedc)
 - 自定义模块名:xedc_core(放 modules/custom/xedc_core)
 - 已启用关键 contrib 模块:twig_tweak、paragraphs、admin_toolbar、pathauto、token、
   field_group、file_mdm、image_widget_crop、metatag
