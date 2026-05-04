@@ -1,0 +1,82 @@
+{#
+  node--article--teaser.html.twig — 文章卡片（列表用）
+#}
+{% set nid = node.id() %}
+{% set has_cover = content.field_cover_image|render|trim is not empty %}
+
+<article{{ attributes.addClass('xedc-article-card', has_cover ? 'xedc-article-card--with-cover' : '') }}>
+
+  <div class="xedc-article-card__body">
+
+    {# 作者信息 #}
+    <div class="xedc-article-card__author xedc-flex xedc-items-center xedc-gap-2">
+      <div class="xedc-avatar xedc-avatar--xs">
+        <span class="xedc-avatar__fallback">
+          {{ node.getOwner().getDisplayName()|slice(0,1)|upper }}
+        </span>
+      </div>
+      <a href="/user/{{ node.getOwnerId() }}" class="xedc-text-sm xedc-text-muted">
+        {{ node.getOwner().getDisplayName() }}
+      </a>
+      <span class="xedc-text-xs xedc-text-muted">·</span>
+      <span class="xedc-text-xs xedc-text-muted">{{ node.getCreatedTime()|date('m-d') }}</span>
+    </div>
+
+    {# 标题 #}
+    <h2 class="xedc-article-card__title">
+      <a href="{{ url }}">{{ label }}</a>
+    </h2>
+
+    {# 摘要 #}
+    {% if node.field_summary.value %}
+      <p class="xedc-article-card__summary xedc-line-clamp-2">
+        {{ node.field_summary.value }}
+      </p>
+    {% endif %}
+
+    {# 底部元数据 #}
+    <div class="xedc-article-card__meta xedc-flex xedc-items-center xedc-gap-3">
+      {# 分类标签 #}
+      {% if content.field_category %}
+        <span class="xedc-badge xedc-badge--secondary">{{ content.field_category }}</span>
+      {% endif %}
+
+      {# 阅读时长 #}
+      {% if node.field_reading_time.value %}
+        <span class="xedc-text-xs xedc-text-muted">
+          📖 {{ node.field_reading_time.value }} 分钟
+        </span>
+      {% endif %}
+
+      {# 阅读量 #}
+      <span class="xedc-text-xs xedc-text-muted">
+        👁 {{ view_count|default(0) }}
+      </span>
+
+      {# 点赞数 #}
+      <span class="xedc-text-xs xedc-text-muted">
+        ❤️ {{ like_count|default(0) }}
+      </span>
+
+      {# 收藏快捷键 #}
+      {% if is_logged_in %}
+        <button class="xedc-icon-btn xedc-collect-btn" data-nid="{{ nid }}" aria-label="收藏" style="margin-left:auto;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+          </svg>
+        </button>
+      {% endif %}
+    </div>
+
+  </div>
+
+  {# 封面图（右侧）#}
+  {% if has_cover %}
+    <div class="xedc-article-card__cover">
+      <a href="{{ url }}" tabindex="-1">
+        {{ content.field_cover_image }}
+      </a>
+    </div>
+  {% endif %}
+
+</article>
