@@ -10,6 +10,9 @@ global-styles:
       component:
       css/components/theme-toggle.css: { weight: -100 }
       css/components/paragraphs.css: { weight: -90 }
+      css/components/gallery.css: { weight: -85 }
+
+
 
 # ── 全局脚本 ──
 global-scripts:
@@ -123,3 +126,30 @@ page-error:
       css/pages/error.css: {}
   js:
     js/network-detect.js: { attributes: { defer: true } }
+
+
+# ── 文章详情页（更新原有条目，加 article-toc.js）──
+page-article-detail:
+  version: VERSION
+  css:
+    theme:
+      css/pages/article-detail.css: {}
+  js:
+    js/article-toc.js: { attributes: { defer: true } }
+    js/reading-progress.js: { attributes: { defer: true } }
+  dependencies:
+    - core/drupal
+
+# ── 图片画廊轮播 ──
+gallery:
+  version: VERSION
+  css:
+    component:
+      css/components/gallery.css: {}
+  js:
+    js/gallery-carousel.js: { attributes: { defer: true } }
+  dependencies:
+    - core/drupal
+
+
+
