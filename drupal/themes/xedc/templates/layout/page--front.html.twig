@@ -1,0 +1,148 @@
+{#
+  page--front.html.twig — 首页专用模板
+  演示 Twig Tweak 大量调用
+#}
+<!DOCTYPE html>
+<html{{ html_attributes }}>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ head_title|safe_join(' | ') }}</title>
+  {{ head }}
+  {{ styles }}
+  {{ scripts_top }}
+</head>
+<body{{ attributes.addClass('xedc-body', 'xedc-body--front') }}>
+{{ page_top }}
+
+{# ── 顶部导航栏 ── #}
+<header class="xedc-navbar" role="banner">
+  <div class="xedc-container xedc-flex xedc-flex-between" style="height:56px;">
+    <a href="{{ url('<front>') }}" class="xedc-navbar__logo" aria-label="{{ site_name }}">
+      <span class="xedc-navbar__logo-text">{{ site_name }}</span>
+    </a>
+    <nav class="xedc-navbar__nav" role="navigation" aria-label="主导航">
+      {{ drupal_menu('main') }}
+    </nav>
+    <div class="xedc-navbar__search">
+      <form action="/search" method="get" role="search">
+        <input type="search" name="q" placeholder="搜索视频、图片、文章..." class="xedc-search-input" aria-label="全站搜索" />
+        <button type="submit" class="xedc-search-btn" aria-label="搜索">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+        </button>
+      </form>
+    </div>
+    <div class="xedc-navbar__tools xedc-flex xedc-items-center xedc-gap-2">
+      {% if is_logged_in %}
+        <a href="/messages" class="xedc-navbar__icon-btn" aria-label="消息通知">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+        </a>
+      {% endif %}
+      {# 主题切换器 #}
+      {% include 'xedc:theme-toggle' %}
+      {% if is_logged_in %}
+        <a href="/user/{{ current_user.id() }}" class="xedc-navbar__icon-btn" aria-label="个人中心">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+        </a>
+      {% else %}
+        <a href="/user/login" class="xedc-btn xedc-btn--default xedc-btn--sm">登录</a>
+      {% endif %}
+    </div>
+  </div>
+</header>
+
+{# ── 系统消息 ── #}
+{% if page.highlighted %}
+  <div class="xedc-highlighted xedc-container" role="alert">{{ page.highlighted }}</div>
+{% endif %}
+
+{# ── Banner 轮播区 ── #}
+<section class="xedc-front__banner">
+  <div class="xedc-container">
+    {{ drupal_view('front_banner', 'block_1') }}
+  </div>
+</section>
+
+{# ── 分类快捷导航 ── #}
+<section class="xedc-front__categories">
+  <div class="xedc-container">
+    <div class="xedc-category-nav" id="xedc-category-nav">
+      <a href="/videos" class="xedc-category-nav__item">
+        <span class="xedc-category-nav__icon">🎬</span>
+        <span>视频</span>
+      </a>
+      <a href="/images" class="xedc-category-nav__item">
+        <span class="xedc-category-nav__icon">🖼️</span>
+        <span>图片</span>
+      </a>
+      <a href="/articles" class="xedc-category-nav__item">
+        <span class="xedc-category-nav__icon">📝</span>
+        <span>文章</span>
+      </a>
+      <a href="/topics" class="xedc-category-nav__item">
+        <span class="xedc-category-nav__icon">🏷️</span>
+        <span>话题</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+{# ── 主体：推荐流 + 侧边栏 ── #}
+<div class="xedc-front__layout xedc-container">
+
+  {# 个性化推荐流 #}
+  <main class="xedc-front__main" id="main-content" role="main">
+    <div class="xedc-front__section-title">
+      <h2>推荐内容</h2>
+    </div>
+    {{ drupal_view('front_recommend', 'default') }}
+  </main>
+
+  {# 右侧边栏（PC端）#}
+  <aside class="xedc-front__sidebar" role="complementary">
+
+    {# 实时热榜 TOP10 #}
+    <div class="xedc-sidebar__widget">
+      <h3 class="xedc-sidebar__title">🔥 热门榜单</h3>
+      {{ drupal_view('hot_rank', 'block_1') }}
+    </div>
+
+    {# 未登录显示登录引导 #}
+    {% if not is_logged_in %}
+      <div class="xedc-sidebar__widget xedc-sidebar__login">
+        <h3 class="xedc-sidebar__title">加入我们</h3>
+        <p class="xedc-text-sm xedc-text-muted">登录后享受个性化推荐</p>
+        <div class="xedc-flex xedc-gap-2" style="margin-top: var(--space-3);">
+          <a href="/user/login" class="xedc-btn xedc-btn--default xedc-btn--sm">登录</a>
+          <a href="/user/register" class="xedc-btn xedc-btn--outline xedc-btn--sm">注册</a>
+        </div>
+      </div>
+    {% endif %}
+
+  </aside>
+</div>
+
+{# ── Footer ── #}
+<footer class="xedc-footer" role="contentinfo">
+  <div class="xedc-container">
+    <nav class="xedc-footer__nav" aria-label="底部导航">
+      {{ drupal_menu('footer') }}
+    </nav>
+    <div class="xedc-footer__bottom">
+      <p class="xedc-text-xs xedc-text-muted">© {{ "now"|date("Y") }} {{ site_name }}. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+{{ page_bottom }}
+{{ scripts }}
+</body>
+</html>
