@@ -1,17 +1,28 @@
-# Drupal 11 网站项目
+# XEDC Drupal 11 主题工程
 
-这是 Drupal 11 项目的自定义代码和配置同步仓库。核心部署思路是：核心代码（Drupal Core 和 Contrib 模块）由 Composer 在服务器端管理，而本仓库只管理我们自己写的业务逻辑和UI。
+## 项目信息
+- 站点地址：tlte.top
+- Drupal 根：/var/www/html/drupal11/web/
+- 主题名：xedc（themes/custom/xedc）
+- 自定义模块：xedc_core（modules/custom/xedc_core）
+- GitHub 仓库：github.com/xxedc/docs（代码放 drupal/ 子目录）
 
-## 目录结构说明
-
-- `themes/` - 存放自定义主题（如 xedc）
-- `modules/` - 存放自定义模块（如 xedc_core）
-- `config/sync/` - 存放 Drupal 的 yml 配置导出文件
-- `scripts/` - 存放自动化运维部署脚本
-- `nginx/` - 存放 Nginx 的参考配置文件
-
-## 部署流程
-
-1. 本地修改代码或配置，通过 Git Push 推送到本仓库的 `main` 分支。
-2. 手机打开 Termius 连接韩国 Vultr 服务器。
-3. 执行 `/opt/dc-repo/drupal/scripts/deploy.sh` 即可自动备份并一键上线。
+## 目录结构
+drupal/
+├── themes/
+│   └── xedc/           # 自定义主题（阶段1产出）
+├── modules/
+│   └── xedc_core/      # 自定义模块（阶段4产出）
+├── config/
+│   └── sync/           # Drupal 配置导出（阶段2产出）
+├── scripts/
+│   ├── deploy.sh       # 一键部署
+│   ├── backup.sh       # 部署前自动备份
+│   ├── rollback.sh     # 回滚到指定备份
+│   ├── init-server.sh  # 服务器一次性初始化
+│   ├── post-deploy-hooks.sh  # 部署后钩子
+│   └── CHEATSHEET.md   # 命令速查
+├── nginx/
+│   └── drupal11.conf   # nginx 站点配置参考
+├── .gitignore
+└── README.md
