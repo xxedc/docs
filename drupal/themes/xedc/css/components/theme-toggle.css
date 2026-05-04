@@ -1,0 +1,212 @@
+/* ================================================================
+   theme-toggle.css — 主题切换器下拉菜单样式
+   ================================================================ */
+
+/* ── 切换器容器 ── */
+.xedc-theme-toggle {
+  position: relative;
+}
+
+/* ── 图标按钮 ── */
+.xedc-navbar__icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius);
+  color: var(--foreground);
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-size: 18px;
+  transition: background-color var(--transition-fast),
+              border-color var(--transition-fast);
+}
+
+.xedc-navbar__icon-btn:hover {
+  background-color: var(--muted);
+  border-color: var(--border);
+}
+
+/* ── 下拉菜单：默认隐藏 ── */
+.xedc-theme-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 140px;
+  background-color: var(--popover);
+  color: var(--popover-foreground);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  z-index: var(--z-dropdown);
+  overflow: hidden;
+  padding: var(--space-1) 0;
+}
+
+/* ── 下拉菜单：打开时显示 ── */
+.xedc-theme-dropdown.is-open {
+  display: block;
+}
+
+/* ── 选项按钮 ── */
+.xedc-theme-dropdown__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--foreground);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color var(--transition-fast);
+  white-space: nowrap;
+}
+
+.xedc-theme-dropdown__item:hover {
+  background-color: var(--muted);
+}
+
+/* ── 选中状态 ── */
+.xedc-theme-dropdown__item.is-active {
+  color: var(--primary);
+  font-weight: 600;
+  background-color: var(--accent);
+}
+
+/* ── 导航栏整体布局修复 ── */
+.xedc-navbar__nav {
+  display: flex;
+  align-items: center;
+}
+
+.xedc-navbar__nav ul {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  list-style: none;
+}
+
+.xedc-navbar__nav a {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--foreground);
+  border-radius: var(--radius);
+  transition: background-color var(--transition-fast),
+              color var(--transition-fast);
+}
+
+.xedc-navbar__nav a:hover,
+.xedc-navbar__nav a.is-active {
+  background-color: var(--muted);
+  color: var(--primary);
+}
+
+/* ── 搜索框 ── */
+.xedc-navbar__search {
+  flex: 1;
+  max-width: 360px;
+  margin-inline: var(--space-4);
+}
+
+.xedc-navbar__search form {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background-color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: border-color var(--transition-fast),
+              box-shadow var(--transition-fast);
+}
+
+.xedc-navbar__search form:focus-within {
+  border-color: var(--ring);
+  box-shadow: 0 0 0 2px oklch(from var(--ring) l c h / 0.2);
+}
+
+.xedc-search-input {
+  flex: 1;
+  padding: var(--space-2) var(--space-3);
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: var(--text-sm);
+  color: var(--foreground);
+}
+
+.xedc-search-input::placeholder {
+  color: var(--muted-foreground);
+}
+
+.xedc-search-btn {
+  padding: var(--space-2) var(--space-3);
+  color: var(--muted-foreground);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: color var(--transition-fast);
+}
+
+.xedc-search-btn:hover {
+  color: var(--primary);
+}
+
+/* ── Logo ── */
+.xedc-navbar__logo-text {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: -0.02em;
+}
+
+/* ── 登录按钮 ── */
+.xedc-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  border-radius: var(--radius);
+  transition: opacity var(--transition-fast),
+              background-color var(--transition-fast);
+  cursor: pointer;
+  border: none;
+  white-space: nowrap;
+}
+
+.xedc-btn--primary {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.xedc-btn--primary:hover {
+  opacity: 0.9;
+}
+
+.xedc-btn--sm {
+  font-size: var(--text-sm);
+  padding: var(--space-1) var(--space-3);
+  height: 32px;
+}
+
+/* ── 响应式：移动端隐藏部分导航 ── */
+@media (max-width: 768px) {
+  .xedc-navbar__nav {
+    display: none;
+  }
+  .xedc-navbar__search {
+    max-width: 200px;
+    margin-inline: var(--space-2);
+  }
+}
