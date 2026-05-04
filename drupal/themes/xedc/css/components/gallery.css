@@ -1,0 +1,133 @@
+/* ================================================================
+   gallery.css — 图片画廊 + CTA 段落样式
+   ================================================================ */
+
+/* ── 网格画廊 ── */
+.xedc-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+@media (max-width: 640px) {
+  .xedc-gallery-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.xedc-gallery-grid__item {
+  aspect-ratio: 1;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.xedc-gallery-grid__item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-slow);
+}
+
+.xedc-gallery-grid__item:hover img { transform: scale(1.05); }
+
+/* ── 瀑布流画廊 ── */
+.xedc-gallery-masonry {
+  column-count: 3;
+  column-gap: var(--space-2);
+}
+
+@media (max-width: 640px) {
+  .xedc-gallery-masonry { column-count: 2; }
+}
+
+.xedc-gallery-masonry__item {
+  break-inside: avoid;
+  margin-bottom: var(--space-2);
+}
+
+.xedc-gallery-masonry__item img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: calc(var(--radius) * 0.5);
+}
+
+/* ── 轮播画廊 ── */
+.xedc-gallery-carousel {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius);
+}
+
+.xedc-gallery-carousel__track {
+  display: flex;
+  transition: transform 0.4s ease;
+}
+
+.xedc-gallery-carousel__slide {
+  flex-shrink: 0;
+  width: 100%;
+}
+
+.xedc-gallery-carousel__slide img {
+  width: 100%;
+  height: auto;
+  max-height: 500px;
+  object-fit: contain;
+  background: var(--muted);
+}
+
+.xedc-gallery-carousel__btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition-fast);
+  z-index: 2;
+}
+
+.xedc-gallery-carousel__btn:hover { background: rgba(0, 0, 0, 0.8); }
+.xedc-gallery-carousel__btn--prev { left: var(--space-2); }
+.xedc-gallery-carousel__btn--next { right: var(--space-2); }
+
+/* ── CTA 块 ── */
+.xedc-paragraph--cta {
+  text-align: center;
+  padding: var(--space-10) var(--space-6);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.xedc-cta--primary { background: var(--primary); color: var(--primary-foreground); }
+.xedc-cta--secondary { background: var(--muted); color: var(--foreground); }
+.xedc-cta--gradient {
+  background: linear-gradient(135deg, var(--primary), oklch(from var(--primary) calc(l + 0.1) calc(c - 0.03) calc(h + 30)));
+  color: var(--primary-foreground);
+}
+
+.xedc-cta__title {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  margin-bottom: var(--space-3);
+}
+
+.xedc-cta--primary .xedc-cta__title,
+.xedc-cta--gradient .xedc-cta__title { color: inherit; }
+
+.xedc-cta__desc {
+  font-size: var(--text-base);
+  margin-bottom: var(--space-6);
+  opacity: 0.9;
+}
+
+.xedc-cta__btn { min-width: 160px; }
