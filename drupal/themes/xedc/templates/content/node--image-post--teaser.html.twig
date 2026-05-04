@@ -1,0 +1,67 @@
+{#
+  node--image-post--teaser.html.twig — 图集卡片（瀑布流用）
+#}
+{% set nid = node.id() %}
+
+<article{{ attributes.addClass('xedc-image-card') }}
+  data-nid="{{ nid }}"
+  data-selectable
+>
+  {# 图片主体 #}
+  <div class="xedc-image-card__img-wrap">
+    <a href="{{ url }}" class="xedc-image-card__link">
+      {% if content.field_cover_image %}
+        {{ content.field_cover_image }}
+      {% elseif content.field_images %}
+        {{ content.field_images }}
+      {% else %}
+        <div class="xedc-image-card__placeholder">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+        </div>
+      {% endif %}
+    </a>
+
+    {# Hover 操作浮层 #}
+    <div class="xedc-image-card__overlay" aria-hidden="true">
+      <div class="xedc-image-card__overlay-actions">
+        {% if is_logged_in %}
+          <button class="xedc-icon-btn xedc-collect-btn" data-nid="{{ nid }}" aria-label="收藏" title="收藏">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+            </svg>
+          </button>
+        {% endif %}
+        <a href="{{ url }}?download=1" class="xedc-icon-btn" aria-label="下载" title="下载"
+           {% if not node.field_allow_download.value %}onclick="alert('该图集不允许下载');return false;"{% endif %}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+        </a>
+      </div>
+
+      {# 多选复选框 #}
+      <label class="xedc-image-card__checkbox" style="display:none;">
+        <input type="checkbox" class="xedc-select-item" value="{{ nid }}" aria-label="选择此图片" />
+      </label>
+    </div>
+  </div>
+
+  {# 图集信息 #}
+  <div class="xedc-image-card__info">
+    <a href="{{ url }}" class="xedc-image-card__title xedc-truncate">{{ label }}</a>
+    <div class="xedc-image-card__meta xedc-flex xedc-items-center xedc-gap-2">
+      <span class="xedc-text-xs xedc-text-muted">👁 {{ view_count|default(0) }}</span>
+      {% if node.field_orientation.value %}
+        <span class="xedc-badge xedc-badge--outline" style="font-size:10px;">
+          {{ node.field_orientation.value == 'landscape' ? '横' : (node.field_orientation.value == 'portrait' ? '竖' : '方') }}
+        </span>
+      {% endif %}
+    </div>
+  </div>
+</article>
