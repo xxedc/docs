@@ -1,14 +1,122 @@
-global-styling:
-  version: 1.0.0
+# ── 全局基础样式（每页必加载）──
+global-styles:
+  version: VERSION
   css:
     base:
-      css/base/reset.css: {}
-      css/base/tokens.css: {}
-      css/base/typography.css: {}
-      css/base/utilities.css: {}
+      css/base/tokens.css: { weight: -200 }
+      css/base/reset.css: { weight: -190 }
+      css/base/typography.css: { weight: -180 }
+      css/base/utilities.css: { weight: -170 }
 
+# ── 全局脚本 ──
 global-scripts:
-  version: 1.0.0
-  header: true # 关键：放进 <head> 避免闪白 (FOUC)
+  version: VERSION
   js:
-    js/theme-toggle.js: { preprocess: false }
+    js/theme-toggle.js: { attributes: { defer: true } }
+  dependencies:
+    - core/drupal
+
+# ── 主题初始化（防闪烁，必须在 head 同步执行）──
+theme-init:
+  version: VERSION
+  header: true
+  js:
+    js/theme-init.js: { attributes: {} }
+
+# ── 字体（本地 woff2）──
+fonts:
+  version: VERSION
+  css:
+    base:
+      css/base/fonts.css: { weight: -210 }
+
+# ── 首页样式 ──
+page-front:
+  version: VERSION
+  css:
+    theme:
+      css/pages/front.css: {}
+  js:
+    js/infinite-scroll.js: { attributes: { defer: true } }
+
+# ── 视频列表页 ──
+page-video-list:
+  version: VERSION
+  css:
+    theme:
+      css/pages/video-list.css: {}
+  js:
+    js/view-mode-switch.js: { attributes: { defer: true } }
+    js/infinite-scroll.js: { attributes: { defer: true } }
+
+# ── 视频详情页 ──
+page-video-detail:
+  version: VERSION
+  css:
+    theme:
+      css/pages/video-detail.css: {}
+  js:
+    js/video-controls.js: { attributes: { defer: true } }
+
+# ── 图片列表页 ──
+page-image-list:
+  version: VERSION
+  css:
+    theme:
+      css/pages/image-list.css: {}
+  js:
+    js/masonry.js: { attributes: { defer: true } }
+    js/infinite-scroll.js: { attributes: { defer: true } }
+
+# ── 图片详情页 ──
+page-image-detail:
+  version: VERSION
+  css:
+    theme:
+      css/pages/image-detail.css: {}
+  js:
+    js/lightbox.js: { attributes: { defer: true } }
+
+# ── 文章列表页 ──
+page-article-list:
+  version: VERSION
+  css:
+    theme:
+      css/pages/article-list.css: {}
+  js:
+    js/infinite-scroll.js: { attributes: { defer: true } }
+
+# ── 文章详情页 ──
+page-article-detail:
+  version: VERSION
+  css:
+    theme:
+      css/pages/article-detail.css: {}
+  js:
+    js/article-toc.js: { attributes: { defer: true } }
+    js/reading-progress.js: { attributes: { defer: true } }
+
+# ── 代码高亮 (Prism.js 本地) ──
+prism:
+  version: 1.29.0
+  css:
+    component:
+      vendor/prism/prism.min.css: {}
+  js:
+    vendor/prism/prism.min.js: { attributes: { defer: true } }
+
+# ── 登录/注册页 ──
+page-auth:
+  version: VERSION
+  css:
+    theme:
+      css/pages/auth.css: {}
+
+# ── 错误页 ──
+page-error:
+  version: VERSION
+  css:
+    theme:
+      css/pages/error.css: {}
+  js:
+    js/network-detect.js: { attributes: { defer: true } }
