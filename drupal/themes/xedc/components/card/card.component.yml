@@ -1,0 +1,36 @@
+$schema: 'https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json'
+name: Card
+status: experimental
+description: '内容卡片组件，支持封面图、标题、描述、底部操作区'
+group: XEDC
+
+slots:
+  cover:
+    title: '封面图区域'
+  header:
+    title: '卡片头部'
+  content:
+    title: '卡片内容'
+  footer:
+    title: '卡片底部'
+
+props:
+  type: object
+  properties:
+    title:
+      type: string
+      title: '卡片标题'
+    description:
+      type: string
+      title: '卡片描述'
+    url:
+      type: string
+      title: '卡片链接'
+    variant:
+      type: string
+      title: '变体'
+      enum: [default, featured, horizontal]
+      default: default
+    extra_classes:
+      type: string
+      title: '额外 CSS 类'
