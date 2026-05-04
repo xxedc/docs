@@ -1,0 +1,76 @@
+{#
+  node--video--teaser.html.twig — 视频卡片（列表用）
+#}
+{% set video_url = url %}
+{% set nid = node.id() %}
+
+<article{{ attributes.addClass('xedc-video-card') }} data-nid="{{ nid }}">
+
+  {# 封面图 + 时长标签 #}
+  <div class="xedc-video-card__cover">
+    <a href="{{ video_url }}" class="xedc-video-card__cover-link" tabindex="-1">
+      {% if content.field_cover_image %}
+        {{ content.field_cover_image }}
+      {% else %}
+        <div class="xedc-video-card__cover-placeholder">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <polygon points="5 3 19 12 5 21 5 3"/>
+          </svg>
+        </div>
+      {% endif %}
+    </a>
+
+    {# 时长标签 #}
+    {% if node.field_duration.value %}
+      {% set duration = node.field_duration.value %}
+      {% set minutes = (duration / 60)|round(0, 'floor') %}
+      {% set seconds = duration % 60 %}
+      <span class="xedc-video-card__duration">
+        {{ minutes }}:{{ seconds < 10 ? '0' ~ seconds : seconds }}
+      </span>
+    {% endif %}
+
+    {# 画质角标 #}
+    {% if node.field_quality.value == '4k' %}
+      <span class="xedc-badge xedc-badge--default xedc-video-card__quality">4K</span>
+    {% elseif node.field_quality.value == '1080p' %}
+      <span class="xedc-badge xedc-badge--secondary xedc-video-card__quality">1080P</span>
+    {% endif %}
+
+    {# Hover 播放按钮 #}
+    <div class="xedc-video-card__play-overlay" aria-hidden="true">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="white">
+        <circle cx="12" cy="12" r="12" fill="rgba(0,0,0,0.6)"/>
+        <polygon points="10 8 16 12 10 16 10 8" fill="white"/>
+      </svg>
+    </div>
+  </div>
+
+  {# 信息区 #}
+  <div class="xedc-video-card__info">
+    <h3 class="xedc-video-card__title">
+      <a href="{{ video_url }}">{{ label }}</a>
+    </h3>
+    <div class="xedc-video-card__meta xedc-flex xedc-items-center xedc-gap-2">
+      <span class="xedc-text-xs xedc-text-muted">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="display:inline;vertical-align:middle;">
+          <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
+        </svg>
+        {{ view_count|default(0) }}
+      </span>
+      <span class="xedc-text-xs xedc-text-muted">{{ node.getCreatedTime()|date('Y-m-d') }}</span>
+    </div>
+
+    {# 快捷操作 #}
+    <div class="xedc-video-card__actions">
+      {% if is_logged_in %}
+        <button class="xedc-icon-btn xedc-like-btn" data-nid="{{ nid }}" aria-label="点赞" title="点赞">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+        </button>
+      {% endif %}
+    </div>
+  </div>
+
+</article>
