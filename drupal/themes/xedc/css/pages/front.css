@@ -1,0 +1,138 @@
+/* ================================================================
+   front.css — 首页样式
+   ================================================================ */
+
+/* ── Banner 区 ── */
+.xedc-front__banner {
+  padding: var(--space-4) 0;
+  background: var(--muted);
+  border-bottom: 1px solid var(--border);
+}
+
+.xedc-front__banner .views-element-container {
+  border-radius: var(--radius);
+  overflow: hidden;
+  min-height: 200px;
+  background: var(--card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted-foreground);
+  font-size: var(--text-sm);
+}
+
+/* ── 分类导航 ── */
+.xedc-front__categories {
+  padding: var(--space-4) 0;
+  border-bottom: 1px solid var(--border);
+  background: var(--background);
+}
+
+.xedc-category-nav {
+  display: flex;
+  gap: var(--space-2);
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.xedc-category-nav::-webkit-scrollbar { display: none; }
+
+.xedc-category-nav__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius);
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+  min-width: 72px;
+  text-align: center;
+}
+
+.xedc-category-nav__item:hover,
+.xedc-category-nav__item.is-active {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-color: var(--primary);
+}
+
+.xedc-category-nav__icon { font-size: 20px; }
+
+/* ── 主体布局 ── */
+.xedc-front__layout {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: var(--space-6);
+  padding-top: var(--space-6);
+  padding-bottom: var(--space-8);
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .xedc-front__layout { grid-template-columns: 1fr; }
+  .xedc-front__sidebar { display: none; }
+}
+
+/* ── 主内容区标题 ── */
+.xedc-front__section-title {
+  margin-bottom: var(--space-4);
+}
+
+.xedc-front__section-title h2 {
+  font-size: var(--text-xl);
+  font-weight: 700;
+}
+
+/* ── 侧边栏组件 ── */
+.xedc-sidebar__widget {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.xedc-sidebar__title {
+  font-size: var(--text-base);
+  font-weight: 700;
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── Footer ── */
+.xedc-footer {
+  background: var(--card);
+  border-top: 1px solid var(--border);
+  padding: var(--space-8) 0 var(--space-4);
+}
+
+.xedc-footer__nav {
+  margin-bottom: var(--space-4);
+}
+
+.xedc-footer__nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.xedc-footer__nav a {
+  font-size: var(--text-sm);
+  color: var(--muted-foreground);
+  transition: color var(--transition-fast);
+}
+
+.xedc-footer__nav a:hover { color: var(--primary); }
+
+.xedc-footer__bottom {
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
