@@ -1,0 +1,15 @@
+<?php
+
+/**
+ * @file
+ * xedc theme 的核心预处理函数。
+ * 我们尽量保持这里干净，UI 逻辑下放到 Twig 和 SDC。
+ */
+
+/**
+ * Implements hook_preprocess_html().
+ */
+function xedc_preprocess_html(array &$variables) {
+  // 可以在此注入全局的元数据或特殊 body 类
+  // color-scheme 和主题的动态切换由 theme-toggle.js 在客户端接管处理
+}
