@@ -1,0 +1,132 @@
+{#
+  node--video--full.html.twig — 视频详情页
+#}
+{% set nid = node.id() %}
+{% set video_file_url = '' %}
+{% if node.field_video_file.entity %}
+  {% set video_file_url = file_url(node.field_video_file.entity.fileUri) %}
+{% endif %}
+{% set video_ext_url = node.field_video_url.uri|default('') %}
+
+<div class="xedc-video-detail">
+  <div class="xedc-container">
+    <div class="xedc-video-detail__layout">
+
+      {# ── 左侧主区 ── #}
+      <div class="xedc-video-detail__main">
+
+        {# 播放器 #}
+        <div class="xedc-video-player" id="xedc-video-player">
+          {% if video_file_url %}
+            <video
+              class="xedc-video-player__video"
+              controls
+              preload="metadata"
+              poster="{{ content.field_cover_image[0]['#uri']|default('') }}"
+              data-nid="{{ nid }}"
+            >
+              <source src="{{ video_file_url }}" type="video/mp4" />
+              您的浏览器不支持 HTML5 视频播放。
+            </video>
+          {% elseif video_ext_url %}
+            {# 外链视频（YouTube/B站/Vimeo 留占位，阶段4接入）#}
+            <div class="xedc-video-player__external" data-src="{{ video_ext_url }}">
+              <div class="xedc-video-player__placeholder">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                  <polygon points="5 3 19 12 5 21 5 3"/>
+                </svg>
+                <p>点击播放外部视频</p>
+              </div>
+            </div>
+          {% else %}
+            <div class="xedc-video-player__placeholder">
+              {{ content.field_cover_image }}
+              <div class="xedc-video-player__no-video">暂无视频源</div>
+            </div>
+          {% endif %}
+        </div>
+
+        {# 视频信息 #}
+        <div class="xedc-video-detail__info">
+          <h1 class="xedc-video-detail__title">{{ label }}</h1>
+          <div class="xedc-video-detail__meta xedc-flex xedc-items-center xedc-gap-4">
+            <span class="xedc-text-sm xedc-text-muted">👁 {{ view_count|default(0) }} 次播放</span>
+            <span class="xedc-text-sm xedc-text-muted">{{ node.getCreatedTime()|date('Y年m月d日') }}</span>
+            {% if node.field_quality.value %}
+              <span class="xedc-badge xedc-badge--secondary">{{ node.field_quality.value|upper }}</span>
+            {% endif %}
+          </div>
+
+          {# 互动操作栏 #}
+          <div class="xedc-video-detail__actions xedc-flex xedc-items-center xedc-gap-3">
+            <button class="xedc-action-btn xedc-like-btn" data-nid="{{ nid }}" aria-label="点赞">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+              <span class="xedc-action-btn__count">{{ like_count|default(0) }}</span>
+            </button>
+            <button class="xedc-action-btn xedc-collect-btn" data-nid="{{ nid }}" aria-label="收藏">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+              </svg>
+              <span class="xedc-action-btn__label">收藏</span>
+            </button>
+            <button class="xedc-action-btn xedc-share-btn" aria-label="分享" onclick="navigator.clipboard.writeText(window.location.href);alert('链接已复制')">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+              </svg>
+              <span class="xedc-action-btn__label">分享</span>
+            </button>
+            {# 投币/弹幕留 DOM 占位 #}
+            <button class="xedc-action-btn" onclick="alert('敬请期待')" aria-label="投币">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="16"/>
+                <line x1="8" y1="12" x2="16" y2="12"/>
+              </svg>
+              <span class="xedc-action-btn__label">投币</span>
+            </button>
+          </div>
+
+          {# 简介 #}
+          {% if content.body %}
+            <details class="xedc-video-detail__desc">
+              <summary>视频简介</summary>
+              <div class="xedc-video-detail__desc-content">{{ content.body }}</div>
+            </details>
+          {% endif %}
+
+          {# 标签 #}
+          {% if content.field_tags %}
+            <div class="xedc-video-detail__tags xedc-flex xedc-gap-2" style="flex-wrap:wrap; margin-top: var(--space-3);">
+              {{ content.field_tags }}
+            </div>
+          {% endif %}
+        </div>
+
+        {# 评论区占位 #}
+        <div class="xedc-comments" id="xedc-comments">
+          <h3 class="xedc-comments__title">评论</h3>
+          {% if is_logged_in %}
+            <div class="xedc-comment-form">
+              <textarea class="xedc-input" style="height:80px;resize:vertical;" placeholder="写下你的评论..."></textarea>
+              <button class="xedc-btn xedc-btn--default xedc-btn--sm" style="margin-top:var(--space-2);" onclick="alert('评论功能阶段4完善')">发表评论</button>
+            </div>
+          {% else %}
+            <p class="xedc-text-sm xedc-text-muted"><a href="/user/login">登录</a>后发表评论</p>
+          {% endif %}
+        </div>
+
+      </div>
+
+      {# ── 右侧推荐栏 ── #}
+      <aside class="xedc-video-detail__sidebar">
+        <h3 class="xedc-sidebar__title">相关视频</h3>
+        {{ drupal_view('video_list', 'block_1') }}
+      </aside>
+
+    </div>
+  </div>
+</div>
