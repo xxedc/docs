@@ -1,0 +1,22 @@
+/* 主题切换过渡动画类 */
+.theme-transitioning,
+.theme-transitioning *,
+.theme-transitioning *::before,
+.theme-transitioning *::after {
+  transition: background-color 200ms ease-in-out, 
+              color 200ms ease-in-out, 
+              border-color 200ms ease-in-out !important;
+  transition-delay: 0s !important;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
