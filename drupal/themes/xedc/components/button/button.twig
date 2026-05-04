@@ -1,0 +1,45 @@
+{#
+  button.twig — 通用按钮组件
+  变体：default / secondary / outline / ghost / destructive / link
+  尺寸：sm / md / lg / icon
+#}
+
+{# 拼装 class #}
+{% set variant = variant|default('default') %}
+{% set size = size|default('md') %}
+{% set base_class = 'xedc-btn xedc-btn--' ~ variant ~ ' xedc-btn--' ~ size %}
+{% if extra_classes %}
+  {% set base_class = base_class ~ ' ' ~ extra_classes %}
+{% endif %}
+{% if disabled %}
+  {% set base_class = base_class ~ ' xedc-btn--disabled' %}
+{% endif %}
+
+{# 有 url 渲染 <a>，否则渲染 <button> #}
+{% if url %}
+  <a
+    href="{{ url }}"
+    class="{{ base_class }}"
+    {% if disabled %}aria-disabled="true" tabindex="-1"{% endif %}
+  >
+    {% if icon %}
+      <span class="xedc-btn__icon" aria-hidden="true">{{ icon|raw }}</span>
+    {% endif %}
+    {% if label %}
+      <span class="xedc-btn__label">{{ label }}</span>
+    {% endif %}
+  </a>
+{% else %}
+  <button
+    type="{{ type_attr|default('button') }}"
+    class="{{ base_class }}"
+    {% if disabled %}disabled aria-disabled="true"{% endif %}
+  >
+    {% if icon %}
+      <span class="xedc-btn__icon" aria-hidden="true">{{ icon|raw }}</span>
+    {% endif %}
+    {% if label %}
+      <span class="xedc-btn__label">{{ label }}</span>
+    {% endif %}
+  </button>
+{% endif %}
