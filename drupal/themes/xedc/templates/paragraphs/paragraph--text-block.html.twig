@@ -1,0 +1,8 @@
+{# paragraph--text-block.html.twig — 普通文本段落 #}
+<div{{ attributes.addClass('xedc-paragraph', 'xedc-paragraph--text-block') }}>
+  {% if content.field_text %}
+    <div class="xedc-paragraph__text">
+      {{ content.field_text }}
+    </div>
+  {% endif %}
+</div>
