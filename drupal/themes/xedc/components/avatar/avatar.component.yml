@@ -1,0 +1,28 @@
+$schema: 'https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json'
+name: Avatar
+status: experimental
+description: '用户头像组件，支持图片和文字 fallback'
+group: XEDC
+
+props:
+  type: object
+  properties:
+    src:
+      type: string
+      title: '头像图片 URL'
+    alt:
+      type: string
+      title: '图片 alt 文字'
+    name:
+      type: string
+      title: '用户名（无图片时显示首字母）'
+    size:
+      type: string
+      title: '尺寸'
+      enum: [xs, sm, md, lg, xl]
+      default: md
+    url:
+      type: string
+      title: '点击跳转链接'
+    extra_classes:
+      type: string
