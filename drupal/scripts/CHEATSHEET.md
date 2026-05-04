@@ -17,3 +17,4 @@ bash /opt/dc-repo/drupal/scripts/rollback.sh
 
 # 回滚（自动选最新，跳过确认）
 bash /opt/dc-repo/drupal/scripts/rollback.sh -y
+#Drush 常用命令
