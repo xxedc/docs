@@ -1,13 +1,9 @@
-{# 
-/**
- * @file
- * Header 区域的包裹器。
- * 因为我们在 page.html.twig 里用 Twig Tweak 渲染了主要内容，
- * 这个区域的默认包裹我们要尽量保持干净。
- */
+{#
+  region--header.html.twig — Header 区域
+  此区域内容由 page.html.twig 的 header 直接渲染
 #}
 {% if content %}
-  <div{{ attributes.addClass('region-header') }}>
+  <div{{ attributes.addClass('xedc-region', 'xedc-region--header') }}>
     {{ content }}
   </div>
 {% endif %}
