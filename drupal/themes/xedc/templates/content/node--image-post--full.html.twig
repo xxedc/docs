@@ -1,0 +1,112 @@
+{#
+  node--image-post--full.html.twig — 图集详情/大图浏览页
+#}
+{% set nid = node.id() %}
+
+<div class="xedc-image-detail">
+  <div class="xedc-container">
+
+    {# ── 大图展示区 ── #}
+    <div class="xedc-lightbox-area" id="xedc-lightbox-area">
+
+      {# 主图展示 #}
+      <div class="xedc-image-viewer" id="xedc-image-viewer">
+        <div class="xedc-image-viewer__stage" id="xedc-viewer-stage">
+          {% if content.field_images %}
+            {{ content.field_images }}
+          {% elseif content.field_cover_image %}
+            {{ content.field_cover_image }}
+          {% endif %}
+        </div>
+
+        {# 缩放/重置控制 #}
+        <div class="xedc-image-viewer__controls" aria-label="图片控制">
+          <button class="xedc-viewer-btn" id="xedc-zoom-in" title="放大" aria-label="放大">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              <line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/>
+            </svg>
+          </button>
+          <button class="xedc-viewer-btn" id="xedc-zoom-out" title="缩小" aria-label="缩小">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              <line x1="8" y1="11" x2="14" y2="11"/>
+            </svg>
+          </button>
+          <button class="xedc-viewer-btn" id="xedc-zoom-reset" title="重置" aria-label="重置大小">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+              <path d="M3 3v5h5"/>
+            </svg>
+          </button>
+          <button class="xedc-viewer-btn" id="xedc-fullscreen" title="全屏" aria-label="全屏浏览">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/>
+              <line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      {# 图集缩略图导航（多图时显示）#}
+      <div class="xedc-image-thumbs" id="xedc-image-thumbs">
+        {{ content.field_images }}
+      </div>
+    </div>
+
+    {# ── 操作栏 ── #}
+    <div class="xedc-image-detail__actions xedc-flex xedc-items-center xedc-gap-3">
+      {% if node.field_allow_download.value %}
+        <a href="{{ file_url(node.field_images.0.entity.fileUri|default('')) }}"
+           download
+           class="xedc-btn xedc-btn--default xedc-btn--md">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          下载原图
+        </a>
+      {% endif %}
+
+      {% if is_logged_in %}
+        <button class="xedc-btn xedc-btn--outline xedc-btn--md xedc-collect-btn" data-nid="{{ nid }}">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+          </svg>
+          收藏
+        </button>
+      {% endif %}
+
+      <button class="xedc-btn xedc-btn--outline xedc-btn--md"
+        onclick="navigator.clipboard.writeText(window.location.href);alert('链接已复制')">
+        分享
+      </button>
+    </div>
+
+    {# ── 图片信息 ── #}
+    <div class="xedc-image-detail__info xedc-card" style="margin-top: var(--space-6);">
+      <div class="xedc-card__body">
+        <h1 class="xedc-image-detail__title">{{ label }}</h1>
+        {% if content.body %}
+          <div class="xedc-image-detail__desc xedc-text-sm">{{ content.body }}</div>
+        {% endif %}
+        <div class="xedc-image-detail__meta xedc-flex xedc-gap-4" style="margin-top: var(--space-3);">
+          <span class="xedc-text-sm xedc-text-muted">👁 {{ view_count|default(0) }} 次浏览</span>
+          <span class="xedc-text-sm xedc-text-muted">📅 {{ node.getCreatedTime()|date('Y-m-d') }}</span>
+        </div>
+        {% if content.field_tags %}
+          <div class="xedc-flex xedc-gap-2" style="flex-wrap:wrap; margin-top: var(--space-3);">
+            {{ content.field_tags }}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    {# ── 相关推荐 ── #}
+    <div class="xedc-image-detail__related" style="margin-top: var(--space-8);">
+      <h3 class="xedc-sidebar__title">相关图集</h3>
+      {{ drupal_view('image_waterfall', 'block_1') }}
+    </div>
+
+  </div>
+</div>
