@@ -1,0 +1,43 @@
+$schema: 'https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json'
+name: Input
+status: experimental
+description: '文本输入框组件，支持禁用和错误状态'
+group: XEDC
+
+props:
+  type: object
+  properties:
+    name:
+      type: string
+      title: '字段 name'
+    id:
+      type: string
+      title: '字段 id'
+    type_attr:
+      type: string
+      title: 'input type'
+      default: text
+    placeholder:
+      type: string
+      title: '占位文字'
+    value:
+      type: string
+      title: '默认值'
+    label:
+      type: string
+      title: '标签文字'
+    helper:
+      type: string
+      title: '帮助文字'
+    error:
+      type: string
+      title: '错误信息'
+    disabled:
+      type: boolean
+      default: false
+    required:
+      type: boolean
+      default: false
+    icon_left:
+      type: string
+      title: '左侧图标 SVG'
