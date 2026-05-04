@@ -1,62 +1,209 @@
-{# 
-/**
- * @file
- * 页面核心框架 (page.html.twig)
- * 严格遵循 Twig Tweak 最佳实践，避免大量 Block 放置。
- */
+{#
+  page.html.twig — XEDC 主页面模板
+  演示 Twig Tweak 用法：drupal_menu / drupal_view / drupal_block
 #}
+<!DOCTYPE html>
+<html{{ html_attributes }}>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ head_title | safe_join(' | ') }}</title>
+  {{ head }}
+  {{ styles }}
+  {# 防闪烁初始化脚本（theme-init.js 在 head 同步执行）#}
+  {{ scripts_top }}
+</head>
+<body{{ attributes.addClass('xedc-body') }}>
 
-<div class="xedc-layout min-h-screen flex flex-col bg-background text-foreground">
-  
-  {# 1. 顶部 Header 区 #}
-  <header class="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur">
-    <div class="container flex h-14 items-center justify-between px-4 md:px-8">
-      <div class="flex items-center gap-4">
-        {# Logo 可以放这里 #}
-        <a href="/" class="font-bold text-xl tracking-tight text-primary">XEDC</a>
-        
-        {# 主导航: 使用 Twig Tweak 渲染 #}
-        <nav class="hidden md:flex">
-          {{ drupal_menu('main') }}
-        </nav>
+  {{ page_top }}
+
+  {# ── 顶部通知条（可选，运营公告）── #}
+  {% if page.header_top %}
+    <div class="xedc-header-top">
+      <div class="xedc-container">
+        {{ page.header_top }}
+      </div>
+    </div>
+  {% endif %}
+
+  {# ── 顶部导航栏 ── #}
+  <header class="xedc-navbar" role="banner">
+    <div class="xedc-container xedc-flex xedc-flex-between" style="height: 56px;">
+
+      {# Logo #}
+      <a href="{{ url('<front>') }}" class="xedc-navbar__logo" aria-label="{{ site_name }}">
+        <span class="xedc-navbar__logo-text">{{ site_name }}</span>
+      </a>
+
+      {# 主导航菜单 #}
+      <nav class="xedc-navbar__nav" role="navigation" aria-label="主导航">
+        {{ drupal_menu('main') }}
+      </nav>
+
+      {# 全局搜索框 #}
+      <div class="xedc-navbar__search">
+        <form action="/search" method="get" role="search">
+          <input
+            type="search"
+            name="q"
+            placeholder="搜索视频、图片、文章..."
+            class="xedc-search-input"
+            aria-label="全站搜索"
+          />
+          <button type="submit" class="xedc-search-btn" aria-label="搜索">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+            </svg>
+          </button>
+        </form>
       </div>
 
-      <div class="flex items-center gap-4">
-        {# 头像 / 登录状态 #}
-        {% if logged_in %}
-          {# 这里之后可以使用 SDC Avatar #}
-          <div class="user-menu-trigger">已登录</div>
-        {% else %}
-          {{ drupal_block('user_login_block') }}
+      {# 右侧工具区 #}
+      <div class="xedc-navbar__tools xedc-flex xedc-items-center xedc-gap-2">
+
+        {# 消息通知图标（已登录显示）#}
+        {% if is_logged_in %}
+          <a href="/messages" class="xedc-navbar__icon-btn" aria-label="消息通知">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+          </a>
         {% endif %}
 
-        {# 引入主题切换器 SDC #}
-        {% include 'xedc:theme-toggle' ignore missing %}
+        {# 主题切换器 #}
+        <div class="xedc-theme-toggle" data-xedc-theme-toggle>
+          {# 图标按钮 #}
+          <button
+            class="xedc-navbar__icon-btn"
+            data-xedc-theme-icon
+            aria-label="切换主题"
+            aria-haspopup="true"
+            aria-expanded="false"
+          >🌙</button>
+
+          {# 下拉菜单 #}
+          <div
+            class="xedc-theme-dropdown"
+            data-xedc-theme-dropdown
+            role="menu"
+            aria-hidden="true"
+          >
+            <button class="xedc-theme-dropdown__item" data-xedc-theme-option="system" role="menuitemradio">
+              🖥️ 跟随系统
+            </button>
+            <button class="xedc-theme-dropdown__item" data-xedc-theme-option="light" role="menuitemradio">
+              ☀️ 日间
+            </button>
+            <button class="xedc-theme-dropdown__item" data-xedc-theme-option="dark" role="menuitemradio">
+              🌙 夜间
+            </button>
+            <button class="xedc-theme-dropdown__item" data-xedc-theme-option="midnight" role="menuitemradio">
+              ⚫ 深夜
+            </button>
+          </div>
+        </div>
+
+        {# 用户入口 #}
+        {% if is_logged_in %}
+          <a href="/user/me" class="xedc-navbar__avatar" aria-label="个人中心">
+            <div class="xedc-avatar xedc-avatar--sm">
+              {{ drupal_entity('user', current_user.id(), 'compact') }}
+            </div>
+          </a>
+        {% else %}
+          <a href="/user/login" class="xedc-btn xedc-btn--primary xedc-btn--sm">登录</a>
+        {% endif %}
+
       </div>
     </div>
   </header>
 
-  {# 2. 页面主体 #}
-  <main class="flex-1 container mx-auto px-4 md:px-8 py-6 flex gap-6">
-    {# 左侧主内容区 #}
-    <div class="main-content flex-1 min-w-0">
-      {{ page.content }}
-    </div>
-
-    {# 右侧边栏: PC 端显示 (阶段 2 建这个 view) #}
-    <aside class="hidden lg:block w-80 shrink-0">
-      <div class="sticky top-20">
-        {{ drupal_view('front_recommend', 'block_hot') }}
+  {# ── 高亮提示区（系统消息）── #}
+  {% if page.highlighted %}
+    <div class="xedc-highlighted" role="alert">
+      <div class="xedc-container">
+        {{ page.highlighted }}
       </div>
-    </aside>
-  </main>
+    </div>
+  {% endif %}
 
-  {# 3. 页脚区 #}
-  <footer class="border-t border-border bg-muted/40 py-6">
-    <div class="container mx-auto px-4 md:px-8 text-center text-sm text-muted-foreground">
-      {{ drupal_menu('footer') }}
-      <p class="mt-4">&copy; {{ 'now'|date('Y') }} XEDC. All rights reserved.</p>
+  {# ── 面包屑 ── #}
+  {% if page.breadcrumb %}
+    <div class="xedc-breadcrumb">
+      <div class="xedc-container">
+        {{ page.breadcrumb }}
+      </div>
+    </div>
+  {% endif %}
+
+  {# ── 主体内容区 ── #}
+  <div class="xedc-layout xedc-container">
+
+    {# 左侧边栏（如有）#}
+    {% if page.sidebar_first %}
+      <aside class="xedc-layout__sidebar-first" role="complementary">
+        {{ page.sidebar_first }}
+      </aside>
+    {% endif %}
+
+    {# 主内容 #}
+    <main
+      class="xedc-layout__main{% if page.sidebar_first %} xedc-layout__main--has-left{% endif %}{% if page.sidebar_second %} xedc-layout__main--has-right{% endif %}"
+      id="main-content"
+      role="main"
+      tabindex="-1"
+    >
+      {{ page.content }}
+    </main>
+
+    {# 右侧边栏（PC端）#}
+    {% if page.sidebar_second %}
+      <aside class="xedc-layout__sidebar-second" role="complementary">
+        {{ page.sidebar_second }}
+        {# 热榜 TOP10（阶段2会建这个 view）#}
+        {# {{ drupal_view('front_recommend', 'block_hot') }} #}
+        {# 未登录显示登录框 #}
+        {% if not is_logged_in %}
+          {{ drupal_block('user_login_block') }}
+        {% endif %}
+      </aside>
+    {% endif %}
+
+  </div>
+
+  {# ── 底部 Footer ── #}
+  <footer class="xedc-footer" role="contentinfo">
+    <div class="xedc-container">
+      <div class="xedc-footer__cols">
+        {% if page.footer_first %}
+          <div class="xedc-footer__col">{{ page.footer_first }}</div>
+        {% endif %}
+        {% if page.footer_second %}
+          <div class="xedc-footer__col">{{ page.footer_second }}</div>
+        {% endif %}
+        {% if page.footer_third %}
+          <div class="xedc-footer__col">{{ page.footer_third }}</div>
+        {% endif %}
+      </div>
+
+      {# Footer 导航菜单 #}
+      <nav class="xedc-footer__nav" aria-label="底部导航">
+        {{ drupal_menu('footer') }}
+      </nav>
+
+      {# 版权 & ICP #}
+      <div class="xedc-footer__bottom">
+        {{ page.footer_bottom }}
+        <p class="xedc-text-xs xedc-text-muted">
+          © {{ "now"|date("Y") }} {{ site_name }}. All rights reserved.
+        </p>
+      </div>
     </div>
   </footer>
 
-</div>
+  {{ page_bottom }}
+  {{ scripts }}
+
+</body>
+</html>
