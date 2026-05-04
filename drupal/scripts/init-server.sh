@@ -1,32 +1,95 @@
+
+---
+
+### 文件 2/9: 服务器一次性初始化脚本
+- **GitHub 路径:** `drupal/scripts/init-server.sh`
+- **服务器路径:** `/opt/dc-repo/drupal/scripts/init-server.sh`
+
+```bash
 #!/bin/bash
-# 作用：全新服务器环境的一键初始化（仅需运行一次）
+# =============================================================
+# init-server.sh — 服务器一次性初始化（只需执行一次）
+# 用法：curl -sL https://raw.githubusercontent.com/xxedc/docs/main/drupal/scripts/init-server.sh | bash
+# =============================================================
 set -euo pipefail
 
-echo "📦 [1/5] 开始安装基础系统依赖..."
-apt update
-apt install -y git rsync curl jq tar zip unzip
+# ── 颜色输出 ──
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+BLUE='\033[0;34m'
+NC='\033[0m'
 
-echo "📂 [2/5] 准备本地代码仓库目录..."
-# 如果存在老目录，先清理掉
-if [ -d "/opt/dc-repo" ]; then
-    rm -rf /opt/dc-repo
+log_info()    { echo -e "${BLUE}ℹ️  $1${NC}"; }
+log_success() { echo -e "${GREEN}✅ $1${NC}"; }
+log_warn()    { echo -e "${YELLOW}⚠️  $1${NC}"; }
+log_error()   { echo -e "${RED}❌ $1${NC}"; exit 1; }
+
+# ── 变量 ──
+REPO_URL="https://github.com/xxedc/docs.git"
+REPO_DIR="/opt/dc-repo"
+DRUPAL_ROOT="/var/www/html/drupal11"
+BACKUP_DIR="/var/backups/drupal11"
+
+log_info "开始服务器初始化..."
+
+# ── 1. 安装基础工具 ──
+log_info "安装基础依赖：git rsync curl jq..."
+apt-get update -qq
+apt-get install -y git rsync curl jq
+log_success "基础依赖安装完成"
+
+# ── 2. 创建备份目录 ──
+log_info "创建备份目录 $BACKUP_DIR..."
+mkdir -p "$BACKUP_DIR"
+log_success "备份目录已创建"
+
+# ── 3. 创建 Drupal 自定义目录 ──
+log_info "创建 Drupal 主题/模块目录..."
+# 自动检测是否有 web/ 子目录
+if [ -d "${DRUPAL_ROOT}/web" ]; then
+    WEB_ROOT="${DRUPAL_ROOT}/web"
+else
+    WEB_ROOT="${DRUPAL_ROOT}"
 fi
-mkdir -p /opt/dc-repo
+mkdir -p "${WEB_ROOT}/themes/custom"
+mkdir -p "${WEB_ROOT}/modules/custom"
+log_success "Drupal 目录已创建：${WEB_ROOT}/themes/custom 和 ${WEB_ROOT}/modules/custom"
 
-echo "📥 [3/5] 使用 Git Sparse-checkout 精准拉取 drupal 目录..."
-git clone --filter=blob:none --no-checkout https://github.com/xxedc/docs.git /opt/dc-repo
-cd /opt/dc-repo
-git sparse-checkout init --cone
-git sparse-checkout set drupal
-git checkout main
+# ── 4. 克隆仓库（sparse checkout 只拉 drupal/ 子目录）──
+log_info "初始化 Git 仓库（sparse checkout）..."
+if [ -d "$REPO_DIR/.git" ]; then
+    log_warn "仓库已存在，跳过克隆，直接 pull"
+    cd "$REPO_DIR" && git pull origin main
+else
+    git clone \
+        --filter=blob:none \
+        --no-checkout \
+        "$REPO_URL" \
+        "$REPO_DIR"
+    cd "$REPO_DIR"
+    git sparse-checkout init --cone
+    git sparse-checkout set drupal
+    git checkout main
+fi
+log_success "仓库已克隆到 $REPO_DIR"
 
-echo "📁 [4/5] 创建服务器上需要的业务和备份文件夹..."
-mkdir -p /var/backups/drupal11
-mkdir -p /var/www/html/drupal11/web/themes/custom
-mkdir -p /var/www/html/drupal11/web/modules/custom
+# ── 5. 给脚本加执行权限 ──
+log_info "设置脚本执行权限..."
+chmod +x "${REPO_DIR}/drupal/scripts/"*.sh
+log_success "执行权限已设置"
 
-echo "🔑 [5/5] 赋予脚本执行权限..."
-chmod +x /opt/dc-repo/drupal/scripts/*.sh
+# ── 6. 创建日志目录 ──
+mkdir -p /var/log/drupal-deploy
+log_success "日志目录已创建：/var/log/drupal-deploy"
 
-echo "✅ 初始化全部完成！"
-echo "👉 推荐操作：现在你可以执行 bash /opt/dc-repo/drupal/scripts/deploy.sh -n 来干跑测试一下部署流程了。"
+# ── 完成 ──
+echo ""
+log_success "============================================"
+log_success "  服务器初始化完成！"
+log_success "============================================"
+echo ""
+echo -e "  ${YELLOW}下一步建议：${NC}"
+echo -e "  1. 干跑验证：${GREEN}bash ${REPO_DIR}/drupal/scripts/deploy.sh -n${NC}"
+echo -e "  2. 正式部署：${GREEN}bash ${REPO_DIR}/drupal/scripts/deploy.sh${NC}"
+echo ""
