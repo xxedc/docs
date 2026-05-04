@@ -1,0 +1,22 @@
+$schema: 'https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json'
+name: Skeleton
+status: experimental
+description: '骨架屏组件，内容加载时的占位动画'
+group: XEDC
+
+props:
+  type: object
+  properties:
+    type:
+      type: string
+      title: '骨架类型'
+      enum: [card, text, avatar, banner, list]
+      default: card
+    count:
+      type: integer
+      title: '重复数量（list/card 类型）'
+      default: 1
+    rows:
+      type: integer
+      title: '文字行数（text 类型）'
+      default: 3
