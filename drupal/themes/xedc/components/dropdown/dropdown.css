@@ -1,0 +1,104 @@
+/* ================================================================
+   dropdown.css — 下拉菜单组件
+   ================================================================ */
+
+.xedc-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* ── 触发器 ── */
+.xedc-dropdown__trigger {
+  cursor: pointer;
+  user-select: none;
+}
+
+/* ── 菜单（默认隐藏）── */
+.xedc-dropdown__menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  min-width: 160px;
+  background-color: var(--popover);
+  color: var(--popover-foreground);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  z-index: var(--z-dropdown);
+  padding: var(--space-1) 0;
+  overflow: hidden;
+}
+
+.xedc-dropdown__menu--left  { left: 0; }
+.xedc-dropdown__menu--right { right: 0; }
+
+/* ── 打开状态 ── */
+.xedc-dropdown__menu.is-open {
+  display: block;
+  animation: xedc-dropdown-in 120ms ease;
+}
+
+@keyframes xedc-dropdown-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── 菜单项 ── */
+.xedc-dropdown__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-sm);
+  color: var(--foreground);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color var(--transition-fast);
+}
+
+.xedc-dropdown__item:hover {
+  background-color: var(--muted);
+}
+
+.xedc-dropdown__item:focus-visible {
+  outline: none;
+  background-color: var(--muted);
+}
+
+/* ── 危险操作 ── */
+.xedc-dropdown__item--destructive {
+  color: var(--destructive);
+}
+
+.xedc-dropdown__item--destructive:hover {
+  background-color: oklch(from var(--destructive) l c h / 0.1);
+}
+
+/* ── 禁用 ── */
+.xedc-dropdown__item--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ── 分割线 ── */
+.xedc-dropdown__separator {
+  height: 1px;
+  background-color: var(--border);
+  margin: var(--space-1) 0;
+}
+
+/* ── 分组标签 ── */
+.xedc-dropdown__label {
+  padding: var(--space-1) var(--space-4);
+  font-size: var(--text-xs);
+  color: var(--muted-foreground);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
