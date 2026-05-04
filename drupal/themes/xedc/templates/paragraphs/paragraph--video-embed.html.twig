@@ -1,0 +1,48 @@
+{# paragraph--video-embed.html.twig — 嵌入视频段落 #}
+{% set video_url = paragraph.field_video_url.uri|default('') %}
+{% set video_file = paragraph.field_video_file.entity %}
+{% set caption = paragraph.field_caption.value|default('') %}
+
+<figure{{ attributes.addClass('xedc-paragraph', 'xedc-paragraph--video') }}>
+  <div class="xedc-embed-video">
+    {% if video_file %}
+      {# 本地 mp4 #}
+      <video controls preload="metadata" class="xedc-embed-video__player">
+        <source src="{{ file_url(video_file.fileUri) }}" type="video/mp4" />
+      </video>
+    {% elseif 'youtube.com' in video_url or 'youtu.be' in video_url %}
+      {# YouTube #}
+      {% set yt_id = video_url|split('v=')|last|split('&')|first %}
+      <iframe
+        src="https://www.youtube.com/embed/{{ yt_id }}"
+        frameborder="0"
+        allowfullscreen
+        loading="lazy"
+        class="xedc-embed-video__iframe"
+        title="{{ caption }}"
+      ></iframe>
+    {% elseif 'bilibili.com' in video_url %}
+      {# B站 #}
+      {% set bv = video_url|split('video/')|last|split('/')|first %}
+      <iframe
+        src="https://player.bilibili.com/player.html?bvid={{ bv }}&autoplay=0"
+        frameborder="0"
+        allowfullscreen
+        scrolling="no"
+        loading="lazy"
+        class="xedc-embed-video__iframe"
+        title="{{ caption }}"
+      ></iframe>
+    {% elseif video_url %}
+      {# 其他外链 #}
+      <div class="xedc-embed-video__external">
+        <a href="{{ video_url }}" target="_blank" rel="noopener" class="xedc-btn xedc-btn--default xedc-btn--md">
+          打开外部视频
+        </a>
+      </div>
+    {% endif %}
+  </div>
+  {% if caption %}
+    <figcaption class="xedc-paragraph__caption xedc-text-sm xedc-text-muted">{{ caption }}</figcaption>
+  {% endif %}
+</figure>
