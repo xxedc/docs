@@ -1,0 +1,88 @@
+/* 基础变量与日间模式 (LIGHT) */
+:root,
+[data-theme="light"] {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.55 0.18 250);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.961 0 0);
+  --secondary-foreground: oklch(0.145 0 0);
+  --muted: oklch(0.961 0 0);
+  --muted-foreground: oklch(0.45 0 0);
+  --accent: oklch(0.961 0 0);
+  --accent-foreground: oklch(0.145 0 0);
+  --destructive: oklch(0.6 0.22 27);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.898 0 0);
+  --input: oklch(0.898 0 0);
+  --ring: oklch(0.55 0.18 250);
+  --radius: 0.5rem;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  color-scheme: light;
+}
+
+/* 常规夜间模式 (DARK) - 类似 B站 */
+[data-theme="dark"] {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.18 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.18 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.55 0.18 250);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.22 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.22 0 0);
+  --muted-foreground: oklch(0.7 0 0);
+  --accent: oklch(0.22 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.6 0.22 27);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.27 0 0);
+  --input: oklch(0.27 0 0);
+  --ring: oklch(0.55 0.18 250);
+  color-scheme: dark;
+}
+
+/* 深夜阅读省电模式 (MIDNIGHT) - OLED 纯黑 */
+[data-theme="midnight"] {
+  --background: oklch(0 0 0);
+  --foreground: oklch(0.92 0 0);
+  --card: oklch(0.08 0 0);
+  --card-foreground: oklch(0.92 0 0);
+  --popover: oklch(0.08 0 0);
+  --popover-foreground: oklch(0.92 0 0);
+  --primary: oklch(0.65 0.16 250);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.12 0 0);
+  --secondary-foreground: oklch(0.92 0 0);
+  --muted: oklch(0.12 0 0);
+  --muted-foreground: oklch(0.6 0 0);
+  --accent: oklch(0.12 0 0);
+  --accent-foreground: oklch(0.92 0 0);
+  --destructive: oklch(0.6 0.22 27);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.18 0 0);
+  --input: oklch(0.18 0 0);
+  --ring: oklch(0.65 0.16 250);
+  color-scheme: dark;
+}
+
+/* 纯黑模式图片亮度压制，保护视力 */
+[data-theme="midnight"] img,
+[data-theme="midnight"] video,
+[data-theme="midnight"] iframe {
+  filter: brightness(0.85) contrast(1.05);
+}
