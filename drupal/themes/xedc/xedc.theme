@@ -2,14 +2,164 @@
 
 /**
  * @file
- * xedc theme 的核心预处理函数。
- * 我们尽量保持这里干净，UI 逻辑下放到 Twig 和 SDC。
+ * xedc.theme — 主题预处理钩子
  */
 
+use Drupal\Core\Form\FormStateInterface;
+
 /**
- * Implements hook_preprocess_html().
+ * 预处理 html.html.twig：注入主题状态、附加字体库
  */
-function xedc_preprocess_html(array &$variables) {
-  // 可以在此注入全局的元数据或特殊 body 类
-  // color-scheme 和主题的动态切换由 theme-toggle.js 在客户端接管处理
+function xedc_preprocess_html(array &$variables): void {
+  // 附加防闪烁初始化脚本（同步执行，放 head）
+  $variables['#attached']['library'][] = 'xedc/theme-init';
+
+  // 附加全局字体
+  $variables['#attached']['library'][] = 'xedc/fonts';
+
+  // 附加全局样式与脚本
+  $variables['#attached']['library'][] = 'xedc/global-styles';
+  $variables['#attached']['library'][] = 'xedc/global-scripts';
+
+  // 将主题模式传给 JS（drupalSettings）
+  $variables['#attached']['drupalSettings']['xedc']['defaultTheme'] = 'light';
+
+  // 获取当前路由，注入到 body class 方便 CSS 精确控制
+  $route_name = \Drupal::routeMatch()->getRouteName();
+  $variables['xedc_route'] = $route_name;
+
+  // 注入 data-theme 属性（服务端默认 light，JS 接管后覆盖）
+  $variables['html_attributes']->setAttribute('data-theme', 'light');
+
+  // 注入 color-scheme meta（JS 会同步更新）
+  $variables['page']['#attached']['html_head'][] = [
+    [
+      '#tag' => 'meta',
+      '#attributes' => [
+        'name' => 'color-scheme',
+        'content' => 'light dark',
+      ],
+    ],
+    'color-scheme',
+  ];
+}
+
+/**
+ * 预处理 page.html.twig：注入页面类型信息
+ */
+function xedc_preprocess_page(array &$variables): void {
+  // 传递站点名称
+  $config = \Drupal::config('system.site');
+  $variables['site_name'] = $config->get('name');
+  $variables['site_slogan'] = $config->get('slogan');
+
+  // 传递当前用户登录状态
+  $variables['is_logged_in'] = \Drupal::currentUser()->isAuthenticated();
+  $variables['current_user'] = \Drupal::currentUser();
+
+  // 检测节点类型，附加对应资源库
+  $node = \Drupal::routeMatch()->getParameter('node');
+  if ($node) {
+    $bundle = $node->bundle();
+    switch ($bundle) {
+      case 'video':
+        $variables['#attached']['library'][] = 'xedc/page-video-detail';
+        break;
+      case 'image_post':
+        $variables['#attached']['library'][] = 'xedc/page-image-detail';
+        break;
+      case 'article':
+        $variables['#attached']['library'][] = 'xedc/page-article-detail';
+        break;
+    }
+  }
+
+  // 首页附加首页样式
+  if (\Drupal::service('path.matcher')->isFrontPage()) {
+    $variables['#attached']['library'][] = 'xedc/page-front';
+  }
+}
+
+/**
+ * 预处理 node.html.twig：传递常用字段
+ */
+function xedc_preprocess_node(array &$variables): void {
+  $node = $variables['node'];
+  $variables['bundle'] = $node->bundle();
+
+  // 传递浏览量（如字段存在）
+  if ($node->hasField('field_view_count')) {
+    $variables['view_count'] = $node->get('field_view_count')->value ?? 0;
+  }
+
+  // 传递点赞数
+  if ($node->hasField('field_like_count')) {
+    $variables['like_count'] = $node->get('field_like_count')->value ?? 0;
+  }
+
+  // 传递封面图 URL
+  if ($node->hasField('field_cover_image') && !$node->get('field_cover_image')->isEmpty()) {
+    $image = $node->get('field_cover_image')->entity;
+    if ($image) {
+      $variables['cover_image_url'] = \Drupal::service('file_url_generator')
+        ->generateAbsoluteString($image->getFileUri());
+    }
+  }
+}
+
+/**
+ * 预处理 paragraph.html.twig：传递 bundle 信息供模板判断
+ */
+function xedc_preprocess_paragraph(array &$variables): void {
+  $paragraph = $variables['paragraph'];
+  $variables['bundle'] = $paragraph->bundle();
+
+  // 代码块附加 Prism.js
+  if ($paragraph->bundle() === 'code_block') {
+    $variables['#attached']['library'][] = 'xedc/prism';
+  }
+}
+
+/**
+ * 预处理 block.html.twig
+ */
+function xedc_preprocess_block(array &$variables): void {
+  // 将 block_id 传给模板方便精确样式控制
+  if (isset($variables['elements']['#id'])) {
+    $variables['block_id'] = $variables['elements']['#id'];
+  }
+}
+
+/**
+ * 预处理评论模板
+ */
+function xedc_preprocess_comment(array &$variables): void {
+  $variables['is_logged_in'] = \Drupal::currentUser()->isAuthenticated();
+}
+
+/**
+ * 实现 hook_page_attachments_alter()：注入 JSON-LD 结构化数据（阶段5完善）
+ */
+function xedc_page_attachments_alter(array &$attachments): void {
+  $node = \Drupal::routeMatch()->getParameter('node');
+  if (!$node) {
+    return;
+  }
+
+  // 基础 JSON-LD（阶段5会扩展为完整 Schema.org）
+  $json_ld = [
+    '@context' => 'https://schema.org',
+    '@type' => 'WebPage',
+    'name' => $node->getTitle(),
+    'url' => \Drupal::request()->getUri(),
+  ];
+
+  $attachments['#attached']['html_head'][] = [
+    [
+      '#tag' => 'script',
+      '#attributes' => ['type' => 'application/ld+json'],
+      '#value' => json_encode($json_ld, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+    ],
+    'json-ld-webpage',
+  ];
 }
