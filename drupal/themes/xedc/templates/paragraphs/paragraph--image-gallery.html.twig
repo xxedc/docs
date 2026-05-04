@@ -1,0 +1,54 @@
+{#
+  paragraph--image-gallery.html.twig — 图片画廊段落
+  按 field_layout 切换 grid / carousel / masonry
+#}
+{% set layout = paragraph.field_layout.value|default('grid') %}
+{% set caption = paragraph.field_caption.value|default('') %}
+
+<figure{{ attributes.addClass('xedc-paragraph', 'xedc-paragraph--gallery', 'xedc-gallery--' ~ layout) }}>
+
+  {% if layout == 'carousel' %}
+    {# 轮播模式 #}
+    <div class="xedc-gallery-carousel" data-xedc-carousel>
+      <div class="xedc-gallery-carousel__track" id="gallery-track-{{ paragraph.id() }}">
+        {% for item in paragraph.field_images %}
+          <div class="xedc-gallery-carousel__slide">
+            <img src="{{ file_url(item.entity.fileUri) }}"
+                 alt="{{ item.alt|default('') }}"
+                 loading="lazy" />
+          </div>
+        {% endfor %}
+      </div>
+      <button class="xedc-gallery-carousel__btn xedc-gallery-carousel__btn--prev" aria-label="上一张">‹</button>
+      <button class="xedc-gallery-carousel__btn xedc-gallery-carousel__btn--next" aria-label="下一张">›</button>
+    </div>
+
+  {% elseif layout == 'masonry' %}
+    {# 瀑布流模式 #}
+    <div class="xedc-gallery-masonry">
+      {% for item in paragraph.field_images %}
+        <div class="xedc-gallery-masonry__item">
+          <img src="{{ file_url(item.entity.fileUri) }}"
+               alt="{{ item.alt|default('') }}"
+               loading="lazy" />
+        </div>
+      {% endfor %}
+    </div>
+
+  {% else %}
+    {# 网格模式（默认）#}
+    <div class="xedc-gallery-grid">
+      {% for item in paragraph.field_images %}
+        <div class="xedc-gallery-grid__item">
+          <img src="{{ file_url(item.entity.fileUri) }}"
+               alt="{{ item.alt|default('') }}"
+               loading="lazy" />
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% if caption %}
+    <figcaption class="xedc-paragraph__caption xedc-text-sm xedc-text-muted">{{ caption }}</figcaption>
+  {% endif %}
+</figure>
