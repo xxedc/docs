@@ -1,0 +1,11 @@
+uuid: 6eae63bb-8d0b-44c4-9b89-018556ffad90
+langcode: zh-hans
+status: true
+dependencies:
+  module:
+    - path_alias
+id: path_alias.token
+label: Token
+description: null
+targetEntityType: path_alias
+cache: true

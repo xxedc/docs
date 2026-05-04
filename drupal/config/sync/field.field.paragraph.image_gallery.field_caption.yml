@@ -1,0 +1,19 @@
+uuid: 8bb3357f-1ec8-4f71-81f4-7fa0a18f99e0
+langcode: zh-hans
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_caption
+    - paragraphs.paragraphs_type.image_gallery
+id: paragraph.image_gallery.field_caption
+field_name: field_caption
+entity_type: paragraph
+bundle: image_gallery
+label: 图片注释
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

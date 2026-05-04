@@ -1,0 +1,13 @@
+uuid: 648a18ac-a853-4f07-b5f2-57c68caa58fa
+langcode: zh-hans
+status: true
+dependencies:
+  module:
+    - paragraphs
+_core:
+  default_config_hash: h3BeHVei4Lnyqbkao3YiF4KqoY-DhRvUNfEgKG8Rgjg
+id: paragraph.preview
+label: 预览
+description: null
+targetEntityType: paragraph
+cache: true

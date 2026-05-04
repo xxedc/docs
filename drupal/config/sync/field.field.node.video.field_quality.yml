@@ -1,0 +1,21 @@
+uuid: c1874b40-f9ed-4f94-b5dd-f8adbfcfd142
+langcode: zh-hans
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_quality
+    - node.type.video
+  module:
+    - options
+id: node.video.field_quality
+field_name: field_quality
+entity_type: node
+bundle: video
+label: 视频画质
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

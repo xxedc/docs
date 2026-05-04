@@ -1,0 +1,22 @@
+uuid: 8ba88fb3-fc27-4b17-9af1-fbfc8f8b5951
+langcode: zh-hans
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_text
+    - paragraphs.paragraphs_type.field_text
+  module:
+    - text
+id: paragraph.field_text.field_text
+field_name: field_text
+entity_type: paragraph
+bundle: field_text
+label: 文本内容
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_formats: {  }
+field_type: text_long

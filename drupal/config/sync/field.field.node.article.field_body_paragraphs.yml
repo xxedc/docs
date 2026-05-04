@@ -1,0 +1,56 @@
+uuid: 7b092fde-ecd0-41d6-82f7-fca59e3c33dd
+langcode: zh-hans
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_body_paragraphs
+    - node.type.article
+    - paragraphs.paragraphs_type.code_block
+    - paragraphs.paragraphs_type.cta_block
+    - paragraphs.paragraphs_type.field_text
+    - paragraphs.paragraphs_type.image_gallery
+    - paragraphs.paragraphs_type.quote_block
+    - paragraphs.paragraphs_type.video_embed
+  module:
+    - entity_reference_revisions
+id: node.article.field_body_paragraphs
+field_name: field_body_paragraphs
+entity_type: node
+bundle: article
+label: 正文段落
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    target_bundles:
+      cta_block: cta_block
+      code_block: code_block
+      field_text: field_text
+      image_gallery: image_gallery
+      quote_block: quote_block
+      video_embed: video_embed
+    negate: 0
+    target_bundles_drag_drop:
+      code_block:
+        weight: 8
+        enabled: true
+      cta_block:
+        weight: 7
+        enabled: true
+      field_text:
+        weight: 9
+        enabled: true
+      image_gallery:
+        weight: 10
+        enabled: true
+      quote_block:
+        weight: 11
+        enabled: true
+      video_embed:
+        weight: 12
+        enabled: true
+field_type: entity_reference_revisions

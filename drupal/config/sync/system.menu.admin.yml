@@ -1,0 +1,10 @@
+uuid: 8ae5acbb-64d5-4857-9e2d-d0a41f5e5a94
+langcode: zh-hans
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: sapEi2YDGoI9yQIT_WgIV2vUdQ6DScH0V3fAyTadAL0
+id: admin
+label: 管理
+description: 管理操作链接
+locked: true

@@ -1,0 +1,23 @@
+uuid: 25cec3e0-99c0-4a97-8e55-934634d2335a
+langcode: zh-hans
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_button_url
+    - paragraphs.paragraphs_type.cta_block
+  module:
+    - link
+id: paragraph.cta_block.field_button_url
+field_name: field_button_url
+entity_type: paragraph
+bundle: cta_block
+label: 按钮链接
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  title: 1
+  link_type: 17
+field_type: link

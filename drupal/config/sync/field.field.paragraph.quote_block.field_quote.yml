@@ -1,0 +1,22 @@
+uuid: 7f06b0f0-f7a9-47b2-8eb6-c4e9771b1812
+langcode: zh-hans
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_quote
+    - paragraphs.paragraphs_type.quote_block
+  module:
+    - text
+id: paragraph.quote_block.field_quote
+field_name: field_quote
+entity_type: paragraph
+bundle: quote_block
+label: 引用内容
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_formats: {  }
+field_type: text_long

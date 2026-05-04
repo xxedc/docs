@@ -1,0 +1,45 @@
+uuid: 10879dc8-4752-4196-8414-0f971b461ab7
+langcode: zh-hans
+status: true
+dependencies:
+  module:
+    - options
+    - paragraphs
+id: paragraph.field_language
+field_name: field_language
+entity_type: paragraph
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: javascript_javascript|javascript
+      label: JavaScript
+    -
+      value: python_python|python
+      label: Python
+    -
+      value: php_php|php
+      label: PHP
+    -
+      value: bash_bash|bash
+      label: Bash
+    -
+      value: yaml_yaml|yaml
+      label: YAML
+    -
+      value: json_json|json
+      label: JSON
+    -
+      value: html_html|html
+      label: HTML
+    -
+      value: css_css|css
+      label: CSS
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

@@ -1,0 +1,10 @@
+uuid: 0d89dd83-f78e-449d-8eba-157a23594ca5
+langcode: zh-hans
+status: true
+dependencies: {  }
+id: quote_block
+label: quote_block
+icon_uuid: null
+icon_default: null
+description: ''
+behavior_plugins: {  }

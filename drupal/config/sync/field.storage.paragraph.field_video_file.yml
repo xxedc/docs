@@ -1,0 +1,23 @@
+uuid: 1846ca2e-55e6-4bb2-b8d1-9717da904307
+langcode: zh-hans
+status: true
+dependencies:
+  module:
+    - file
+    - paragraphs
+id: paragraph.field_video_file
+field_name: field_video_file
+entity_type: paragraph
+type: file
+settings:
+  target_type: file
+  display_field: false
+  display_default: false
+  uri_scheme: public
+module: file
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

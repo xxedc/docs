@@ -1,0 +1,20 @@
+uuid: abedba58-f3f6-4d94-bc47-91f4df1f2636
+langcode: zh-hans
+status: true
+dependencies:
+  theme:
+    - gin
+_core:
+  default_config_hash: OQ9aJ-4qVwK1x00o9EOYK4eFDjQr_HLpbPiJaPSVZiQ
+id: gin_local_actions
+theme: gin
+region: content
+weight: -10
+provider: null
+plugin: local_actions_block
+settings:
+  id: local_actions_block
+  label: 主要管理动作
+  label_display: '0'
+  provider: core
+visibility: {  }

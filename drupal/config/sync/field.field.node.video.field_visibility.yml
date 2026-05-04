@@ -1,0 +1,21 @@
+uuid: 34cbb5ee-df3e-4b24-a222-1e2ef96aa7c2
+langcode: zh-hans
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_visibility
+    - node.type.video
+  module:
+    - options
+id: node.video.field_visibility
+field_name: field_visibility
+entity_type: node
+bundle: video
+label: 可见性
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

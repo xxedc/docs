@@ -1,0 +1,21 @@
+uuid: 1a3926ac-68b2-4acb-8785-6f0d6005e28f
+langcode: zh-hans
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_style
+    - paragraphs.paragraphs_type.cta_block
+  module:
+    - options
+id: paragraph.cta_block.field_style
+field_name: field_style
+entity_type: paragraph
+bundle: cta_block
+label: 样式
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

@@ -1,0 +1,19 @@
+uuid: 29c5b7eb-1ae7-4962-9d90-f7435c95a6a4
+langcode: zh-hans
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_author
+    - paragraphs.paragraphs_type.quote_block
+id: paragraph.quote_block.field_author
+field_name: field_author
+entity_type: paragraph
+bundle: quote_block
+label: 引用作者
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

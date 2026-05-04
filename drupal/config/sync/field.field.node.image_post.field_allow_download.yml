@@ -1,0 +1,21 @@
+uuid: 68055520-eccc-441f-a07c-95f6763a413e
+langcode: zh-hans
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_allow_download
+    - node.type.image_post
+id: node.image_post.field_allow_download
+field_name: field_allow_download
+entity_type: node
+bundle: image_post
+label: 允许下载
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  on_label: 开启
+  off_label: 关闭
+field_type: boolean

@@ -1,0 +1,11 @@
+uuid: 9c4be84a-21c8-4509-8134-d93979df0aaf
+langcode: zh-hans
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: OeKGIkmZA_c-t6QLH81WNQx8gDCc1MRmxaTuQgxBByU
+id: administrator
+label: 管理员
+weight: 3
+is_admin: true
+permissions: {  }

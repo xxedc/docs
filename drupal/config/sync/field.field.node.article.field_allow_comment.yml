@@ -1,0 +1,21 @@
+uuid: 40309ea5-2b2b-4a50-9eed-c9d4ca05d238
+langcode: zh-hans
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_allow_comment
+    - node.type.article
+id: node.article.field_allow_comment
+field_name: field_allow_comment
+entity_type: node
+bundle: article
+label: 允许评论
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  on_label: 开启
+  off_label: 关闭
+field_type: boolean

@@ -1,0 +1,13 @@
+uuid: 1a68e0de-f735-45fa-aa92-1f24d95f3039
+langcode: zh-hans
+status: false
+dependencies:
+  module:
+    - block_content
+_core:
+  default_config_hash: Q7yUUYeRLByl-MCGveKKF_KhAtNICLCMJuKWfugCvso
+id: block_content.full
+label: 完整
+description: ''
+targetEntityType: block_content
+cache: true

@@ -1,0 +1,13 @@
+uuid: 960351eb-7c25-430c-95e1-479d3aa9316f
+langcode: zh-hans
+status: true
+dependencies:
+  enforced:
+    theme:
+      - olivero
+_core:
+  default_config_hash: z7ynTCss9wwEi8ojENJ08qx44RN6leI-tqoN2o5QzdE
+id: olivero_medium
+label: Olivero中等
+locked: false
+pattern: 'j F Y'

@@ -1,0 +1,11 @@
+uuid: f96e577c-d76d-4cfd-8edb-36cbb53f47f9
+langcode: zh-hans
+status: true
+dependencies:
+  module:
+    - paragraphs
+id: paragraph.token
+label: Token
+description: null
+targetEntityType: paragraph
+cache: true

@@ -1,0 +1,13 @@
+uuid: 988eae69-9ef6-4bf8-a1b1-4617947c1a67
+langcode: zh-hans
+status: true
+dependencies:
+  module:
+    - comment
+_core:
+  default_config_hash: vpBH8OmL4sdesCdeZLsW8KOutB5gkbreWJbfjhfFKaQ
+id: comment_delete_action
+label: 删除评论
+type: comment
+plugin: 'entity:delete_action:comment'
+configuration: {  }

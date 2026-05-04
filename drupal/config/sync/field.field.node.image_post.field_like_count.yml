@@ -1,0 +1,23 @@
+uuid: 03fbdf02-0566-4392-b125-839649764ca0
+langcode: zh-hans
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_like_count
+    - node.type.image_post
+id: node.image_post.field_like_count
+field_name: field_like_count
+entity_type: node
+bundle: image_post
+label: 点赞数
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

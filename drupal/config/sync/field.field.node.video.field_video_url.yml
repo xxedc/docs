@@ -1,0 +1,23 @@
+uuid: 57014ec8-30a7-4465-be3c-dd3931f2a072
+langcode: zh-hans
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_video_url
+    - node.type.video
+  module:
+    - link
+id: node.video.field_video_url
+field_name: field_video_url
+entity_type: node
+bundle: video
+label: 视频外链
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  title: 1
+  link_type: 17
+field_type: link

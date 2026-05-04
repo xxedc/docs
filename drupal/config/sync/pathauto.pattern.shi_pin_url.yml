@@ -1,0 +1,22 @@
+uuid: 513e5aee-1c6c-4a7e-af17-52bcacffd268
+langcode: zh-hans
+status: true
+dependencies:
+  module:
+    - node
+id: shi_pin_url
+label: 视频url
+type: 'canonical_entities:node'
+pattern: '[node:content-type]/[node:title]'
+selection_criteria:
+  e21d97cb-098d-4572-9a3d-3beac4eb5b85:
+    id: 'entity_bundle:node'
+    negate: false
+    uuid: e21d97cb-098d-4572-9a3d-3beac4eb5b85
+    context_mapping:
+      node: node
+    bundles:
+      video: video
+selection_logic: and
+weight: -5
+relationships: {  }

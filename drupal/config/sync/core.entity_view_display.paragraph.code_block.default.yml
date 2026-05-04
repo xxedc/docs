@@ -1,0 +1,39 @@
+uuid: 004e06be-15c1-4c4d-9acc-bb435fb2be81
+langcode: zh-hans
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.code_block.field_code
+    - field.field.paragraph.code_block.field_filename
+    - field.field.paragraph.code_block.field_language
+    - paragraphs.paragraphs_type.code_block
+  module:
+    - options
+id: paragraph.code_block.default
+targetEntityType: paragraph
+bundle: code_block
+mode: default
+content:
+  field_code:
+    type: basic_string
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_filename:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_language:
+    type: list_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden: {  }

@@ -1,0 +1,10 @@
+uuid: 5a67f4cf-b605-4642-8094-5e7cfd048126
+langcode: zh-hans
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: bqZsN31T2n0UjcbyCpOPi9D2iO0sAOHR7FnEs9qMvaA
+id: comment
+label: 默认评论
+target_entity_type_id: node
+description: 允许对内容评论

@@ -1,0 +1,22 @@
+uuid: 11dd7561-92be-486a-9121-4fe94e63f1ee
+langcode: zh-hans
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - xedc
+_core:
+  default_config_hash: erQSEZF2XUjNmgTl0uNRBzmg18ZGXwUcw2FhApoeuHk
+id: xedc_content
+theme: xedc
+region: content
+weight: 0
+provider: null
+plugin: system_main_block
+settings:
+  id: system_main_block
+  label: 主页内容
+  label_display: '0'
+  provider: system
+visibility: {  }

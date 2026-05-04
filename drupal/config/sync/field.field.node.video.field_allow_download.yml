@@ -1,0 +1,21 @@
+uuid: 0db34c70-46c7-4059-aa28-7af464817fd1
+langcode: zh-hans
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_allow_download
+    - node.type.video
+id: node.video.field_allow_download
+field_name: field_allow_download
+entity_type: node
+bundle: video
+label: 允许下载
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  on_label: 开启
+  off_label: 关闭
+field_type: boolean

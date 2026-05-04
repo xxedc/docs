@@ -1,0 +1,13 @@
+uuid: fabb815c-a333-4e60-82f3-61143f961c2c
+langcode: zh-hans
+status: true
+dependencies:
+  module:
+    - node
+_core:
+  default_config_hash: JBptjnfuOMtsdKygklXxoOgeOCTMtQxlkymjnnj-cC0
+id: node_unpromote_action
+label: 从首页移除内容
+type: node
+plugin: node_unpromote_action
+configuration: {  }

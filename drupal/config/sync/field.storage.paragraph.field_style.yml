@@ -1,0 +1,30 @@
+uuid: 5da0d15e-e695-4036-b833-20d293b39911
+langcode: zh-hans
+status: true
+dependencies:
+  module:
+    - options
+    - paragraphs
+id: paragraph.field_style
+field_name: field_style
+entity_type: paragraph
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: primary_zhu_se|primary
+      label: 主色
+    -
+      value: secondary_ci_yao|secondary
+      label: 次要
+    -
+      value: gradient_jian_bian|gradient
+      label: 渐变
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

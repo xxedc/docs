@@ -1,0 +1,23 @@
+uuid: 87116e9b-eade-4a9a-8e99-5f875ccc006a
+langcode: zh-hans
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_view_count
+    - node.type.article
+id: node.article.field_view_count
+field_name: field_view_count
+entity_type: node
+bundle: article
+label: 浏览量
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

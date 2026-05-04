@@ -1,0 +1,9 @@
+uuid: fa9d4a60-1889-4764-93f1-491c33d23fb5
+langcode: zh-hans
+status: true
+dependencies: {  }
+name: categories
+vid: categories
+description: 视频的
+weight: 0
+new_revision: false

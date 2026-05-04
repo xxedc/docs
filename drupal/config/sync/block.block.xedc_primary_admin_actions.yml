@@ -1,0 +1,20 @@
+uuid: 34845ee7-f507-4151-bacb-5feebca4eaa1
+langcode: zh-hans
+status: true
+dependencies:
+  theme:
+    - xedc
+_core:
+  default_config_hash: Q9_2whdOj1YIomfvsIfopROW4FT_X5pY0DjdOiOaQ5U
+id: xedc_primary_admin_actions
+theme: xedc
+region: highlighted
+weight: -5
+provider: null
+plugin: local_actions_block
+settings:
+  id: local_actions_block
+  label: 主要管理动作
+  label_display: '0'
+  provider: core
+visibility: {  }

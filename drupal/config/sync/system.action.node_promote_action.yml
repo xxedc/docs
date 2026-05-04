@@ -1,0 +1,13 @@
+uuid: a676b847-6d84-4263-8b6b-4b86ed0f3ef1
+langcode: zh-hans
+status: true
+dependencies:
+  module:
+    - node
+_core:
+  default_config_hash: N0RDBTqiK4dKoN4p4oW2j0SGWycdHyALUe9M-Ofp89U
+id: node_promote_action
+label: 将内容推荐到首页
+type: node
+plugin: node_promote_action
+configuration: {  }

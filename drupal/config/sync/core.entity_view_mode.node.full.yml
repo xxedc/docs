@@ -1,0 +1,13 @@
+uuid: de58aaca-0fd4-4221-aad1-55e8e9298b70
+langcode: zh-hans
+status: false
+dependencies:
+  module:
+    - node
+_core:
+  default_config_hash: QJ2aZ1xfVf59aq6Pz5X7fyUOa2HxuCoTwQ_RQjoulAU
+id: node.full
+label: 全文
+description: ''
+targetEntityType: node
+cache: true

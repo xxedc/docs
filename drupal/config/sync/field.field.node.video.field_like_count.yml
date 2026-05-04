@@ -1,0 +1,23 @@
+uuid: e0e769d9-279a-42d5-b853-ad2eebb50e5d
+langcode: zh-hans
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_like_count
+    - node.type.video
+id: node.video.field_like_count
+field_name: field_like_count
+entity_type: node
+bundle: video
+label: 点赞数
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

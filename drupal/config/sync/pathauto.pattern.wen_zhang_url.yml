@@ -1,0 +1,22 @@
+uuid: c2aca212-1e5f-4a7e-9bbe-a24ac0172abc
+langcode: zh-hans
+status: true
+dependencies:
+  module:
+    - node
+id: wen_zhang_url
+label: 文章url
+type: 'canonical_entities:node'
+pattern: '/article/[node:title]'
+selection_criteria:
+  e8021ad7-f850-438d-bd3b-2f6eaaea4d6c:
+    id: 'entity_bundle:node'
+    negate: false
+    uuid: e8021ad7-f850-438d-bd3b-2f6eaaea4d6c
+    context_mapping:
+      node: node
+    bundles:
+      article: article
+selection_logic: and
+weight: -5
+relationships: {  }

@@ -1,0 +1,23 @@
+uuid: 77a624f1-a247-4b8e-af4a-2f50da4a1f83
+langcode: zh-hans
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_reading_time
+    - node.type.article
+id: node.article.field_reading_time
+field_name: field_reading_time
+entity_type: node
+bundle: article
+label: 阅读时长
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

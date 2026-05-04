@@ -1,0 +1,10 @@
+uuid: ddf5a74e-5528-4c16-b45b-0df419f9d776
+langcode: zh-hans
+status: true
+dependencies: {  }
+id: video_embed
+label: video_embed
+icon_uuid: null
+icon_default: null
+description: ''
+behavior_plugins: {  }

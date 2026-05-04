@@ -1,0 +1,11 @@
+uuid: 4fdf32ab-ff3d-4385-9c22-f39a7a614f58
+langcode: zh-hans
+status: true
+dependencies:
+  config:
+    - node.type.video
+id: node.video
+target_entity_type_id: node
+target_bundle: video
+default_langcode: site_default
+language_alterable: false

@@ -1,0 +1,13 @@
+uuid: 48c751b8-f307-49b7-8324-f4891669f644
+langcode: zh-hans
+status: true
+dependencies:
+  module:
+    - user
+_core:
+  default_config_hash: TtD7OuGskOsQfoGyxXkrdtllBpR37J19d5BMQDZWJgA
+id: user.compact
+label: 压缩紧凑型
+description: ''
+targetEntityType: user
+cache: true

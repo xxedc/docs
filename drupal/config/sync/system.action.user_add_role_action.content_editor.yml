@@ -1,0 +1,14 @@
+uuid: d6930b51-f2f4-4e31-abf1-cd000c3c8d07
+langcode: zh-hans
+status: true
+dependencies:
+  config:
+    - user.role.content_editor
+  module:
+    - user
+id: user_add_role_action.content_editor
+label: 'Add the Content editor role to the selected user(s)'
+type: user
+plugin: user_add_role_action
+configuration:
+  rid: content_editor

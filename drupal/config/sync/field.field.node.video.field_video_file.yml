@@ -1,0 +1,27 @@
+uuid: 85b2563a-7553-4fa3-972e-48649d301daf
+langcode: zh-hans
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_video_file
+    - node.type.video
+  module:
+    - file
+id: node.video.field_video_file
+field_name: field_video_file
+entity_type: node
+bundle: video
+label: 视频文件
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:file'
+  handler_settings: {  }
+  file_directory: '[date:custom:Y]-[date:custom:m]'
+  file_extensions: mp4
+  max_filesize: ''
+  description_field: false
+field_type: file

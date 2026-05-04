@@ -1,0 +1,19 @@
+uuid: 1d3b31e1-b338-4dde-a44f-a13524087a72
+langcode: zh-hans
+status: true
+dependencies:
+  module:
+    - link
+    - paragraphs
+id: paragraph.field_source_url
+field_name: field_source_url
+entity_type: paragraph
+type: link
+settings: {  }
+module: link
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

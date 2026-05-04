@@ -1,0 +1,27 @@
+uuid: 13153998-e61a-4d8d-989a-a1d1f1a8f78e
+langcode: zh-hans
+status: true
+dependencies:
+  module:
+    - node
+    - options
+id: node.field_visibility
+field_name: field_visibility
+entity_type: node
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: public_gong_kai|public
+      label: 公开
+    -
+      value: private_jin_zi_ji|private
+      label: 仅自己
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

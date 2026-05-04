@@ -1,0 +1,22 @@
+uuid: 11f5442d-1795-420b-afd8-0d62ed9fc63e
+langcode: zh-hans
+status: true
+dependencies:
+  theme:
+    - xedc
+_core:
+  default_config_hash: nGE3EoPQQaQCuqTUtZgw0-KIzmrqdKDzdNQf2JyPUt4
+id: xedc_primary_local_tasks
+theme: xedc
+region: highlighted
+weight: -4
+provider: null
+plugin: local_tasks_block
+settings:
+  id: local_tasks_block
+  label: 主标签
+  label_display: '0'
+  provider: core
+  primary: true
+  secondary: false
+visibility: {  }

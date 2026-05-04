@@ -1,0 +1,30 @@
+uuid: 82c60711-1c11-43c8-b664-30699cb25a13
+langcode: zh-hans
+status: true
+dependencies:
+  module:
+    - node
+    - options
+id: node.field_orientation
+field_name: field_orientation
+entity_type: node
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: landscape_heng_ban|landscape
+      label: 横版
+    -
+      value: portrait_shu_ban|portrait
+      label: 竖版
+    -
+      value: square_zheng_fang_xing|square
+      label: 正方形
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

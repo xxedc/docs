@@ -1,0 +1,15 @@
+_core:
+  default_config_hash: ijfbzDTN4CbE7Sr-6ubWzy_t1vH4OtU1doNCLssVz-4
+langcode: zh-hans
+uuid: e119b57b-3db8-4d7b-a22c-74b984e1c66d
+name: DCXE
+mail: aiweixxz@gmail.com
+slogan: ''
+page:
+  403: ''
+  404: ''
+  front: /node
+admin_compact_mode: false
+weight_select_max: 100
+default_langcode: zh-hans
+mail_notification: null

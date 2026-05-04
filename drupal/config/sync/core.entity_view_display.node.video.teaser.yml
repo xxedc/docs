@@ -1,0 +1,52 @@
+uuid: 9cea13dc-bbcb-416a-920f-1e251071e0e1
+langcode: zh-hans
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.video.field_allow_comment
+    - field.field.node.video.field_allow_download
+    - field.field.node.video.field_category
+    - field.field.node.video.field_cover_image
+    - field.field.node.video.field_duration
+    - field.field.node.video.field_like_count
+    - field.field.node.video.field_quality
+    - field.field.node.video.field_tags
+    - field.field.node.video.field_video_file
+    - field.field.node.video.field_video_url
+    - field.field.node.video.field_view_count
+    - field.field.node.video.field_visibility
+    - node.type.video
+  module:
+    - user
+id: node.video.teaser
+targetEntityType: node
+bundle: video
+mode: teaser
+content:
+  field_tags:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 10
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  field_allow_comment: true
+  field_allow_download: true
+  field_category: true
+  field_cover_image: true
+  field_duration: true
+  field_like_count: true
+  field_quality: true
+  field_video_file: true
+  field_video_url: true
+  field_view_count: true
+  field_visibility: true
+  langcode: true

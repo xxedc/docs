@@ -1,0 +1,42 @@
+uuid: 7c74c377-f90d-4553-a16b-aa3e9b041804
+langcode: zh-hans
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.image_gallery.field_caption
+    - field.field.paragraph.image_gallery.field_images
+    - field.field.paragraph.image_gallery.field_layout
+    - image.style.thumbnail
+    - paragraphs.paragraphs_type.image_gallery
+  module:
+    - image
+id: paragraph.image_gallery.default
+targetEntityType: paragraph
+bundle: image_gallery
+mode: default
+content:
+  field_caption:
+    type: string_textfield
+    weight: 1
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_images:
+    type: image_image
+    weight: 0
+    region: content
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
+    third_party_settings: {  }
+  field_layout:
+    type: options_select
+    weight: 2
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true

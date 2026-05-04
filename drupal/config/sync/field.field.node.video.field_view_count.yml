@@ -1,0 +1,23 @@
+uuid: c2f7ff38-85f1-4162-ab11-c7be07586ebf
+langcode: zh-hans
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_view_count
+    - node.type.video
+id: node.video.field_view_count
+field_name: field_view_count
+entity_type: node
+bundle: video
+label: 浏览量
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

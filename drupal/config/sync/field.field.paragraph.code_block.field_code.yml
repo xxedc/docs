@@ -1,0 +1,19 @@
+uuid: 47d9e0d9-a791-4dac-a608-7b830eb1ad9e
+langcode: zh-hans
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_code
+    - paragraphs.paragraphs_type.code_block
+id: paragraph.code_block.field_code
+field_name: field_code
+entity_type: paragraph
+bundle: code_block
+label: 代码内容
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

@@ -1,0 +1,21 @@
+uuid: 59f1e557-e044-4d69-9b0f-79d0f34c1fc9
+langcode: zh-hans
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_orientation
+    - node.type.image_post
+  module:
+    - options
+id: node.image_post.field_orientation
+field_name: field_orientation
+entity_type: node
+bundle: image_post
+label: 图片方向
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

@@ -1,0 +1,27 @@
+uuid: 4eca2e63-977f-4a59-a5fa-95d8055957f6
+langcode: zh-hans
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_video_file
+    - paragraphs.paragraphs_type.video_embed
+  module:
+    - file
+id: paragraph.video_embed.field_video_file
+field_name: field_video_file
+entity_type: paragraph
+bundle: video_embed
+label: 本地视频
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:file'
+  handler_settings: {  }
+  file_directory: '[date:custom:Y]-[date:custom:m]'
+  file_extensions: mp4
+  max_filesize: ''
+  description_field: false
+field_type: file

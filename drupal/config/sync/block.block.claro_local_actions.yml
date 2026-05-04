@@ -1,0 +1,20 @@
+uuid: a1fd9f62-5470-4f7b-90b7-d6e84341ffce
+langcode: zh-hans
+status: true
+dependencies:
+  theme:
+    - claro
+_core:
+  default_config_hash: CdXfDmRgAvms7EQovxxWPdYi0GitxeRbVtScYK16ZH0
+id: claro_local_actions
+theme: claro
+region: content
+weight: -10
+provider: null
+plugin: local_actions_block
+settings:
+  id: local_actions_block
+  label: 主要管理动作
+  label_display: '0'
+  provider: core
+visibility: {  }

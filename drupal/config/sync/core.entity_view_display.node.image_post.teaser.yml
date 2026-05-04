@@ -1,0 +1,56 @@
+uuid: 594c444f-029b-4c77-afd6-097574a343c1
+langcode: zh-hans
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.image_post.field_allow_download
+    - field.field.node.image_post.field_category
+    - field.field.node.image_post.field_cover_image
+    - field.field.node.image_post.field_image
+    - field.field.node.image_post.field_like_count
+    - field.field.node.image_post.field_orientation
+    - field.field.node.image_post.field_tags
+    - field.field.node.image_post.field_view_count
+    - image.style.medium
+    - node.type.image_post
+  module:
+    - image
+    - user
+id: node.image_post.teaser
+targetEntityType: node
+bundle: image_post
+mode: teaser
+content:
+  field_image:
+    type: image
+    label: hidden
+    settings:
+      image_link: content
+      image_style: medium
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: -1
+    region: content
+  field_tags:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 10
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  field_allow_download: true
+  field_category: true
+  field_cover_image: true
+  field_like_count: true
+  field_orientation: true
+  field_view_count: true
+  langcode: true

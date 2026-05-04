@@ -1,0 +1,10 @@
+uuid: d9bfe413-1387-4e21-bc8a-b4b2c80441aa
+langcode: zh-hans
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: q7pDV2d9qFh1IVqvymOxUUYGSziZDeg961wURC0cSLs
+id: medium
+label: 默认中等日期
+locked: false
+pattern: 'D, j M Y - H:i'

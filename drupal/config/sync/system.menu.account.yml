@@ -1,0 +1,10 @@
+uuid: baa86108-287c-4262-a7c8-63a1bc13d8fb
+langcode: zh-hans
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: M_Bh81osDyUQ4wV0GgU_NdBNqkzM87sLxjaCdFj9mnw
+id: account
+label: 用户帐户菜单
+description: 链接到活跃的用户账户
+locked: true

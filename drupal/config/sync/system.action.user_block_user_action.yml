@@ -1,0 +1,13 @@
+uuid: 9d87d8cd-87eb-4ce2-ab38-cda124e40955
+langcode: zh-hans
+status: true
+dependencies:
+  module:
+    - user
+_core:
+  default_config_hash: DyypzTfThX10FFQw-399qPfEbLLyrhXgQrKPVsmAoJ4
+id: user_block_user_action
+label: 封锁选中的用户
+type: user
+plugin: user_block_user_action
+configuration: {  }

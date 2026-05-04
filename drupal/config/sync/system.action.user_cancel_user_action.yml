@@ -1,0 +1,13 @@
+uuid: d1ceb16b-4fb2-4c48-aaa7-7cb505dc3dd4
+langcode: zh-hans
+status: true
+dependencies:
+  module:
+    - user
+_core:
+  default_config_hash: nvrL9bFilzBvm2bjO9rQnFDpBA7dBBUjShSSt6NS-DU
+id: user_cancel_user_action
+label: 取消选中的用户帐户
+type: user
+plugin: user_cancel_user_action
+configuration: {  }

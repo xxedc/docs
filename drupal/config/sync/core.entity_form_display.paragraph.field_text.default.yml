@@ -1,0 +1,25 @@
+uuid: 8c00ab8e-96bb-4350-ad13-66ff39b25a7f
+langcode: zh-hans
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.field_text.field_text
+    - paragraphs.paragraphs_type.field_text
+  module:
+    - text
+id: paragraph.field_text.default
+targetEntityType: paragraph
+bundle: field_text
+mode: default
+content:
+  field_text:
+    type: text_textarea
+    weight: 0
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true

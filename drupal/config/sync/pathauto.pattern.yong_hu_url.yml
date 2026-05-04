@@ -1,0 +1,22 @@
+uuid: 08b28ffc-20e0-404e-b6ba-2ea5711e6c24
+langcode: zh-hans
+status: true
+dependencies:
+  module:
+    - node
+id: yong_hu_url
+label: 用户url
+type: 'canonical_entities:node'
+pattern: '/image/ [node:title]'
+selection_criteria:
+  ff1f164b-cb96-4425-a34c-5a0814153534:
+    id: 'entity_bundle:node'
+    negate: false
+    uuid: ff1f164b-cb96-4425-a34c-5a0814153534
+    context_mapping:
+      node: node
+    bundles:
+      image_post: image_post
+selection_logic: and
+weight: -5
+relationships: {  }
