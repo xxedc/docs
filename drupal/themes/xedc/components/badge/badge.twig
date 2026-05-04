@@ -1,0 +1,18 @@
+{#
+  badge.twig — 徽标组件
+#}
+
+{% set variant = variant|default('default') %}
+{% set tag = url ? 'a' : 'span' %}
+{% set classes = 'xedc-badge xedc-badge--' ~ variant %}
+{% if extra_classes %}{% set classes = classes ~ ' ' ~ extra_classes %}{% endif %}
+
+<{{ tag }}
+  class="{{ classes }}"
+  {% if url %}href="{{ url }}"{% endif %}
+>
+  {% if icon %}
+    <span class="xedc-badge__icon" aria-hidden="true">{{ icon|raw }}</span>
+  {% endif %}
+  {{ label }}
+</{{ tag }}>
