@@ -1,88 +1,212 @@
-/* 基础变量与日间模式 (LIGHT) */
+/* ================================================================
+   tokens.css — 设计系统 Token（三色模式：light / dark / midnight）
+   所有颜色使用 OKLCH，命名约定参考 shadcn/ui
+   ================================================================ */
+
+/* ── 日间模式（默认）── */
 :root,
 [data-theme="light"] {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
+  /* 基础色板 */
+  --background:         oklch(1 0 0);
+  --foreground:         oklch(0.145 0 0);
+
+  /* 卡片 */
+  --card:               oklch(1 0 0);
+  --card-foreground:    oklch(0.145 0 0);
+
+  /* 弹出层 */
+  --popover:            oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.55 0.18 250);
+
+  /* 主色（深蓝紫）*/
+  --primary:            oklch(0.55 0.18 250);
   --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.961 0 0);
-  --secondary-foreground: oklch(0.145 0 0);
-  --muted: oklch(0.961 0 0);
-  --muted-foreground: oklch(0.45 0 0);
-  --accent: oklch(0.961 0 0);
-  --accent-foreground: oklch(0.145 0 0);
-  --destructive: oklch(0.6 0.22 27);
+
+  /* 次要色 */
+  --secondary:          oklch(0.961 0 0);
+  --secondary-foreground: oklch(0.21 0 0);
+
+  /* 柔和区域 */
+  --muted:              oklch(0.961 0 0);
+  --muted-foreground:   oklch(0.556 0 0);
+
+  /* 强调色 */
+  --accent:             oklch(0.961 0 0);
+  --accent-foreground:  oklch(0.21 0 0);
+
+  /* 危险/错误色 */
+  --destructive:        oklch(0.6 0.22 27);
   --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.898 0 0);
-  --input: oklch(0.898 0 0);
-  --ring: oklch(0.55 0.18 250);
+
+  /* 边框 / 输入框 / 焦点环 */
+  --border:             oklch(0.898 0 0);
+  --input:              oklch(0.898 0 0);
+  --ring:               oklch(0.55 0.18 250);
+
+  /* 成功 / 警告 */
+  --success:            oklch(0.6 0.18 145);
+  --success-foreground: oklch(0.985 0 0);
+  --warning:            oklch(0.75 0.18 70);
+  --warning-foreground: oklch(0.145 0 0);
+
+  /* 圆角 */
   --radius: 0.5rem;
-  --space-1: 0.25rem;
-  --space-2: 0.5rem;
-  --space-3: 0.75rem;
-  --space-4: 1rem;
-  --space-6: 1.5rem;
-  --space-8: 2rem;
-  --space-12: 3rem;
-  --space-16: 4rem;
+
+  /* 阴影（极轻）*/
+  --shadow-sm:  0 1px 2px oklch(0 0 0 / 0.04);
+  --shadow-md:  0 4px 6px oklch(0 0 0 / 0.06), 0 1px 3px oklch(0 0 0 / 0.04);
+  --shadow-lg:  0 10px 15px oklch(0 0 0 / 0.08), 0 4px 6px oklch(0 0 0 / 0.04);
+  --shadow-xl:  0 20px 25px oklch(0 0 0 / 0.1), 0 8px 10px oklch(0 0 0 / 0.04);
+
+  /* color-scheme */
   color-scheme: light;
 }
 
-/* 常规夜间模式 (DARK) - 类似 B站 */
+/* ── 夜间模式（常规深灰，B站夜间风格）── */
 [data-theme="dark"] {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.18 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.18 0 0);
+  --background:         oklch(0.145 0 0);
+  --foreground:         oklch(0.985 0 0);
+
+  --card:               oklch(0.18 0 0);
+  --card-foreground:    oklch(0.985 0 0);
+
+  --popover:            oklch(0.18 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.55 0.18 250);
+
+  --primary:            oklch(0.55 0.18 250);
   --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.22 0 0);
+
+  --secondary:          oklch(0.22 0 0);
   --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.22 0 0);
-  --muted-foreground: oklch(0.7 0 0);
-  --accent: oklch(0.22 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.6 0.22 27);
+
+  --muted:              oklch(0.22 0 0);
+  --muted-foreground:   oklch(0.65 0 0);
+
+  --accent:             oklch(0.22 0 0);
+  --accent-foreground:  oklch(0.985 0 0);
+
+  --destructive:        oklch(0.6 0.22 27);
   --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.27 0 0);
-  --input: oklch(0.27 0 0);
-  --ring: oklch(0.55 0.18 250);
+
+  --border:             oklch(0.27 0 0);
+  --input:              oklch(0.27 0 0);
+  --ring:               oklch(0.55 0.18 250);
+
+  --success:            oklch(0.55 0.18 145);
+  --success-foreground: oklch(0.985 0 0);
+  --warning:            oklch(0.7 0.18 70);
+  --warning-foreground: oklch(0.145 0 0);
+
+  --shadow-sm:  0 1px 2px oklch(0 0 0 / 0.3);
+  --shadow-md:  0 4px 6px oklch(0 0 0 / 0.4);
+  --shadow-lg:  0 10px 15px oklch(0 0 0 / 0.5);
+  --shadow-xl:  0 20px 25px oklch(0 0 0 / 0.6);
+
   color-scheme: dark;
 }
 
-/* 深夜阅读省电模式 (MIDNIGHT) - OLED 纯黑 */
+/* ── 深夜模式（OLED 纯黑，省电护眼）── */
 [data-theme="midnight"] {
-  --background: oklch(0 0 0);
-  --foreground: oklch(0.92 0 0);
-  --card: oklch(0.08 0 0);
-  --card-foreground: oklch(0.92 0 0);
-  --popover: oklch(0.08 0 0);
+  --background:         oklch(0 0 0);
+  --foreground:         oklch(0.92 0 0);
+
+  --card:               oklch(0.08 0 0);
+  --card-foreground:    oklch(0.92 0 0);
+
+  --popover:            oklch(0.08 0 0);
   --popover-foreground: oklch(0.92 0 0);
-  --primary: oklch(0.65 0.16 250);
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.12 0 0);
+
+  /* 主色在纯黑底上稍微亮一点 */
+  --primary:            oklch(0.65 0.16 250);
+  --primary-foreground: oklch(0.985 0 0);
+
+  --secondary:          oklch(0.12 0 0);
   --secondary-foreground: oklch(0.92 0 0);
-  --muted: oklch(0.12 0 0);
-  --muted-foreground: oklch(0.6 0 0);
-  --accent: oklch(0.12 0 0);
-  --accent-foreground: oklch(0.92 0 0);
-  --destructive: oklch(0.6 0.22 27);
-  --destructive-foreground: oklch(1 0 0);
-  --border: oklch(0.18 0 0);
-  --input: oklch(0.18 0 0);
-  --ring: oklch(0.65 0.16 250);
+
+  --muted:              oklch(0.12 0 0);
+  --muted-foreground:   oklch(0.6 0 0);
+
+  --accent:             oklch(0.12 0 0);
+  --accent-foreground:  oklch(0.92 0 0);
+
+  --destructive:        oklch(0.55 0.2 27);
+  --destructive-foreground: oklch(0.985 0 0);
+
+  --border:             oklch(0.18 0 0);
+  --input:              oklch(0.18 0 0);
+  --ring:               oklch(0.65 0.16 250);
+
+  --success:            oklch(0.5 0.16 145);
+  --success-foreground: oklch(0.985 0 0);
+  --warning:            oklch(0.65 0.16 70);
+  --warning-foreground: oklch(0.985 0 0);
+
+  /* midnight 用 inset 描边代替 box-shadow */
+  --shadow-sm:  inset 0 0 0 1px oklch(0.2 0 0);
+  --shadow-md:  inset 0 0 0 1px oklch(0.2 0 0);
+  --shadow-lg:  inset 0 0 0 1px oklch(0.22 0 0);
+  --shadow-xl:  inset 0 0 0 1px oklch(0.25 0 0);
+
   color-scheme: dark;
 }
 
-/* 纯黑模式图片亮度压制，保护视力 */
+/* ── midnight 模式：图片降亮（减少强光刺眼）── */
 [data-theme="midnight"] img,
-[data-theme="midnight"] video,
-[data-theme="midnight"] iframe {
-  filter: brightness(0.85) contrast(1.05);
+[data-theme="midnight"] video {
+  filter: brightness(0.85);
+}
+
+/* ── 间距系统（4px 基础）── */
+:root {
+  --space-1:  0.25rem;  /* 4px */
+  --space-2:  0.5rem;   /* 8px */
+  --space-3:  0.75rem;  /* 12px */
+  --space-4:  1rem;     /* 16px */
+  --space-5:  1.25rem;  /* 20px */
+  --space-6:  1.5rem;   /* 24px */
+  --space-8:  2rem;     /* 32px */
+  --space-10: 2.5rem;   /* 40px */
+  --space-12: 3rem;     /* 48px */
+  --space-16: 4rem;     /* 64px */
+  --space-20: 5rem;     /* 80px */
+  --space-24: 6rem;     /* 96px */
+
+  /* 字体族 */
+  --font-sans:  'Inter', 'Noto Sans SC', system-ui, -apple-system, sans-serif;
+  --font-mono:  'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+
+  /* 字号比例 */
+  --text-xs:   0.75rem;    /* 12px */
+  --text-sm:   0.875rem;   /* 14px */
+  --text-base: 1rem;       /* 16px */
+  --text-lg:   1.125rem;   /* 18px */
+  --text-xl:   1.25rem;    /* 20px */
+  --text-2xl:  1.5rem;     /* 24px */
+  --text-3xl:  1.875rem;   /* 30px */
+  --text-4xl:  2.25rem;    /* 36px */
+
+  /* 行高 */
+  --leading-tight:  1.25;
+  --leading-snug:   1.375;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+  --leading-loose:  1.75;
+
+  /* 过渡速度 */
+  --transition-fast:   100ms ease;
+  --transition-normal: 200ms ease;
+  --transition-slow:   300ms ease;
+
+  /* 布局最大宽度 */
+  --max-width-content: 720px;
+  --max-width-wide:    1280px;
+  --max-width-full:    1536px;
+
+  /* z-index 层级 */
+  --z-dropdown:  1000;
+  --z-sticky:    1010;
+  --z-fixed:     1020;
+  --z-modal:     1050;
+  --z-toast:     1060;
+  --z-tooltip:   1070;
 }
