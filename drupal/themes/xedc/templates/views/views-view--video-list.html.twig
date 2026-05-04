@@ -1,0 +1,59 @@
+{#
+  views-view--video-list.html.twig — 视频列表页视图模板
+#}
+<div class="xedc-video-list">
+
+  {# 筛选排序栏 #}
+  <div class="xedc-list-toolbar xedc-flex xedc-flex-between">
+    <div class="xedc-list-toolbar__filters">
+      {% if exposed %}
+        <div class="xedc-exposed-filters">{{ exposed }}</div>
+      {% endif %}
+    </div>
+    {# 视图模式切换 #}
+    <div class="xedc-view-mode-switch" data-xedc-view-mode="video-list">
+      <button class="xedc-view-mode-btn is-active" data-mode="grid" aria-label="网格视图" title="网格">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+          <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+        </svg>
+      </button>
+      <button class="xedc-view-mode-btn" data-mode="list" aria-label="列表视图" title="列表">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
+          <line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/>
+          <line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  {# 内容区 #}
+  {% if rows %}
+    <div class="xedc-video-grid" data-view-container="video-list">
+      {{ rows }}
+    </div>
+  {% elseif empty %}
+    <div class="xedc-empty-state">
+      <div class="xedc-empty-state__icon">🎬</div>
+      <h3 class="xedc-empty-state__title">暂无视频</h3>
+      <p class="xedc-empty-state__desc xedc-text-muted">还没有视频内容，快来上传第一个吧</p>
+      {% if is_logged_in %}
+        <a href="/publish" class="xedc-btn xedc-btn--default xedc-btn--md" style="margin-top: var(--space-4);">上传视频</a>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  {# 分页 #}
+  {% if pager %}
+    <div class="xedc-pager">{{ pager }}</div>
+  {% endif %}
+
+  {# 回到顶部 #}
+  <button class="xedc-back-to-top" id="xedc-back-to-top" aria-label="回到顶部" title="回到顶部">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="18 15 12 9 6 15"/>
+    </svg>
+  </button>
+
+</div>
