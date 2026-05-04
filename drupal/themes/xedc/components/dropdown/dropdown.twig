@@ -1,0 +1,44 @@
+{#
+  dropdown.twig — 通用下拉菜单
+  使用方法：
+    {% set trigger_content %}
+      <button class="xedc-btn xedc-btn--outline xedc-btn--sm">更多操作</button>
+    {% endset %}
+    {% set menu_items %}
+      <button class="xedc-dropdown__item">编辑</button>
+      <button class="xedc-dropdown__item xedc-dropdown__item--destructive">删除</button>
+    {% endset %}
+    {% include 'xedc:dropdown' with {id: 'my-menu', trigger: trigger_content, items: menu_items} %}
+#}
+
+{% set align = align|default('left') %}
+{% set dropdown_id = id|default('dropdown-' ~ random()) %}
+{% set classes = 'xedc-dropdown' %}
+{% if extra_classes %}{% set classes = classes ~ ' ' ~ extra_classes %}{% endif %}
+
+<div
+  class="{{ classes }}"
+  data-xedc-dropdown="{{ dropdown_id }}"
+>
+  {# 触发器 #}
+  <div
+    class="xedc-dropdown__trigger"
+    data-xedc-dropdown-trigger="{{ dropdown_id }}"
+    aria-haspopup="true"
+    aria-expanded="false"
+    aria-controls="{{ dropdown_id }}-menu"
+  >
+    {{ trigger }}
+  </div>
+
+  {# 菜单 #}
+  <div
+    id="{{ dropdown_id }}-menu"
+    class="xedc-dropdown__menu xedc-dropdown__menu--{{ align }}"
+    data-xedc-dropdown-menu="{{ dropdown_id }}"
+    role="menu"
+    aria-hidden="true"
+  >
+    {{ items }}
+  </div>
+</div>
