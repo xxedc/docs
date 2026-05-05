@@ -1,0 +1,43 @@
+/* ================================================================
+   search-suggest.css — 搜索联想下拉
+   ================================================================ */
+
+.xedc-search-suggest {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--popover);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  z-index: var(--z-dropdown);
+  overflow: hidden;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.xedc-search-suggest:empty { display: none; }
+
+.xedc-search-suggest__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--foreground);
+  text-decoration: none;
+  transition: background var(--transition-fast);
+}
+
+.xedc-search-suggest__item:hover {
+  background: var(--muted);
+}
+
+.xedc-search-suggest__icon { flex-shrink: 0; font-size: 16px; }
+
+.xedc-search-suggest__text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
