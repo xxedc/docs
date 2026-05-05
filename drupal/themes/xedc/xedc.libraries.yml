@@ -11,6 +11,8 @@ global-styles:
       css/components/theme-toggle.css: { weight: -100 }
       css/components/paragraphs.css: { weight: -90 }
       css/components/gallery.css: { weight: -85 }
+      css/components/search-suggest.css: { weight: -80 }
+      css/components/hot-rank.css: { weight: -75 }
 
 global-scripts:
   version: VERSION
