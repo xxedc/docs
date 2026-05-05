@@ -24,8 +24,8 @@
                 <span class="xedc-text-xs xedc-text-muted">粉丝</span>
               </div>
               <div class="xedc-profile__stat">
-                <span class="xedc-profile__stat-num">0</span>
-                <span class="xedc-text-xs xedc-text-muted">获赞</span>
+                <span class="xedc-profile__stat-num">{{ collected_items|length }}</span>
+                <span class="xedc-text-xs xedc-text-muted">收藏</span>
               </div>
             </div>
           </div>
@@ -33,9 +33,9 @@
             {% if is_own_profile %}
               <a href="/user/{{ viewed_user_id }}/edit"
                  class="xedc-btn xedc-btn--outline xedc-btn--sm">编辑资料</a>
-            {% elseif is_logged_in %}
-              <button class="xedc-btn xedc-btn--default xedc-btn--sm xedc-follow-btn"
-                      data-uid="{{ viewed_user_id }}">关注</button>
+              <a href="/publish" class="xedc-btn xedc-btn--default xedc-btn--sm">发布内容</a>
+            {% elseif logged_in %}
+              {{ drupal_flag('follow', user) }}
               <a href="/messages" class="xedc-btn xedc-btn--outline xedc-btn--sm">私信</a>
             {% endif %}
           </div>
@@ -43,35 +43,76 @@
       </div>
     </div>
 
+    {# Tab 导航 #}
     <div class="xedc-profile__tabs xedc-flex" style="margin-top:var(--space-4);">
       <button class="xedc-profile-tab is-active" data-tab="posts">TA的内容</button>
+      <button class="xedc-profile-tab" data-tab="collects">
+        收藏 {% if collected_items %}({{ collected_items|length }}){% endif %}
+      </button>
       {% if is_own_profile %}
-        <button class="xedc-profile-tab" data-tab="collects">收藏</button>
-        <button class="xedc-profile-tab" data-tab="history">历史</button>
+        <button class="xedc-profile-tab" data-tab="history">
+          历史 {% if history_items %}({{ history_items|length }}){% endif %}
+        </button>
       {% endif %}
     </div>
 
     <div class="xedc-profile__content" style="margin-top:var(--space-4);">
+
+      {# TA的内容 #}
       <div class="xedc-tab-panel is-active" id="tab-posts">
         <div class="xedc-empty-state" style="padding:var(--space-8) 0;">
           <p class="xedc-text-sm xedc-text-muted">暂无投稿内容</p>
         </div>
       </div>
-      {% if is_own_profile %}
-        <div class="xedc-tab-panel" id="tab-collects" style="display:none;">
+
+      {# 收藏 #}
+      <div class="xedc-tab-panel" id="tab-collects" style="display:none;">
+        {% if collected_items %}
+          <div class="xedc-related-list">
+            {% for item in collected_items %}
+              <a href="{{ item.url }}" class="xedc-related-item">
+                <span class="xedc-related-item__icon">
+                  {% if item.bundle == 'video' %}🎬
+                  {% elseif item.bundle == 'image_post' %}🖼️
+                  {% else %}📝{% endif %}
+                </span>
+                <span class="xedc-related-item__title">{{ item.title }}</span>
+              </a>
+            {% endfor %}
+          </div>
+        {% else %}
           <div class="xedc-empty-state" style="padding:var(--space-8) 0;">
             <div class="xedc-empty-state__icon">🔖</div>
-            <p class="xedc-text-sm xedc-text-muted">暂无收藏</p>
+            <p class="xedc-text-sm xedc-text-muted">暂无收藏内容</p>
           </div>
-        </div>
+        {% endif %}
+      </div>
+
+      {# 历史记录 #}
+      {% if is_own_profile %}
         <div class="xedc-tab-panel" id="tab-history" style="display:none;">
-          <div class="xedc-empty-state" style="padding:var(--space-8) 0;">
-            <div class="xedc-empty-state__icon">🕐</div>
-            <p class="xedc-text-sm xedc-text-muted">浏览历史阶段5完善</p>
-          </div>
+          {% if history_items %}
+            <div class="xedc-related-list">
+              {% for item in history_items %}
+                <a href="{{ item.url }}" class="xedc-related-item">
+                  <span class="xedc-related-item__icon">
+                    {% if item.bundle == 'video' %}🎬
+                    {% elseif item.bundle == 'image_post' %}🖼️
+                    {% else %}📝{% endif %}
+                  </span>
+                  <span class="xedc-related-item__title">{{ item.title }}</span>
+                </a>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="xedc-empty-state" style="padding:var(--space-8) 0;">
+              <div class="xedc-empty-state__icon">🕐</div>
+              <p class="xedc-text-sm xedc-text-muted">暂无浏览历史</p>
+            </div>
+          {% endif %}
         </div>
       {% endif %}
-    </div>
 
+    </div>
   </div>
 </div>

@@ -108,6 +108,41 @@ function xedc_preprocess_user(array &$variables): void {
 
   // 附加个人中心 CSS/JS
   $variables['#attached']['library'][] = 'xedc/page-profile';
+
+  // 查询收藏列表
+  $uid_val = (int) $viewed_user->id();
+  try {
+    $db = \Drupal::database();
+    $cnids = $db->select('flagging', 'f')
+      ->fields('f', ['entity_id'])
+      ->condition('flag_id', 'collect')
+      ->condition('uid', $uid_val)
+      ->orderBy('created', 'DESC')
+      ->range(0, 12)
+      ->execute()->fetchCol();
+    $variables['collected_items'] = [];
+    if (!empty($cnids)) {
+      foreach (\Drupal::entityTypeManager()->getStorage('node')->loadMultiple($cnids) as $n) {
+        $variables['collected_items'][] = ['title' => $n->getTitle(), 'url' => $n->toUrl()->toString(), 'bundle' => $n->bundle()];
+      }
+    }
+  } catch (\Exception $e) { $variables['collected_items'] = []; }
+
+  // 查询历史记录
+  try {
+    $hnids = $db->select('xedc_history', 'h')
+      ->fields('h', ['nid'])
+      ->condition('uid', $uid_val)
+      ->orderBy('timestamp', 'DESC')
+      ->range(0, 12)
+      ->execute()->fetchCol();
+    $variables['history_items'] = [];
+    if (!empty($hnids)) {
+      foreach (\Drupal::entityTypeManager()->getStorage('node')->loadMultiple($hnids) as $n) {
+        $variables['history_items'][] = ['title' => $n->getTitle(), 'url' => $n->toUrl()->toString(), 'bundle' => $n->bundle()];
+      }
+    }
+  } catch (\Exception $e) { $variables['history_items'] = []; }
 }
 
 /**
