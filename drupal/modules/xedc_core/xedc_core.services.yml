@@ -1,0 +1,17 @@
+services:
+  # Twig 扩展服务
+  xedc_core.twig_extension:
+    class: Drupal\xedc_core\TwigExtension\XedcExtension
+    arguments: ['@current_user', '@date.formatter']
+    tags:
+      - { name: twig.extension }
+
+  # 历史记录服务
+  xedc_core.history:
+    class: Drupal\xedc_core\Service\HistoryService
+    arguments: ['@database', '@current_user']
+
+  # 通知服务
+  xedc_core.notification:
+    class: Drupal\xedc_core\Service\NotificationService
+    arguments: ['@database', '@current_user']
