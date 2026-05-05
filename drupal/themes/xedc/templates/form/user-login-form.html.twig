@@ -1,0 +1,21 @@
+{#
+  user-login-form.html.twig — 登录表单
+#}
+<div class="xedc-auth-form">
+  {{ form.name }}
+  {{ form.pass }}
+
+  {% if form.remember_me is defined %}
+    <div class="xedc-auth-form__remember">
+      {{ form.remember_me }}
+    </div>
+  {% endif %}
+
+  <div class="xedc-auth-form__actions">
+    {{ form.actions }}
+  </div>
+
+  {{ form.form_id }}
+  {{ form.form_build_id }}
+  {{ form.form_token }}
+</div>
