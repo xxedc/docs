@@ -144,30 +144,3 @@ function xedc_page_attachments_alter(array &$attachments): void {
   ];
 }
 
-/**
- * hook_theme() — 注册自定义 Twig 模板
- */
-function xedc_core_theme(): array {
-  return [
-    'xedc_hot_rank' => [
-      'variables' => ['items' => []],
-      'template'  => 'xedc-hot-rank',
-    ],
-    'xedc_category_nav' => [
-      'variables' => ['items' => []],
-      'template'  => 'xedc-category-nav',
-    ],
-    'xedc_article_actions' => [
-      'variables' => ['node' => NULL, 'nid' => 0, 'like_count' => 0, 'is_logged_in' => FALSE],
-      'template'  => 'xedc-article-actions',
-    ],
-    'xedc_related_content' => [
-      'variables' => ['items' => []],
-      'template'  => 'xedc-related-content',
-    ],
-    'xedc_recommend_users' => [
-      'variables' => ['items' => []],
-      'template'  => 'xedc-recommend-users',
-    ],
-  ];
-}
