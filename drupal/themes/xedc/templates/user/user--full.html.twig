@@ -35,7 +35,7 @@
                  class="xedc-btn xedc-btn--outline xedc-btn--sm">编辑资料</a>
               <a href="/publish" class="xedc-btn xedc-btn--default xedc-btn--sm">发布内容</a>
             {% elseif logged_in %}
-              {{ drupal_flag('follow', user) }}
+              <button class="xedc-btn xedc-btn--default xedc-btn--sm xedc-follow-btn" data-uid="{{ viewed_user_id }}">关注</button>
               <a href="/messages" class="xedc-btn xedc-btn--outline xedc-btn--sm">私信</a>
             {% endif %}
           </div>
