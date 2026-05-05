@@ -68,13 +68,26 @@
         </a>
       {% endif %}
 
-      {% if is_logged_in %}
+      {% if logged_in %}
         <button class="xedc-btn xedc-btn--outline xedc-btn--md xedc-collect-btn" data-nid="{{ nid }}">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
           </svg>
           收藏
         </button>
+      {% endif %}
+
+      {# Flag 点赞/收藏 #}
+      {% if logged_in %}
+        <div class="xedc-flag-btn">
+          {{ content.flag_like is defined ? content.flag_like : '' }}
+        </div>
+        <div class="xedc-flag-btn">
+          {{ content.flag_collect is defined ? content.flag_collect : '' }}
+        </div>
+      {% else %}
+        <a href="/user/login" class="xedc-btn xedc-btn--outline xedc-btn--md">❤️ 点赞</a>
+        <a href="/user/login" class="xedc-btn xedc-btn--outline xedc-btn--md">🔖 收藏</a>
       {% endif %}
 
       <button class="xedc-btn xedc-btn--outline xedc-btn--md"

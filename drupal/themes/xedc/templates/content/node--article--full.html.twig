@@ -84,9 +84,9 @@
 
         {# 文末互动 #}
         <div class="xedc-article-detail__bottom-actions xedc-flex xedc-items-center xedc-gap-3">
-          {% if is_logged_in %}
-            <div class="xedc-flag-btn">{{ drupal_flag('like', node) }}</div>
-            <div class="xedc-flag-btn">{{ drupal_flag('collect', node) }}</div>
+          {% if logged_in %}
+            <div class="xedc-flag-btn">{{ content.flag_like is defined ? content.flag_like : '' }}</div>
+            <div class="xedc-flag-btn">{{ content.flag_collect is defined ? content.flag_collect : '' }}</div>
           {% else %}
             <a href="/user/login" class="xedc-action-btn">❤️ 点赞</a>
             <a href="/user/login" class="xedc-action-btn">🔖 收藏</a>
@@ -128,7 +128,7 @@
         {# 评论区 #}
         <div class="xedc-comments" id="xedc-comments" style="margin-top: var(--space-8);">
           <h3 class="xedc-comments__title">评论</h3>
-          {% if is_logged_in %}
+          {% if logged_in %}
             <div class="xedc-comment-form">
               <textarea class="xedc-input" style="height:100px;resize:vertical;width:100%;"
                 placeholder="写下你的想法... 支持 Markdown"></textarea>

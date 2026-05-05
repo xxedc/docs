@@ -42,14 +42,14 @@
           {# 互动操作栏 — Flag 模块 #}
           <div class="xedc-video-detail__actions xedc-flex xedc-items-center xedc-gap-3"
                style="margin: var(--space-4) 0;">
-            {% if is_logged_in %}
+            {% if logged_in %}
               {# 点赞 Flag 链接 #}
               <div class="xedc-flag-btn">
-                {{ drupal_flag('like', node) }}
+                {{ content.flag_like is defined ? content.flag_like : '' }}
               </div>
               {# 收藏 Flag 链接 #}
               <div class="xedc-flag-btn">
-                {{ drupal_flag('collect', node) }}
+                {{ content.flag_collect is defined ? content.flag_collect : '' }}
               </div>
             {% else %}
               <a href="/user/login" class="xedc-action-btn">❤️ 点赞</a>
@@ -81,7 +81,7 @@
         {# 评论区 #}
         <div class="xedc-comments" style="margin-top:var(--space-8);">
           <h3 class="xedc-comments__title">评论</h3>
-          {% if is_logged_in %}
+          {% if logged_in %}
             <div class="xedc-comment-form">
               <textarea class="xedc-input" style="height:80px;resize:vertical;width:100%;"
                         placeholder="写下你的评论..."></textarea>
