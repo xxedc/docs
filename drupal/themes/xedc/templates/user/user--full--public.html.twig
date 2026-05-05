@@ -1,0 +1,6 @@
+{#
+  user--full--public.html.twig — 他人主页（公开）
+  与 user--full.html.twig 共享同一模板逻辑，通过 is_own_profile 区分
+#}
+{% include 'xedc:user-profile' ignore missing %}
+{{ content }}
