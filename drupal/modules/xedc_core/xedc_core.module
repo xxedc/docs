@@ -1,0 +1,151 @@
+<?php
+
+/**
+ * @file
+ * xedc_core.module — XEDC 核心功能模块
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\node\NodeInterface;
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * 实现 hook_node_view() — 记录浏览历史 + 附加互动库
+ */
+function xedc_core_node_view(array &$build, EntityInterface $entity, $display, $view_mode): void {
+  if (!$entity instanceof NodeInterface) {
+    return;
+  }
+
+  // 只在完整详情页记录
+  if ($view_mode !== 'full') {
+    return;
+  }
+
+  $nid = $entity->id();
+  $current_user = \Drupal::currentUser();
+
+  // 记录浏览历史（已登录用户）
+  if ($current_user->isAuthenticated()) {
+    /** @var \Drupal\xedc_core\Service\HistoryService $history */
+    $history = \Drupal::service('xedc_core.history');
+    $history->record($nid, $entity->bundle());
+  }
+
+  // 附加互动 JS 库
+  $build['#attached']['library'][] = 'xedc_core/interactions';
+
+  // 传递 nid 和 CSRF token 给 JS
+  $token = \Drupal::csrfToken()->get('xedc-api');
+  $build['#attached']['drupalSettings']['xedc']['nid'] = $nid;
+  $build['#attached']['drupalSettings']['xedc']['csrfToken'] = $token;
+  $build['#attached']['drupalSettings']['xedc']['isLoggedIn'] = $current_user->isAuthenticated();
+  $build['#attached']['drupalSettings']['xedc']['uid'] = $current_user->id();
+}
+
+/**
+ * 实现 hook_page_attachments() — 全局注入设置
+ */
+function xedc_core_page_attachments(array &$attachments): void {
+  $current_user = \Drupal::currentUser();
+  $token = \Drupal::csrfToken()->get('xedc-api');
+
+  $attachments['#attached']['drupalSettings']['xedc']['csrfToken'] = $token;
+  $attachments['#attached']['drupalSettings']['xedc']['isLoggedIn'] = $current_user->isAuthenticated();
+  $attachments['#attached']['drupalSettings']['xedc']['uid'] = (int) $current_user->id();
+  $attachments['#attached']['drupalSettings']['xedc']['apiBase'] = '/api';
+}
+
+/**
+ * 实现 hook_schema() — 创建自定义数据表
+ */
+function xedc_core_schema(): array {
+  $schema = [];
+
+  // 浏览历史表
+  $schema['xedc_history'] = [
+    'description' => '用户浏览历史记录',
+    'fields' => [
+      'id'         => ['type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE],
+      'uid'        => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+      'nid'        => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+      'bundle'     => ['type' => 'varchar', 'length' => 32, 'not null' => TRUE, 'default' => ''],
+      'timestamp'  => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+    ],
+    'primary key' => ['id'],
+    'indexes' => [
+      'uid_timestamp' => ['uid', 'timestamp'],
+      'nid'           => ['nid'],
+    ],
+  ];
+
+  // 点赞表
+  $schema['xedc_likes'] = [
+    'description' => '内容点赞记录',
+    'fields' => [
+      'id'        => ['type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE],
+      'uid'       => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+      'nid'       => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+      'timestamp' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+    ],
+    'primary key' => ['id'],
+    'unique keys' => ['uid_nid' => ['uid', 'nid']],
+    'indexes'     => ['nid' => ['nid']],
+  ];
+
+  // 收藏表
+  $schema['xedc_collects'] = [
+    'description' => '内容收藏记录',
+    'fields' => [
+      'id'        => ['type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE],
+      'uid'       => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+      'nid'       => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+      'timestamp' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+    ],
+    'primary key' => ['id'],
+    'unique keys' => ['uid_nid' => ['uid', 'nid']],
+    'indexes'     => ['nid' => ['nid']],
+  ];
+
+  // 关注表
+  $schema['xedc_follows'] = [
+    'description' => '用户关注关系',
+    'fields' => [
+      'id'          => ['type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE],
+      'follower_id' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+      'followee_id' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+      'timestamp'   => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+    ],
+    'primary key' => ['id'],
+    'unique keys' => ['follower_followee' => ['follower_id', 'followee_id']],
+  ];
+
+  // 通知表
+  $schema['xedc_notifications'] = [
+    'description' => '用户通知消息',
+    'fields' => [
+      'id'          => ['type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE],
+      'uid'         => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+      'type'        => ['type' => 'varchar', 'length' => 32, 'not null' => TRUE],
+      'message'     => ['type' => 'text', 'not null' => TRUE],
+      'entity_id'   => ['type' => 'int', 'unsigned' => TRUE, 'not null' => FALSE, 'default' => NULL],
+      'actor_id'    => ['type' => 'int', 'unsigned' => TRUE, 'not null' => FALSE, 'default' => NULL],
+      'is_read'     => ['type' => 'int', 'size' => 'tiny', 'not null' => TRUE, 'default' => 0],
+      'timestamp'   => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+    ],
+    'primary key' => ['id'],
+    'indexes' => [
+      'uid_read'  => ['uid', 'is_read'],
+      'timestamp' => ['timestamp'],
+    ],
+  ];
+
+  return $schema;
+}
+
+/**
+ * 实现 hook_install() — 初始化
+ */
+function xedc_core_install(): void {
+  \Drupal::messenger()->addStatus('XEDC Core 模块安装成功！');
+}
