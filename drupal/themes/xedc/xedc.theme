@@ -163,3 +163,18 @@ function xedc_page_attachments_alter(array &$attachments): void {
     'json-ld-webpage',
   ];
 }
+
+/**
+ * 预处理 user 实体模板，注入当前用户信息
+ */
+function xedc_preprocess_user(array &$variables): void {
+  $current_user = \Drupal::currentUser();
+  $viewed_user  = $variables['user'];
+
+  $variables['is_own_profile']   = ($current_user->id() == $viewed_user->id());
+  $variables['current_user_id']  = $current_user->id();
+  $variables['is_logged_in']     = $current_user->isAuthenticated();
+  $variables['viewed_user_name'] = $viewed_user->getDisplayName();
+  $variables['viewed_user_id']   = $viewed_user->id();
+  $variables['viewed_user_url']  = $viewed_user->toUrl()->toString();
+}

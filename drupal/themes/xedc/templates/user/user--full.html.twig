@@ -1,62 +1,39 @@
 {#
-  user--full.html.twig — 个人中心页（自己的主页）
+  user--full.html.twig — 个人中心 / 用户主页
 #}
-{% set is_own_profile = (current_user.id() == user.id()) %}
-
 <div class="xedc-profile">
   <div class="xedc-container">
 
-    {# 个人资料卡 #}
     <div class="xedc-profile__card xedc-card">
       <div class="xedc-card__body">
         <div class="xedc-profile__header xedc-flex xedc-items-center xedc-gap-4">
 
-          {# 头像 #}
           <div class="xedc-avatar xedc-avatar--xl">
-            {% if content.field_avatar|render|trim is not empty %}
-              {{ content.field_avatar }}
-            {% else %}
-              <span class="xedc-avatar__fallback">
-                {{ user.getDisplayName()|slice(0,1)|upper }}
-              </span>
-            {% endif %}
+            <span class="xedc-avatar__fallback">
+              {{ viewed_user_name|slice(0,1)|upper }}
+            </span>
           </div>
 
-          {# 用户信息 #}
           <div class="xedc-profile__info" style="flex:1;">
-            <h1 class="xedc-profile__name">{{ user.getDisplayName() }}</h1>
-
+            <h1 class="xedc-profile__name">{{ viewed_user_name }}</h1>
             {% if content.field_bio|render|trim is not empty %}
               <p class="xedc-profile__bio xedc-text-sm xedc-text-muted">{{ content.field_bio }}</p>
             {% endif %}
-
-            {# 统计数字 #}
             <div class="xedc-profile__stats xedc-flex xedc-gap-6" style="margin-top:var(--space-3);">
               <div class="xedc-profile__stat">
-                <span class="xedc-profile__stat-num">0</span>
-                <span class="xedc-text-xs xedc-text-muted">关注</span>
-              </div>
-              <div class="xedc-profile__stat">
-                <span class="xedc-profile__stat-num">0</span>
-                <span class="xedc-text-xs xedc-text-muted">粉丝</span>
-              </div>
-              <div class="xedc-profile__stat">
-                <span class="xedc-profile__stat-num">0</span>
+                <span class="xedc-profile__stat-num">{{ content.field_view_count|render|striptags|trim ?: '0' }}</span>
                 <span class="xedc-text-xs xedc-text-muted">获赞</span>
               </div>
             </div>
           </div>
 
-          {# 操作按钮 #}
           <div class="xedc-profile__actions xedc-flex xedc-gap-2">
             {% if is_own_profile %}
-              <a href="/user/{{ user.id() }}/edit"
+              <a href="/user/{{ viewed_user_id }}/edit"
                  class="xedc-btn xedc-btn--outline xedc-btn--sm">编辑资料</a>
-            {% else %}
+            {% elseif is_logged_in %}
               <button class="xedc-btn xedc-btn--default xedc-btn--sm xedc-follow-btn"
-                      data-uid="{{ user.id() }}">关注</button>
-              <a href="/messages?uid={{ user.id() }}"
-                 class="xedc-btn xedc-btn--outline xedc-btn--sm">私信</a>
+                      data-uid="{{ viewed_user_id }}">关注</button>
             {% endif %}
           </div>
 
@@ -64,50 +41,32 @@
       </div>
     </div>
 
-    {# 内容 Tab #}
     <div class="xedc-profile__tabs xedc-flex" style="margin-top:var(--space-4);">
-      <button class="xedc-profile-tab is-active" data-tab="posts">投稿</button>
-      <button class="xedc-profile-tab" data-tab="collects">收藏</button>
-      <button class="xedc-profile-tab" data-tab="likes">喜欢</button>
+      <button class="xedc-profile-tab is-active" data-tab="posts">TA的内容</button>
       {% if is_own_profile %}
+        <button class="xedc-profile-tab" data-tab="collects">收藏</button>
         <button class="xedc-profile-tab" data-tab="history">历史</button>
       {% endif %}
     </div>
 
-    {# Tab 内容区 #}
     <div class="xedc-profile__content" style="margin-top:var(--space-4);">
-
-      {# 投稿列表 #}
       <div class="xedc-tab-panel is-active" id="tab-posts">
-        {{ drupal_view('user_content', 'block_posts', user.id()) }}
+        {{ content }}
       </div>
-
-      {# 收藏 #}
-      <div class="xedc-tab-panel" id="tab-collects" style="display:none;">
-        <div class="xedc-empty-state">
-          <div class="xedc-empty-state__icon">🔖</div>
-          <p class="xedc-text-sm xedc-text-muted">暂无收藏内容（阶段5完善）</p>
-        </div>
-      </div>
-
-      {# 喜欢 #}
-      <div class="xedc-tab-panel" id="tab-likes" style="display:none;">
-        <div class="xedc-empty-state">
-          <div class="xedc-empty-state__icon">❤️</div>
-          <p class="xedc-text-sm xedc-text-muted">暂无点赞内容（阶段5完善）</p>
-        </div>
-      </div>
-
-      {# 历史 #}
       {% if is_own_profile %}
+        <div class="xedc-tab-panel" id="tab-collects" style="display:none;">
+          <div class="xedc-empty-state" style="padding:var(--space-12) 0;">
+            <div class="xedc-empty-state__icon">🔖</div>
+            <p class="xedc-text-sm xedc-text-muted">暂无收藏内容</p>
+          </div>
+        </div>
         <div class="xedc-tab-panel" id="tab-history" style="display:none;">
-          <div class="xedc-empty-state">
+          <div class="xedc-empty-state" style="padding:var(--space-12) 0;">
             <div class="xedc-empty-state__icon">🕐</div>
-            <p class="xedc-text-sm xedc-text-muted">浏览历史（阶段5完善）</p>
+            <p class="xedc-text-sm xedc-text-muted">浏览历史阶段5完善</p>
           </div>
         </div>
       {% endif %}
-
     </div>
 
   </div>
