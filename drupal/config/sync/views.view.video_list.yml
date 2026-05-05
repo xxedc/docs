@@ -164,6 +164,7 @@ display:
       relationships: {  }
       header: {  }
       footer: {  }
+      display_extenders: {  }
     cache_metadata:
       max-age: -1
       contexts:
@@ -180,7 +181,7 @@ display:
     position: 1
     display_options:
       display_extenders: {  }
-      path: video
+      path: videos
     cache_metadata:
       max-age: -1
       contexts:
