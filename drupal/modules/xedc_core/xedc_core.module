@@ -149,3 +149,7 @@ function xedc_core_schema(): array {
 function xedc_core_install(): void {
   \Drupal::messenger()->addStatus('XEDC Core 模块安装成功！');
 }
+// 在文件末尾加上
+module_load_include('inc', 'xedc_core', 'xedc_core.theme');
+
+
