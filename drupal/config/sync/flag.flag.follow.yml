@@ -21,10 +21,10 @@ flag_type: 'entity:user'
 link_type: ajax_link
 flagTypeConfig:
   show_in_links: {  }
-  show_as_field: true
+  show_as_field: false
   show_on_form: false
   show_contextual_link: false
   extra_permissions:
     owner: '0'
-  show_on_profile: true
+  show_on_profile: false
 linkTypeConfig: {  }
