@@ -1,0 +1,9 @@
+name: 'XEDC Core'
+type: module
+description: 'XEDC 核心功能模块：浏览量、点赞、收藏、通知、历史记录、Block插件、Twig扩展'
+package: XEDC
+core_version_requirement: ^10 || ^11
+dependencies:
+  - drupal:node
+  - drupal:user
+  - drupal:views
