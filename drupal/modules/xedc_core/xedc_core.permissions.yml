@@ -1,0 +1,19 @@
+'use xedc like':
+  title: '点赞内容'
+  description: '允许用户对内容点赞/取消点赞'
+
+'use xedc collect':
+  title: '收藏内容'
+  description: '允许用户收藏内容'
+
+'use xedc follow':
+  title: '关注用户'
+  description: '允许用户关注其他用户'
+
+'view xedc notifications':
+  title: '查看通知'
+  description: '允许用户查看自己的通知消息'
+
+'administer xedc':
+  title: '管理 XEDC 设置'
+  restrict access: true
