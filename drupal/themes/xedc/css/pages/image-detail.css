@@ -7,18 +7,19 @@
 /* ── 图片查看器 ── */
 .xedc-image-viewer {
   position: relative;
-  background: oklch(0.05 0 0);
-  border-radius: var(--radius);
+  background: oklch(0.06 0 0);
+  border-radius: 12px;
   overflow: hidden;
   min-height: 400px;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 8px 32px oklch(0 0 0 / 0.2);
 }
 
 .xedc-image-viewer__stage {
   max-width: 100%;
-  max-height: 70vh;
+  max-height: 72vh;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -27,7 +28,7 @@
 
 .xedc-image-viewer__stage img {
   max-width: 100%;
-  max-height: 70vh;
+  max-height: 72vh;
   object-fit: contain;
   transform-origin: center;
 }
@@ -45,17 +46,21 @@
   width: 36px;
   height: 36px;
   border-radius: var(--radius);
-  background: rgba(0, 0, 0, 0.6);
+  background: oklch(1 0 0 / 0.12);
+  backdrop-filter: blur(8px);
   color: #fff;
-  border: none;
+  border: 1px solid oklch(1 0 0 / 0.2);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background var(--transition-fast);
+  transition: background var(--transition-fast), transform var(--transition-fast);
 }
 
-.xedc-viewer-btn:hover { background: rgba(0, 0, 0, 0.85); }
+.xedc-viewer-btn:hover {
+  background: oklch(1 0 0 / 0.25);
+  transform: scale(1.05);
+}
 
 /* ── 缩略图导航 ── */
 .xedc-image-thumbs {
@@ -70,12 +75,16 @@
   width: 72px;
   height: 72px;
   object-fit: cover;
-  border-radius: calc(var(--radius) * 0.5);
+  border-radius: 8px;
   border: 2px solid transparent;
   cursor: pointer;
-  transition: border-color var(--transition-fast), opacity var(--transition-fast);
+  transition: border-color var(--transition-fast),
+              opacity var(--transition-fast),
+              transform var(--transition-fast);
   flex-shrink: 0;
 }
+
+.xedc-image-thumbs img:hover { transform: scale(1.05); }
 
 .xedc-image-thumbs img:hover,
 .xedc-image-thumbs img.is-active {
@@ -84,8 +93,77 @@
 
 /* ── 操作栏 ── */
 .xedc-image-detail__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
   padding: var(--space-4) 0;
   border-bottom: 1px solid var(--border);
+}
+
+/* ── 操作按钮（pill 形态）── */
+.xedc-image-detail__actions .xedc-btn,
+.xedc-image-detail__actions .xedc-action-btn,
+.xedc-image-detail__actions .xedc-flag-btn a,
+.xedc-image-detail__actions .xedc-flag-btn .flag-wrapper a {
+  border-radius: 999px;
+  padding: var(--space-2) var(--space-5);
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  text-decoration: none;
+  transition: background var(--transition-fast),
+              color var(--transition-fast),
+              border-color var(--transition-fast),
+              transform var(--transition-fast);
+}
+
+.xedc-image-detail__actions .xedc-flag-btn,
+.xedc-image-detail__actions .xedc-flag-btn .flag-wrapper {
+  display: inline-flex;
+}
+
+.xedc-image-detail__actions .xedc-flag-btn a,
+.xedc-image-detail__actions .xedc-flag-btn .flag-wrapper a {
+  background: var(--secondary);
+  border: 1.5px solid var(--border);
+  color: var(--foreground);
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+
+.xedc-image-detail__actions .xedc-flag-btn a:hover,
+.xedc-image-detail__actions .xedc-flag-btn .flag-wrapper a:hover {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+/* ── 图片信息区 ── */
+.xedc-image-detail__info {
+  margin-top: var(--space-6);
+  border-radius: 12px;
+}
+
+.xedc-image-detail__title {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  margin-bottom: var(--space-3);
+  line-height: var(--leading-snug);
+}
+
+.xedc-image-detail__desc {
+  color: var(--muted-foreground);
+  line-height: var(--leading-relaxed);
+}
+
+.xedc-image-detail__meta {
+  padding: var(--space-3) 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
 }
 
 /* ── 全屏模式 ── */
@@ -102,6 +180,7 @@
   width: 100%;
   max-height: 90vh;
   min-height: auto;
+  border-radius: 0;
 }
 
 /* ── midnight 模式 ── */
