@@ -1,0 +1,111 @@
+{#
+  page--messages.html.twig — 消息通知页
+#}
+<header class="xedc-navbar" role="banner">
+  <div class="xedc-container xedc-flex xedc-flex-between" style="height:56px;">
+    <a href="{{ url('<front>') }}" class="xedc-navbar__logo">
+      <span class="xedc-navbar__logo-text">{{ site_name }}</span>
+    </a>
+    <div class="xedc-flex xedc-items-center xedc-gap-2">
+      {% include 'xedc:theme-toggle' %}
+      <a href="/user/{{ current_user.id() }}" class="xedc-navbar__icon-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main class="xedc-messages-page xedc-container" id="main-content">
+
+  <h1 class="xedc-messages-page__title" style="margin-bottom:var(--space-4);">消息中心</h1>
+
+  {# 消息分类 Tab #}
+  <div class="xedc-messages-tabs xedc-flex">
+    <button class="xedc-messages-tab is-active" data-tab="interact">
+      互动消息
+      <span class="xedc-badge xedc-badge--destructive xedc-unread-count"
+            id="xedc-interact-count" style="display:none;">0</span>
+    </button>
+    <button class="xedc-messages-tab" data-tab="system">系统通知</button>
+    <button class="xedc-messages-tab" data-tab="private">私信</button>
+  </div>
+
+  {# 互动消息列表 #}
+  <div class="xedc-tab-panel is-active" id="tab-interact">
+    <div class="xedc-notification-list" id="xedc-notification-list">
+      <div class="xedc-loading-more"><div class="xedc-spinner"></div></div>
+    </div>
+    <div class="xedc-messages-actions xedc-flex xedc-gap-2" style="margin-top:var(--space-4);">
+      <button class="xedc-btn xedc-btn--outline xedc-btn--sm"
+              onclick="markAllRead()">全部标为已读</button>
+    </div>
+  </div>
+
+  {# 系统通知 #}
+  <div class="xedc-tab-panel" id="tab-system" style="display:none;">
+    <div class="xedc-empty-state" style="padding:var(--space-12) 0;">
+      <div class="xedc-empty-state__icon">🔔</div>
+      <p class="xedc-text-sm xedc-text-muted">暂无系统通知</p>
+    </div>
+  </div>
+
+  {# 私信 #}
+  <div class="xedc-tab-panel" id="tab-private" style="display:none;">
+    <div class="xedc-empty-state" style="padding:var(--space-12) 0;">
+      <div class="xedc-empty-state__icon">💬</div>
+      <p class="xedc-text-sm xedc-text-muted">私信功能阶段5完善</p>
+    </div>
+  </div>
+
+</main>
+
+<footer class="xedc-footer">
+  <div class="xedc-container">
+    <div class="xedc-footer__bottom">
+      <p class="xedc-text-xs xedc-text-muted">© {{ "now"|date("Y") }} {{ site_name }}. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function() {
+  // Tab 切换
+  document.querySelectorAll('.xedc-messages-tab').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.xedc-messages-tab').forEach(function(b) { b.classList.remove('is-active'); });
+      document.querySelectorAll('.xedc-tab-panel').forEach(function(p) { p.style.display = 'none'; });
+      this.classList.add('is-active');
+      document.getElementById('tab-' + this.dataset.tab).style.display = 'block';
+    });
+  });
+
+  // 加载通知列表
+  function loadNotifications() {
+    fetch('/api/unread-count', { credentials: 'same-origin' })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        var countEl = document.getElementById('xedc-interact-count');
+        if (data.count > 0 && countEl) {
+          countEl.textContent = data.count;
+          countEl.style.display = 'inline-flex';
+        }
+      })
+      .catch(function() {});
+
+    var list = document.getElementById('xedc-notification-list');
+    if (list) {
+      list.innerHTML = '<div class="xedc-empty-state" style="padding:var(--space-12) 0;"><div class="xedc-empty-state__icon">🔔</div><p class="xedc-text-sm xedc-text-muted">暂无新消息</p></div>';
+    }
+  }
+
+  function markAllRead() {
+    fetch('/api/unread-count', { credentials: 'same-origin' })
+      .then(function() { loadNotifications(); });
+  }
+  window.markAllRead = markAllRead;
+
+  loadNotifications();
+})();
+</script>
