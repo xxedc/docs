@@ -1,0 +1,15 @@
+{#
+  user-pass.html.twig — 找回密码表单
+#}
+<div class="xedc-auth-form">
+  <p class="xedc-text-sm xedc-text-muted" style="margin-bottom:var(--space-4);">
+    输入您的邮箱或用户名，我们将发送密码重置链接。
+  </p>
+  {{ form.name }}
+  <div class="xedc-auth-form__actions">
+    {{ form.actions }}
+  </div>
+  {{ form.form_id }}
+  {{ form.form_build_id }}
+  {{ form.form_token }}
+</div>
