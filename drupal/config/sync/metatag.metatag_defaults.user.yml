@@ -1,0 +1,12 @@
+uuid: 4e65af07-924a-4d39-be06-3a96754c44ef
+langcode: zh-hans
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: MvQPTbQx0Vxwy0ordSHyixdZmLCMpvMdLD69dlwkrKc
+id: user
+label: 用户
+tags:
+  canonical_url: '[user:url]'
+  description: '[site:name]'
+  title: '[user:display-name] | [site:name]'

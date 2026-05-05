@@ -1,0 +1,15 @@
+uuid: e5022da5-6582-4e2d-a841-5baf4124167a
+langcode: zh-hans
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: sL588ui1E_8-2c_UupwyYxcqX2OVyMFp3HTLbbFqvPc
+id: global
+label: 全局
+tags:
+  canonical_url: '[current-page:url]'
+  description: '[node:summary]'
+  og_description: '[node:summary]'
+  og_image: '[node:field_cover_image:entity:file:url]'
+  og_title: '[node:title]'
+  title: '[current-page:title] | [site:name]'

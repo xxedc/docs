@@ -32,6 +32,9 @@ module:
   locale: 0
   menu_link_content: 0
   menu_ui: 0
+  metatag: 0
+  metatag_open_graph: 0
+  metatag_twitter_cards: 0
   mysql: 0
   navigation: 0
   node: 0
@@ -41,6 +44,7 @@ module:
   path_alias: 0
   search: 0
   shortcut: 0
+  simple_sitemap: 0
   system: 0
   taxonomy: 0
   text: 0
