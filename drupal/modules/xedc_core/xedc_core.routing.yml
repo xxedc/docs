@@ -1,0 +1,74 @@
+# 浏览量 +1
+xedc_core.view_count:
+  path: '/api/view/{nid}'
+  defaults:
+    _controller: '\Drupal\xedc_core\Controller\ViewCountController::increment'
+    _title: '浏览量'
+  requirements:
+    _access: 'TRUE'
+    nid: '\d+'
+  methods: [POST]
+
+# 点赞切换
+xedc_core.like:
+  path: '/api/like/{nid}'
+  defaults:
+    _controller: '\Drupal\xedc_core\Controller\LikeController::toggle'
+    _title: '点赞'
+  requirements:
+    _permission: 'access content'
+    nid: '\d+'
+  methods: [POST]
+
+# 收藏切换
+xedc_core.collect:
+  path: '/api/collect/{nid}'
+  defaults:
+    _controller: '\Drupal\xedc_core\Controller\CollectController::toggle'
+    _title: '收藏'
+  requirements:
+    _permission: 'access content'
+    nid: '\d+'
+  methods: [POST]
+
+# 关注切换
+xedc_core.follow:
+  path: '/api/follow/{uid}'
+  defaults:
+    _controller: '\Drupal\xedc_core\Controller\FollowController::toggle'
+    _title: '关注'
+  requirements:
+    _permission: 'access content'
+    uid: '\d+'
+  methods: [POST]
+
+# 搜索联想
+xedc_core.search_suggest:
+  path: '/api/search-suggest'
+  defaults:
+    _controller: '\Drupal\xedc_core\Controller\SearchController::suggest'
+    _title: '搜索联想'
+  requirements:
+    _access: 'TRUE'
+  methods: [GET]
+
+# 未读消息计数
+xedc_core.unread_count:
+  path: '/api/unread-count'
+  defaults:
+    _controller: '\Drupal\xedc_core\Controller\NotificationController::unreadCount'
+    _title: '未读消息'
+  requirements:
+    _permission: 'access content'
+  methods: [GET]
+
+# 猜你喜欢
+xedc_core.recommend:
+  path: '/api/recommend/{nid}'
+  defaults:
+    _controller: '\Drupal\xedc_core\Controller\RecommendController::suggest'
+    _title: '猜你喜欢'
+  requirements:
+    _access: 'TRUE'
+    nid: '\d+'
+  methods: [GET]
