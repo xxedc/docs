@@ -8,6 +8,7 @@ dependencies:
     - comment
     - file
     - filter
+    - flag
     - search
     - shortcut
     - system
@@ -22,7 +23,13 @@ permissions:
   - 'access content'
   - 'access shortcuts'
   - 'delete own files'
+  - 'flag collect'
+  - 'flag follow'
+  - 'flag like'
   - 'post comments'
   - 'search content'
   - 'skip comment approval'
+  - 'unflag collect'
+  - 'unflag follow'
+  - 'unflag like'
   - 'use text format basic_html'
