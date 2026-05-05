@@ -1,0 +1,56 @@
+{#
+  page--system--404.html.twig — 页面未找到
+#}
+<header class="xedc-navbar" role="banner">
+  <div class="xedc-container xedc-flex xedc-flex-between" style="height:56px;">
+    <a href="{{ url('<front>') }}" class="xedc-navbar__logo">
+      <span class="xedc-navbar__logo-text">{{ site_name }}</span>
+    </a>
+    {% include 'xedc:theme-toggle' %}
+  </div>
+</header>
+
+<main class="xedc-error-page" id="main-content" role="main">
+  <div class="xedc-error-card">
+
+    {# 插画 SVG #}
+    <div class="xedc-error-card__illustration" aria-hidden="true">
+      <svg width="200" height="160" viewBox="0 0 200 160" fill="none">
+        <circle cx="100" cy="80" r="60" fill="var(--muted)" opacity="0.5"/>
+        <text x="100" y="95" text-anchor="middle" font-size="48" font-weight="700"
+              fill="var(--muted-foreground)">404</text>
+        <circle cx="60" cy="55" r="8" fill="var(--primary)" opacity="0.6"/>
+        <circle cx="145" cy="45" r="5" fill="var(--primary)" opacity="0.4"/>
+        <circle cx="155" cy="110" r="6" fill="var(--primary)" opacity="0.3"/>
+        <path d="M30 130 Q100 100 170 130" stroke="var(--border)" stroke-width="2" fill="none"/>
+      </svg>
+    </div>
+
+    <h1 class="xedc-error-card__code">404</h1>
+    <h2 class="xedc-error-card__title">页面未找到</h2>
+    <p class="xedc-error-card__desc xedc-text-muted">
+      您访问的页面不存在或已被移除，请检查链接是否正确。
+    </p>
+
+    {# 搜索引导 #}
+    <div class="xedc-error-card__search">
+      <form action="/search" method="get" role="search">
+        <input type="search" name="q" placeholder="搜索其他内容..."
+               class="xedc-input" aria-label="搜索" />
+        <button type="submit" class="xedc-btn xedc-btn--default xedc-btn--md">
+          搜索
+        </button>
+      </form>
+    </div>
+
+    <div class="xedc-error-card__actions xedc-flex xedc-gap-3">
+      <a href="{{ url('<front>') }}" class="xedc-btn xedc-btn--default xedc-btn--md">
+        返回首页
+      </a>
+      <button onclick="history.back()" class="xedc-btn xedc-btn--outline xedc-btn--md">
+        返回上页
+      </button>
+    </div>
+
+  </div>
+</main>
