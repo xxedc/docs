@@ -7,26 +7,28 @@
     <div class="xedc-profile__card xedc-card">
       <div class="xedc-card__body">
         <div class="xedc-profile__header xedc-flex xedc-items-center xedc-gap-4">
-
           <div class="xedc-avatar xedc-avatar--xl">
             <span class="xedc-avatar__fallback">
               {{ viewed_user_name|slice(0,1)|upper }}
             </span>
           </div>
-
           <div class="xedc-profile__info" style="flex:1;">
             <h1 class="xedc-profile__name">{{ viewed_user_name }}</h1>
-            {% if content.field_bio|render|trim is not empty %}
-              <p class="xedc-profile__bio xedc-text-sm xedc-text-muted">{{ content.field_bio }}</p>
-            {% endif %}
             <div class="xedc-profile__stats xedc-flex xedc-gap-6" style="margin-top:var(--space-3);">
               <div class="xedc-profile__stat">
-                <span class="xedc-profile__stat-num">{{ content.field_view_count|render|striptags|trim ?: '0' }}</span>
+                <span class="xedc-profile__stat-num">0</span>
+                <span class="xedc-text-xs xedc-text-muted">关注</span>
+              </div>
+              <div class="xedc-profile__stat">
+                <span class="xedc-profile__stat-num">0</span>
+                <span class="xedc-text-xs xedc-text-muted">粉丝</span>
+              </div>
+              <div class="xedc-profile__stat">
+                <span class="xedc-profile__stat-num">0</span>
                 <span class="xedc-text-xs xedc-text-muted">获赞</span>
               </div>
             </div>
           </div>
-
           <div class="xedc-profile__actions xedc-flex xedc-gap-2">
             {% if is_own_profile %}
               <a href="/user/{{ viewed_user_id }}/edit"
@@ -34,9 +36,9 @@
             {% elseif is_logged_in %}
               <button class="xedc-btn xedc-btn--default xedc-btn--sm xedc-follow-btn"
                       data-uid="{{ viewed_user_id }}">关注</button>
+              <a href="/messages" class="xedc-btn xedc-btn--outline xedc-btn--sm">私信</a>
             {% endif %}
           </div>
-
         </div>
       </div>
     </div>
@@ -51,17 +53,19 @@
 
     <div class="xedc-profile__content" style="margin-top:var(--space-4);">
       <div class="xedc-tab-panel is-active" id="tab-posts">
-        {{ content }}
+        <div class="xedc-empty-state" style="padding:var(--space-8) 0;">
+          <p class="xedc-text-sm xedc-text-muted">暂无投稿内容</p>
+        </div>
       </div>
       {% if is_own_profile %}
         <div class="xedc-tab-panel" id="tab-collects" style="display:none;">
-          <div class="xedc-empty-state" style="padding:var(--space-12) 0;">
+          <div class="xedc-empty-state" style="padding:var(--space-8) 0;">
             <div class="xedc-empty-state__icon">🔖</div>
-            <p class="xedc-text-sm xedc-text-muted">暂无收藏内容</p>
+            <p class="xedc-text-sm xedc-text-muted">暂无收藏</p>
           </div>
         </div>
         <div class="xedc-tab-panel" id="tab-history" style="display:none;">
-          <div class="xedc-empty-state" style="padding:var(--space-12) 0;">
+          <div class="xedc-empty-state" style="padding:var(--space-8) 0;">
             <div class="xedc-empty-state__icon">🕐</div>
             <p class="xedc-text-sm xedc-text-muted">浏览历史阶段5完善</p>
           </div>
