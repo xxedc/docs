@@ -1,4 +1,4 @@
-# ── 全局基础样式（每页必加载）──
+# XEDC 资源库
 global-styles:
   version: VERSION
   css:
@@ -12,7 +12,6 @@ global-styles:
       css/components/paragraphs.css: { weight: -90 }
       css/components/gallery.css: { weight: -85 }
 
-# ── 全局脚本 ──
 global-scripts:
   version: VERSION
   js:
@@ -20,21 +19,12 @@ global-scripts:
   dependencies:
     - core/drupal
 
-# ── 主题初始化（防闪烁，必须在 head 同步执行）──
 theme-init:
   version: VERSION
   header: true
   js:
     js/theme-init.js: { attributes: {} }
 
-# ── 字体 ──
-fonts:
-  version: VERSION
-  css:
-    base:
-      css/base/fonts.css: { weight: -210 }
-
-# ── 首页 ──
 page-front:
   version: VERSION
   css:
@@ -45,7 +35,6 @@ page-front:
   dependencies:
     - core/drupal
 
-# ── 视频列表页 ──
 page-video-list:
   version: VERSION
   css:
@@ -57,7 +46,6 @@ page-video-list:
   dependencies:
     - core/drupal
 
-# ── 视频详情页 ──
 page-video-detail:
   version: VERSION
   css:
@@ -68,7 +56,6 @@ page-video-detail:
   dependencies:
     - core/drupal
 
-# ── 图片列表页 ──
 page-image-list:
   version: VERSION
   css:
@@ -80,7 +67,6 @@ page-image-list:
   dependencies:
     - core/drupal
 
-# ── 图片详情页 ──
 page-image-detail:
   version: VERSION
   css:
@@ -91,7 +77,6 @@ page-image-detail:
   dependencies:
     - core/drupal
 
-# ── 文章列表页 ──
 page-article-list:
   version: VERSION
   css:
@@ -102,7 +87,6 @@ page-article-list:
   dependencies:
     - core/drupal
 
-# ── 文章详情页 ──
 page-article-detail:
   version: VERSION
   css:
@@ -114,34 +98,19 @@ page-article-detail:
   dependencies:
     - core/drupal
 
-# ── 图片画廊轮播 ──
 gallery:
   version: VERSION
-  css:
-    component:
-      css/components/gallery.css: {}
   js:
     js/gallery-carousel.js: { attributes: { defer: true } }
   dependencies:
     - core/drupal
 
-# ── 代码高亮 Prism.js ──
-prism:
-  version: 1.29.0
-  css:
-    component:
-      vendor/prism/prism.min.css: {}
-  js:
-    vendor/prism/prism.min.js: { attributes: { defer: true } }
-
-# ── 登录/注册页 ──
 page-auth:
   version: VERSION
   css:
     theme:
       css/pages/auth.css: {}
 
-# ── 错误页 ──
 page-error:
   version: VERSION
   css:
