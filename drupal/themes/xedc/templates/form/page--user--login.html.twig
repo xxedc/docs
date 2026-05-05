@@ -1,0 +1,59 @@
+{#
+  page--user--login.html.twig — 登录页专用布局
+#}
+
+{# 顶部导航简化版 #}
+<header class="xedc-navbar" role="banner">
+  <div class="xedc-container xedc-flex xedc-flex-between" style="height:56px;">
+    <a href="{{ url('<front>') }}" class="xedc-navbar__logo" aria-label="{{ site_name }}">
+      <span class="xedc-navbar__logo-text">{{ site_name }}</span>
+    </a>
+    {% include 'xedc:theme-toggle' %}
+  </div>
+</header>
+
+{# 登录卡片居中 #}
+<main class="xedc-auth-page" id="main-content" role="main">
+  <div class="xedc-auth-card xedc-card">
+    <div class="xedc-card__body">
+
+      {# Tab 切换：登录 / 注册 #}
+      <div class="xedc-auth-tabs xedc-flex" role="tablist">
+        <a href="/user/login"
+           class="xedc-auth-tab{% if current_path == '/user/login' %} is-active{% endif %}"
+           role="tab">
+          登录
+        </a>
+        <a href="/user/register"
+           class="xedc-auth-tab{% if current_path == '/user/register' %} is-active{% endif %}"
+           role="tab">
+          注册
+        </a>
+      </div>
+
+      {# 系统消息 #}
+      {% if page.highlighted %}
+        <div class="xedc-auth-messages" role="alert">{{ page.highlighted }}</div>
+      {% endif %}
+
+      {# 表单内容 #}
+      <div class="xedc-auth-form-wrap">
+        {{ page.content }}
+      </div>
+
+      {# 底部链接 #}
+      <div class="xedc-auth-card__footer xedc-flex xedc-flex-between">
+        <a href="/user/password" class="xedc-text-sm xedc-text-muted">忘记密码？</a>
+        <a href="{{ url('<front>') }}" class="xedc-text-sm xedc-text-muted">返回首页</a>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+{# 简化 Footer #}
+<footer class="xedc-auth-footer">
+  <p class="xedc-text-xs xedc-text-muted">
+    © {{ "now"|date("Y") }} {{ site_name }}
+  </p>
+</footer>
