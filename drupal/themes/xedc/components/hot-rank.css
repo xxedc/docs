@@ -1,0 +1,81 @@
+/* ================================================================
+   hot-rank.css — 热门榜单
+   ================================================================ */
+
+.xedc-hot-rank__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.xedc-hot-rank__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.xedc-hot-rank__item:last-child { border-bottom: none; }
+
+.xedc-hot-rank__num {
+  font-size: var(--text-sm);
+  font-weight: 700;
+  width: 20px;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.xedc-hot-rank__num--top { color: var(--primary); }
+.xedc-hot-rank__num--normal { color: var(--muted-foreground); }
+
+.xedc-hot-rank__title {
+  flex: 1;
+  font-size: var(--text-sm);
+  color: var(--foreground);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color var(--transition-fast);
+}
+
+.xedc-hot-rank__title:hover { color: var(--primary); }
+
+.xedc-hot-rank__count {
+  flex-shrink: 0;
+  font-size: var(--text-xs);
+  color: var(--muted-foreground);
+}
+
+/* ── 相关推荐列表 ── */
+.xedc-related-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.xedc-related-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--border);
+  text-decoration: none;
+  transition: background var(--transition-fast);
+  border-radius: var(--radius);
+}
+
+.xedc-related-item:last-child { border-bottom: none; }
+.xedc-related-item:hover { background: var(--muted); padding-inline: var(--space-2); }
+
+.xedc-related-item__icon { font-size: 14px; flex-shrink: 0; margin-top: 2px; }
+
+.xedc-related-item__title {
+  flex: 1;
+  font-size: var(--text-sm);
+  color: var(--foreground);
+  line-height: var(--leading-snug);
+}
