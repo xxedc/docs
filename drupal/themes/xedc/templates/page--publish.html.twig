@@ -1,0 +1,63 @@
+{#
+  page--publish.html.twig — 内容发布页入口
+  实际发布使用 Drupal 原生 /node/add 表单
+#}
+<header class="xedc-navbar" role="banner">
+  <div class="xedc-container xedc-flex xedc-flex-between" style="height:56px;">
+    <a href="{{ url('<front>') }}" class="xedc-navbar__logo">
+      <span class="xedc-navbar__logo-text">{{ site_name }}</span>
+    </a>
+    <h2 style="font-size:var(--text-base);font-weight:600;">发布内容</h2>
+    <a href="{{ url('<front>') }}" class="xedc-navbar__icon-btn" aria-label="关闭">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </a>
+  </div>
+</header>
+
+<main class="xedc-publish-page xedc-container" id="main-content">
+
+  {% if is_logged_in %}
+    <div class="xedc-publish-types">
+      <h2 class="xedc-publish-types__title">选择发布类型</h2>
+      <div class="xedc-publish-types__grid">
+
+        <a href="/node/add/article" class="xedc-publish-type-card xedc-card">
+          <div class="xedc-card__body" style="text-align:center;padding:var(--space-8);">
+            <div style="font-size:48px;margin-bottom:var(--space-3);">📝</div>
+            <h3 style="font-size:var(--text-xl);font-weight:600;margin-bottom:var(--space-2);">文章</h3>
+            <p class="xedc-text-sm xedc-text-muted">支持富文本、代码块、图片画廊等 Paragraph 模块</p>
+          </div>
+        </a>
+
+        <a href="/node/add/video" class="xedc-publish-type-card xedc-card">
+          <div class="xedc-card__body" style="text-align:center;padding:var(--space-8);">
+            <div style="font-size:48px;margin-bottom:var(--space-3);">🎬</div>
+            <h3 style="font-size:var(--text-xl);font-weight:600;margin-bottom:var(--space-2);">视频</h3>
+            <p class="xedc-text-sm xedc-text-muted">上传本地视频或填写外链（YouTube/B站）</p>
+          </div>
+        </a>
+
+        <a href="/node/add/image_post" class="xedc-publish-type-card xedc-card">
+          <div class="xedc-card__body" style="text-align:center;padding:var(--space-8);">
+            <div style="font-size:48px;margin-bottom:var(--space-3);">🖼️</div>
+            <h3 style="font-size:var(--text-xl);font-weight:600;margin-bottom:var(--space-2);">图集</h3>
+            <p class="xedc-text-sm xedc-text-muted">批量上传图片，支持瀑布流展示</p>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  {% else %}
+    <div class="xedc-empty-state" style="min-height:60vh;">
+      <div class="xedc-empty-state__icon">🔒</div>
+      <h3 class="xedc-empty-state__title">请先登录</h3>
+      <p class="xedc-text-sm xedc-text-muted">登录后才能发布内容</p>
+      <a href="/user/login?destination=/publish"
+         class="xedc-btn xedc-btn--default xedc-btn--md"
+         style="margin-top:var(--space-4);">立即登录</a>
+    </div>
+  {% endif %}
+
+</main>
