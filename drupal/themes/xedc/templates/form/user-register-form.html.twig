@@ -1,0 +1,18 @@
+{#
+  user-register-form.html.twig — 注册表单
+#}
+<div class="xedc-auth-form">
+  {{ form.account }}
+
+  {% if form.field_avatar is defined %}
+    <div class="xedc-auth-form__avatar">{{ form.field_avatar }}</div>
+  {% endif %}
+
+  <div class="xedc-auth-form__actions">
+    {{ form.actions }}
+  </div>
+
+  {{ form.form_id }}
+  {{ form.form_build_id }}
+  {{ form.form_token }}
+</div>
