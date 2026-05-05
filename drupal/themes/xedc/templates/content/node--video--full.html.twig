@@ -34,33 +34,49 @@
           <div class="xedc-video-detail__meta xedc-flex xedc-items-center xedc-gap-4">
             <span class="xedc-text-sm xedc-text-muted">👁 {{ view_count|default(0) }} 次播放</span>
             <span class="xedc-text-sm xedc-text-muted">{{ node.getCreatedTime()|date('Y年m月d日') }}</span>
-            {% if node.field_quality.value %}
-              <span class="xedc-badge xedc-badge--secondary">{{ node.field_quality.value|upper }}</span>
+            {% if content.field_quality|render|trim is not empty %}
+              <span class="xedc-badge xedc-badge--secondary">{{ content.field_quality }}</span>
             {% endif %}
           </div>
 
           {# 互动操作栏 — Flag 模块 #}
-          <div class="xedc-video-detail__actions xedc-flex xedc-items-center xedc-gap-3"
-               style="margin: var(--space-4) 0;">
+          <div class="xedc-video-detail__actions">
             {% if logged_in %}
-              {# 点赞 Flag 链接 #}
               <div class="xedc-flag-btn">
                 {{ content.flag_like is defined ? content.flag_like : '' }}
               </div>
-              {# 收藏 Flag 链接 #}
               <div class="xedc-flag-btn">
                 {{ content.flag_collect is defined ? content.flag_collect : '' }}
               </div>
             {% else %}
-              <a href="/user/login" class="xedc-action-btn">❤️ 点赞</a>
-              <a href="/user/login" class="xedc-action-btn">🔖 收藏</a>
+              <a href="/user/login" class="xedc-action-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                </svg>
+                点赞
+              </a>
+              <a href="/user/login" class="xedc-action-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+                </svg>
+                收藏
+              </a>
             {% endif %}
 
             <button class="xedc-action-btn"
-              onclick="navigator.clipboard.writeText(window.location.href);alert('链接已复制')">
+              onclick="navigator.clipboard.writeText(window.location.href).then(()=>alert('链接已复制'))">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+              </svg>
               分享
             </button>
-            <button class="xedc-action-btn" onclick="alert('敬请期待')">投币</button>
+            <button class="xedc-action-btn" onclick="alert('敬请期待')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+              </svg>
+              投币
+            </button>
           </div>
 
           {# 简介 #}

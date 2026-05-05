@@ -2,7 +2,6 @@
    video-list.css — 视频列表页样式
    ================================================================ */
 
-/* ── 页面包裹 ── */
 .xedc-video-list { padding: var(--space-6) 0; }
 
 /* ── 工具栏 ── */
@@ -10,6 +9,7 @@
   margin-bottom: var(--space-4);
   padding-bottom: var(--space-3);
   border-bottom: 1px solid var(--border);
+  align-items: center;
 }
 
 /* ── 视图模式切换按钮 ── */
@@ -40,7 +40,7 @@
 .xedc-video-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-4);
+  gap: var(--space-5);
 }
 
 @media (max-width: 1280px) {
@@ -54,9 +54,7 @@
 }
 
 /* 列表模式 */
-.xedc-video-grid[data-mode="list"] {
-  grid-template-columns: 1fr;
-}
+.xedc-video-grid[data-mode="list"] { grid-template-columns: 1fr; }
 
 .xedc-video-grid[data-mode="list"] .xedc-video-card {
   flex-direction: row;
@@ -65,31 +63,39 @@
 .xedc-video-grid[data-mode="list"] .xedc-video-card__cover {
   width: 240px;
   flex-shrink: 0;
-  aspect-ratio: 16/9;
+  aspect-ratio: 16 / 9;
 }
 
-/* ── 视频卡片 ── */
+/* ── 视频卡片（无边框阴影风格）── */
 .xedc-video-card {
   background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: 10px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+  box-shadow:
+    0 1px 3px oklch(0 0 0 / 0.06),
+    0 3px 8px oklch(0 0 0 / 0.07);
+  transition:
+    transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.25s ease;
   cursor: pointer;
 }
 
 .xedc-video-card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-md);
+  transform: translateY(-5px);
+  box-shadow:
+    0 10px 24px oklch(0 0 0 / 0.12),
+    0 2px 6px oklch(0 0 0 / 0.06);
 }
 
+/* ── 封面 ── */
 .xedc-video-card__cover {
   position: relative;
   aspect-ratio: 16 / 9;
   overflow: hidden;
   background: var(--muted);
+  flex-shrink: 0;
 }
 
 .xedc-video-card__cover img {
@@ -100,7 +106,7 @@
 }
 
 .xedc-video-card:hover .xedc-video-card__cover img {
-  transform: scale(1.05);
+  transform: scale(1.06);
 }
 
 .xedc-video-card__cover-link {
@@ -119,24 +125,32 @@
   background: var(--muted);
 }
 
+/* ── 时长标签 ── */
 .xedc-video-card__duration {
   position: absolute;
   bottom: var(--space-2);
   right: var(--space-2);
-  background: rgba(0, 0, 0, 0.75);
+  background: oklch(0 0 0 / 0.78);
   color: #fff;
-  font-size: var(--text-xs);
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-weight: 500;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 5px;
+  letter-spacing: 0.02em;
 }
 
+/* ── 画质角标 ── */
 .xedc-video-card__quality {
   position: absolute;
   top: var(--space-2);
   left: var(--space-2);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 4px;
 }
 
+/* ── 播放按钮悬浮层 ── */
 .xedc-video-card__play-overlay {
   position: absolute;
   inset: 0;
@@ -144,16 +158,24 @@
   align-items: center;
   justify-content: center;
   opacity: 0;
-  transition: opacity var(--transition-fast);
-  background: rgba(0, 0, 0, 0.15);
+  transition: opacity 0.2s ease;
+  background: oklch(0 0 0 / 0.22);
 }
 
-.xedc-video-card:hover .xedc-video-card__play-overlay {
-  opacity: 1;
+.xedc-video-card:hover .xedc-video-card__play-overlay { opacity: 1; }
+
+.xedc-video-card__play-overlay svg {
+  filter: drop-shadow(0 2px 8px oklch(0 0 0 / 0.4));
+  transition: transform 0.2s ease;
 }
 
+.xedc-video-card:hover .xedc-video-card__play-overlay svg {
+  transform: scale(1.1);
+}
+
+/* ── 信息区 ── */
 .xedc-video-card__info {
-  padding: var(--space-3);
+  padding: var(--space-3) var(--space-3) var(--space-3);
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
@@ -177,7 +199,13 @@
 
 .xedc-video-card__title a:hover { color: var(--primary); }
 
-.xedc-video-card__meta { margin-top: auto; }
+.xedc-video-card__meta {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
 
 .xedc-video-card__actions {
   display: flex;
@@ -189,6 +217,7 @@
 
 .xedc-video-card:hover .xedc-video-card__actions { opacity: 1; }
 
+/* ── 图标按钮 ── */
 .xedc-icon-btn {
   display: inline-flex;
   align-items: center;
@@ -208,6 +237,7 @@
   background: var(--primary);
   color: var(--primary-foreground);
   border-color: var(--primary);
+  transform: scale(1.1);
 }
 
 /* ── 空状态 ── */
@@ -219,8 +249,17 @@
   text-align: center;
 }
 
-.xedc-empty-state__icon { font-size: 64px; margin-bottom: var(--space-4); }
-.xedc-empty-state__title { font-size: var(--text-xl); margin-bottom: var(--space-2); }
+.xedc-empty-state__icon {
+  font-size: 56px;
+  margin-bottom: var(--space-4);
+  opacity: 0.5;
+}
+
+.xedc-empty-state__title {
+  font-size: var(--text-xl);
+  font-weight: 600;
+  margin-bottom: var(--space-2);
+}
 
 /* ── 回到顶部 ── */
 .xedc-back-to-top {
@@ -234,7 +273,9 @@
   color: var(--primary-foreground);
   border: none;
   cursor: pointer;
-  box-shadow: var(--shadow-lg);
+  box-shadow:
+    0 4px 14px oklch(from var(--primary) l c h / 0.4),
+    0 1px 4px oklch(0 0 0 / 0.1);
   opacity: 0;
   transform: translateY(10px);
   transition: opacity var(--transition-normal), transform var(--transition-normal);
