@@ -1,22 +1,23 @@
-uuid: 513e5aee-1c6c-4a7e-af17-52bcacffd268
+uuid: 8e66b85a-aa89-42ef-b25e-bffa8ed71e1b
 langcode: zh-hans
 status: true
 dependencies:
+  config:
+    - node.type.image_post
   module:
     - node
-id: shi_pin_url
-label: 视频url
+id: node_image_post
+label: 'image_post URL pattern'
 type: 'canonical_entities:node'
-pattern: '/[node:content-type]/[node:title]'
+pattern: '/images/[node:title]'
 selection_criteria:
-  e21d97cb-098d-4572-9a3d-3beac4eb5b85:
+  a72a9725-6a1e-4d8c-8f2a-e0d8d54ce206:
     id: 'entity_bundle:node'
     negate: false
-    uuid: e21d97cb-098d-4572-9a3d-3beac4eb5b85
     context_mapping:
       node: node
     bundles:
-      video: video
+      image_post: image_post
 selection_logic: and
-weight: -5
+weight: 0
 relationships: {  }

@@ -1,0 +1,15 @@
+uuid: 5bc6fc1c-f152-4bd0-8684-e149f3d2328d
+langcode: zh-hans
+status: true
+dependencies:
+  module:
+    - imageapi_optimize_webp
+name: webp
+label: webp
+processors:
+  ed8466b3-6fec-406a-9eaf-a308886e81b5:
+    id: imageapi_optimize_webp
+    data:
+      quality: '75'
+    weight: 1
+    uuid: ed8466b3-6fec-406a-9eaf-a308886e81b5
