@@ -1,0 +1,22 @@
+{#
+  xedc-hot-rank.html.twig — 热门榜单模板
+#}
+{% if items %}
+  <ol class="xedc-hot-rank__list">
+    {% for item in items %}
+      <li class="xedc-hot-rank__item">
+        <span class="xedc-hot-rank__num xedc-hot-rank__num--{{ loop.index <= 3 ? 'top' : 'normal' }}">
+          {{ loop.index }}
+        </span>
+        <a href="{{ item.url }}" class="xedc-hot-rank__title xedc-truncate">
+          {{ item.title }}
+        </a>
+        <span class="xedc-hot-rank__count xedc-text-xs xedc-text-muted">
+          {{ item.view_count }}
+        </span>
+      </li>
+    {% endfor %}
+  </ol>
+{% else %}
+  <p class="xedc-text-sm xedc-text-muted">暂无热门内容</p>
+{% endif %}

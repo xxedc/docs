@@ -1,0 +1,20 @@
+{#
+  xedc-related-content.html.twig — 相关推荐模板
+#}
+{% if items %}
+  <div class="xedc-related-list">
+    {% for item in items %}
+      <a href="{{ item.url }}" class="xedc-related-item">
+        <span class="xedc-related-item__icon">
+          {% if item.bundle == 'video' %}🎬
+          {% elseif item.bundle == 'image_post' %}🖼️
+          {% else %}📝{% endif %}
+        </span>
+        <span class="xedc-related-item__title xedc-line-clamp-2">{{ item.title }}</span>
+        <span class="xedc-text-xs xedc-text-muted" style="flex-shrink:0;">
+          👁 {{ item.view_count }}
+        </span>
+      </a>
+    {% endfor %}
+  </div>
+{% endif %}
