@@ -118,3 +118,40 @@ page-error:
       css/pages/error.css: {}
   js:
     js/network-detect.js: { attributes: { defer: true } }
+
+# ── 搜索联想 ──
+search-suggest:
+  version: VERSION
+  css:
+    component:
+      css/components/search-suggest.css: {}
+  js:
+    js/search-suggest.js: { attributes: { defer: true } }
+  dependencies:
+    - core/drupal
+
+# ── 热榜/相关推荐样式 ──
+hot-rank:
+  version: VERSION
+  css:
+    component:
+      css/components/hot-rank.css: {}
+
+# ── 个人中心/消息页 ──
+page-profile:
+  version: VERSION
+  css:
+    theme:
+      css/pages/profile.css: {}
+  js:
+    js/profile-tabs.js: { attributes: { defer: true } }
+  dependencies:
+    - core/drupal
+
+# ── 搜索页 ──
+page-search:
+  version: VERSION
+  css:
+    theme:
+      css/pages/search.css: {}
+
