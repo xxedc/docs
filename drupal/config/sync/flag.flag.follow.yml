@@ -1,0 +1,30 @@
+uuid: ebb62074-bf1d-4ddb-8c4e-b95837bb2c49
+langcode: zh-hans
+status: true
+dependencies:
+  module:
+    - user
+id: follow
+label: 关注
+bundles: {  }
+entity_type: user
+global: false
+flag_short: 关注
+flag_long: ''
+flag_message: 已关注
+unflag_short: 取消关注
+unflag_long: ''
+unflag_message: 已取消关注
+unflag_denied_text: ''
+weight: 0
+flag_type: 'entity:user'
+link_type: ajax_link
+flagTypeConfig:
+  show_in_links: {  }
+  show_as_field: true
+  show_on_form: false
+  show_contextual_link: false
+  extra_permissions:
+    owner: '0'
+  show_on_profile: true
+linkTypeConfig: {  }

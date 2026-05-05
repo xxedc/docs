@@ -1,0 +1,15 @@
+uuid: 86c9258e-1ee1-411d-8869-1b77d66c24ca
+langcode: zh-hans
+status: true
+dependencies:
+  config:
+    - flag.flag.collect
+  module:
+    - flag
+id: flag_action.collect_unflag
+label: 取消收藏
+type: node
+plugin: 'flag_action:collect_unflag'
+configuration:
+  flag_id: collect
+  flag_action: unflag

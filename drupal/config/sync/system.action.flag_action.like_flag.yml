@@ -1,0 +1,15 @@
+uuid: 0a669b5b-9061-4965-bd74-967fc00cdf4a
+langcode: zh-hans
+status: true
+dependencies:
+  config:
+    - flag.flag.like
+  module:
+    - flag
+id: flag_action.like_flag
+label: 点赞
+type: node
+plugin: 'flag_action:like_flag'
+configuration:
+  flag_id: like
+  flag_action: flag

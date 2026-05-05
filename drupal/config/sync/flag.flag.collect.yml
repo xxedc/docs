@@ -1,0 +1,32 @@
+uuid: 6fedfe8d-74c4-41f3-a311-e0e3a017ae12
+langcode: zh-hans
+status: true
+dependencies:
+  module:
+    - node
+id: collect
+label: 收藏
+bundles:
+  - article
+  - image_post
+  - video
+entity_type: node
+global: false
+flag_short: 收藏
+flag_long: ''
+flag_message: 已收藏
+unflag_short: 取消收藏
+unflag_long: ''
+unflag_message: 已取消收藏
+unflag_denied_text: ''
+weight: 0
+flag_type: 'entity:node'
+link_type: ajax_link
+flagTypeConfig:
+  show_in_links: {  }
+  show_as_field: true
+  show_on_form: false
+  show_contextual_link: false
+  extra_permissions:
+    owner: '0'
+linkTypeConfig: {  }

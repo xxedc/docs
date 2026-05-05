@@ -1,0 +1,32 @@
+uuid: 39f95fcb-aa3e-4f2a-a030-315efdc5ca03
+langcode: zh-hans
+status: true
+dependencies:
+  module:
+    - node
+id: like
+label: 点赞
+bundles:
+  - article
+  - image_post
+  - video
+entity_type: node
+global: false
+flag_short: 点赞
+flag_long: ''
+flag_message: 已点赞
+unflag_short: 取消点赞
+unflag_long: ''
+unflag_message: ''
+unflag_denied_text: ''
+weight: 0
+flag_type: 'entity:node'
+link_type: ajax_link
+flagTypeConfig:
+  show_in_links: {  }
+  show_as_field: true
+  show_on_form: false
+  show_contextual_link: false
+  extra_permissions:
+    owner: '0'
+linkTypeConfig: {  }

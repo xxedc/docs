@@ -1,0 +1,15 @@
+uuid: a4465860-80f9-452d-93d6-c4c16aa5b7c0
+langcode: zh-hans
+status: true
+dependencies:
+  config:
+    - flag.flag.like
+  module:
+    - flag
+id: flag_action.like_unflag
+label: 取消点赞
+type: node
+plugin: 'flag_action:like_unflag'
+configuration:
+  flag_id: like
+  flag_action: unflag

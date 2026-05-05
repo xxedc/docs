@@ -1,0 +1,13 @@
+uuid: cf564fcd-b810-445b-8e4d-2f3fb7ec543a
+langcode: zh-hans
+status: true
+dependencies:
+  module:
+    - flag
+_core:
+  default_config_hash: Z9dGFmjyQgZjDwdsI-Mmgd2tZkUsjYi7cOSUPqjXPtw
+id: flag_delete_flagging
+label: 删除标记
+type: flagging
+plugin: flag_delete_flagging
+configuration: {  }

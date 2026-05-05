@@ -14,3 +14,4 @@ fast_404:
 js:
   preprocess: true
   gzip: true
+twig_debug: '0'
