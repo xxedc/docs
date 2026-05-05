@@ -1,0 +1,59 @@
+{#
+  page--system--500.html.twig — 服务器错误
+#}
+<header class="xedc-navbar" role="banner">
+  <div class="xedc-container xedc-flex xedc-flex-between" style="height:56px;">
+    <a href="{{ url('<front>') }}" class="xedc-navbar__logo">
+      <span class="xedc-navbar__logo-text">{{ site_name }}</span>
+    </a>
+  </div>
+</header>
+
+<main class="xedc-error-page" id="main-content" role="main">
+  <div class="xedc-error-card">
+
+    <div class="xedc-error-card__illustration" aria-hidden="true">
+      <svg width="200" height="160" viewBox="0 0 200 160" fill="none">
+        <rect x="40" y="40" width="120" height="80" rx="8" fill="var(--muted)"/>
+        <rect x="40" y="40" width="120" height="20" rx="8" fill="var(--muted-foreground)" opacity="0.3"/>
+        <circle cx="55" cy="50" r="4" fill="var(--destructive)" opacity="0.8"/>
+        <circle cx="70" cy="50" r="4" fill="var(--warning)" opacity="0.8"/>
+        <circle cx="85" cy="50" r="4" fill="var(--success)" opacity="0.8"/>
+        <path d="M65 85 L80 70 L95 85 L110 75 L125 85"
+              stroke="var(--destructive)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <text x="100" y="115" text-anchor="middle" font-size="11"
+              fill="var(--muted-foreground)">500 Internal Error</text>
+      </svg>
+    </div>
+
+    <h1 class="xedc-error-card__code">500</h1>
+    <h2 class="xedc-error-card__title">服务器开小差了</h2>
+    <p class="xedc-error-card__desc xedc-text-muted">
+      服务器遇到了一点问题，我们已记录此错误，请稍后重试。
+    </p>
+
+    <div class="xedc-error-card__actions xedc-flex xedc-gap-3">
+      <button onclick="location.reload()"
+              class="xedc-btn xedc-btn--default xedc-btn--md">
+        刷新重试
+      </button>
+      <a href="{{ url('<front>') }}" class="xedc-btn xedc-btn--outline xedc-btn--md">
+        返回首页
+      </a>
+    </div>
+
+  </div>
+</main>
+
+<script id="xedc-network-detect">
+  window.addEventListener('online', function() {
+    document.getElementById('xedc-offline-tip')?.remove();
+  });
+  window.addEventListener('offline', function() {
+    var tip = document.createElement('div');
+    tip.id = 'xedc-offline-tip';
+    tip.className = 'xedc-offline-tip';
+    tip.textContent = '📡 网络已断开，请检查网络连接';
+    document.body.prepend(tip);
+  });
+</script>
