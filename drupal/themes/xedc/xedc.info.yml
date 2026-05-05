@@ -36,3 +36,8 @@ favicon:
 
 # 截图
 screenshot: screenshot.png
+
+libraries:
+  - xedc/global-styles
+  - xedc/global-scripts
+  - xedc/theme-init
