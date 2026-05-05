@@ -1,0 +1,179 @@
+/* ================================================================
+   auth.css — 登录/注册页 + 错误页样式
+   ================================================================ */
+
+/* ── 登录页整体布局 ── */
+.xedc-auth-page {
+  min-height: calc(100vh - 120px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6) var(--space-4);
+  background: var(--background);
+}
+
+/* ── 登录卡片 ── */
+.xedc-auth-card {
+  width: 100%;
+  max-width: 420px;
+  box-shadow: var(--shadow-lg);
+}
+
+.xedc-auth-card .xedc-card__body {
+  padding: var(--space-8);
+}
+
+/* ── Tab 切换 ── */
+.xedc-auth-tabs {
+  border-bottom: 1px solid var(--border);
+  margin-bottom: var(--space-6);
+  gap: 0;
+}
+
+.xedc-auth-tab {
+  flex: 1;
+  text-align: center;
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-base);
+  font-weight: 500;
+  color: var(--muted-foreground);
+  border-bottom: 2px solid transparent;
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.xedc-auth-tab:hover,
+.xedc-auth-tab.is-active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+/* ── 表单内容 ── */
+.xedc-auth-form { display: flex; flex-direction: column; gap: var(--space-4); }
+
+.xedc-auth-form .xedc-auth-form__actions .button,
+.xedc-auth-form .xedc-auth-form__actions input[type="submit"] {
+  width: 100%;
+  height: 44px;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border: none;
+  border-radius: var(--radius);
+  font-size: var(--text-base);
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity var(--transition-fast);
+}
+
+.xedc-auth-form .xedc-auth-form__actions .button:hover,
+.xedc-auth-form .xedc-auth-form__actions input[type="submit"]:hover {
+  opacity: 0.9;
+}
+
+/* Drupal 默认表单字段美化 */
+.xedc-auth-form .form-item { display: flex; flex-direction: column; gap: var(--space-1); }
+
+.xedc-auth-form label {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--foreground);
+}
+
+.xedc-auth-form input[type="text"],
+.xedc-auth-form input[type="email"],
+.xedc-auth-form input[type="password"] {
+  width: 100%;
+  height: 42px;
+  padding: var(--space-2) var(--space-3);
+  background: var(--background);
+  border: 1px solid var(--input);
+  border-radius: var(--radius);
+  font-size: var(--text-sm);
+  color: var(--foreground);
+  outline: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.xedc-auth-form input:focus {
+  border-color: var(--ring);
+  box-shadow: 0 0 0 2px oklch(from var(--ring) l c h / 0.2);
+}
+
+/* ── 底部链接 ── */
+.xedc-auth-card__footer {
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+/* ── Auth Footer ── */
+.xedc-auth-footer {
+  text-align: center;
+  padding: var(--space-4);
+  color: var(--muted-foreground);
+}
+
+/* ── 错误页 ── */
+.xedc-error-page {
+  min-height: calc(100vh - 120px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8) var(--space-4);
+}
+
+.xedc-error-card {
+  text-align: center;
+  max-width: 480px;
+  width: 100%;
+}
+
+.xedc-error-card__illustration {
+  margin-bottom: var(--space-6);
+  display: flex;
+  justify-content: center;
+}
+
+.xedc-error-card__code {
+  font-size: var(--text-4xl);
+  font-weight: 700;
+  color: var(--primary);
+  line-height: 1;
+  margin-bottom: var(--space-2);
+}
+
+.xedc-error-card__title {
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  margin-bottom: var(--space-3);
+}
+
+.xedc-error-card__desc {
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+  margin-bottom: var(--space-6);
+}
+
+.xedc-error-card__search {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-6);
+}
+
+.xedc-error-card__search .xedc-input { flex: 1; }
+
+.xedc-error-card__actions { justify-content: center; }
+
+/* ── 断网提示 ── */
+.xedc-offline-tip {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: var(--destructive);
+  color: var(--destructive-foreground);
+  text-align: center;
+  padding: var(--space-3);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  z-index: var(--z-toast);
+}
