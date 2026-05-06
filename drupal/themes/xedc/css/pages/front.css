@@ -151,14 +151,53 @@
 @media (max-width: 768px)  { .xedc-front-feed { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 480px)  { .xedc-front-feed { grid-template-columns: 1fr; } }
 
-/* 文章卡片在推荐流中占两列（视觉权重更高）*/
-.xedc-front-feed__item:has(.xedc-article-card) {
-  grid-column: span 2;
+/* 推荐流所有卡片单列，保持统一网格节奏 */
+.xedc-front-feed__item {
+  display: flex;
+  flex-direction: column;
 }
-@media (max-width: 768px) {
-  .xedc-front-feed__item:has(.xedc-article-card) {
-    grid-column: span 1;
-  }
+
+/* ── 推荐流内图片/视频封面统一比例 ── */
+.xedc-front-feed .xedc-image-card__img-wrap,
+.xedc-front-feed .xedc-video-card__cover {
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+.xedc-front-feed .xedc-image-card__img-wrap img,
+.xedc-front-feed .xedc-video-card__cover img,
+.xedc-front-feed .xedc-video-card__cover-placeholder {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ── 推荐流内文章卡片改为竖向排列（与图片/视频卡片统一）── */
+.xedc-front-feed .xedc-article-card {
+  flex-direction: column;
+  height: 100%;
+}
+.xedc-front-feed .xedc-article-card__cover {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  order: -1;
+  border-radius: 0;
+}
+.xedc-front-feed .xedc-article-card__cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.xedc-front-feed .xedc-article-card__body {
+  flex: 1;
+}
+/* 无封面文章卡片占位色块 */
+.xedc-front-feed .xedc-article-card:not(.xedc-article-card--with-cover)::before {
+  content: '';
+  display: block;
+  aspect-ratio: 4 / 3;
+  background: linear-gradient(135deg, oklch(from var(--primary) 0.93 0.04 h), oklch(from var(--primary) 0.9 0.03 calc(h + 30)));
+  order: -1;
 }
 
 /* ── 侧边栏组件 ── */

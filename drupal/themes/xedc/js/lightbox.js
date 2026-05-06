@@ -1,5 +1,5 @@
 /**
- * lightbox.js — 图片灯箱 + 缩放拖拽
+ * lightbox.js — 多图画廊切换 + 缩放拖拽
  */
 (function (Drupal) {
   'use strict';
@@ -8,19 +8,59 @@
   var isDragging = false;
   var dragStart = { x: 0, y: 0 };
   var translate = { x: 0, y: 0 };
-  var stage, currentImg;
+  var currentImg = null;
+  var currentIndex = 0;
 
+  // ── 切换到指定下标的图片 ──
+  function switchToIndex(idx) {
+    var mainImgs = document.querySelectorAll('#xedc-viewer-stage .xedc-viewer__main-img');
+    if (!mainImgs.length) return;
+
+    var total = mainImgs.length;
+    idx = ((idx % total) + total) % total; // 循环边界
+
+    mainImgs.forEach(function (img) {
+      var imgIdx = parseInt(img.getAttribute('data-index') || '0', 10);
+      if (imgIdx === idx) {
+        img.classList.add('is-active');
+        currentImg = img;
+      } else {
+        img.classList.remove('is-active');
+      }
+    });
+
+    // 更新缩略图激活状态
+    var thumbImgs = document.querySelectorAll('#xedc-image-thumbs img');
+    thumbImgs.forEach(function (t) {
+      var tIdx = parseInt(t.getAttribute('data-index') || '0', 10);
+      t.classList.toggle('is-active', tIdx === idx);
+      if (tIdx === idx) {
+        t.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      }
+    });
+
+    // 更新计数器
+    var counterCurrent = document.getElementById('xedc-viewer-current');
+    if (counterCurrent) counterCurrent.textContent = idx + 1;
+
+    currentIndex = idx;
+
+    // 重置缩放
+    scale = 1;
+    translate = { x: 0, y: 0 };
+    applyTransform();
+  }
+
+  // ── 主图缩放/拖拽初始化 ──
   function initViewer() {
-    stage = document.getElementById('xedc-viewer-stage');
+    var stage = document.getElementById('xedc-viewer-stage');
     if (!stage) return;
 
-    // 找到主图
-    currentImg = stage.querySelector('img');
+    // 初始化 currentImg 为第一张可见的主图
+    currentImg = stage.querySelector('.xedc-viewer__main-img.is-active')
+                 || stage.querySelector('.xedc-viewer__main-img')
+                 || stage.querySelector('img');
     if (!currentImg) return;
-
-    currentImg.style.cursor = 'grab';
-    currentImg.style.transition = 'transform 0.2s ease';
-    currentImg.style.userSelect = 'none';
 
     // ── 滚轮缩放 ──
     stage.addEventListener('wheel', function (e) {
@@ -31,11 +71,11 @@
     }, { passive: false });
 
     // ── 拖拽移动 ──
-    currentImg.addEventListener('mousedown', function (e) {
+    stage.addEventListener('mousedown', function (e) {
       if (scale <= 1) return;
       isDragging = true;
       dragStart = { x: e.clientX - translate.x, y: e.clientY - translate.y };
-      currentImg.style.cursor = 'grabbing';
+      stage.style.cursor = 'grabbing';
       e.preventDefault();
     });
 
@@ -47,12 +87,14 @@
     });
 
     document.addEventListener('mouseup', function () {
-      isDragging = false;
-      if (currentImg) currentImg.style.cursor = 'grab';
+      if (isDragging) {
+        isDragging = false;
+        stage.style.cursor = '';
+      }
     });
 
     // ── 控制按钮 ──
-    var zoomIn = document.getElementById('xedc-zoom-in');
+    var zoomIn  = document.getElementById('xedc-zoom-in');
     var zoomOut = document.getElementById('xedc-zoom-out');
     var zoomReset = document.getElementById('xedc-zoom-reset');
     var fullscreenBtn = document.getElementById('xedc-fullscreen');
@@ -61,18 +103,15 @@
       scale = Math.min(scale + 0.25, 4);
       applyTransform();
     });
-
     if (zoomOut) zoomOut.addEventListener('click', function () {
       scale = Math.max(scale - 0.25, 0.5);
       applyTransform();
     });
-
     if (zoomReset) zoomReset.addEventListener('click', function () {
       scale = 1;
       translate = { x: 0, y: 0 };
       applyTransform();
     });
-
     if (fullscreenBtn) fullscreenBtn.addEventListener('click', function () {
       var area = document.getElementById('xedc-lightbox-area');
       if (!area) return;
@@ -83,20 +122,38 @@
       }
     });
 
-    // ── 键盘左右切换（图集）──
+    // ── Prev / Next 箭头 ──
+    var prevBtn = document.getElementById('xedc-viewer-prev');
+    var nextBtn = document.getElementById('xedc-viewer-next');
+    if (prevBtn) prevBtn.addEventListener('click', function () { switchToIndex(currentIndex - 1); });
+    if (nextBtn) nextBtn.addEventListener('click', function () { switchToIndex(currentIndex + 1); });
+
+    // ── 键盘方向键 ──
     document.addEventListener('keydown', function (e) {
-      var thumbs = document.querySelectorAll('#xedc-image-thumbs img');
-      if (!thumbs.length) return;
-      var current = Array.from(thumbs).findIndex(function (t) {
-        return t.classList.contains('is-active');
-      });
-      if (e.key === 'ArrowRight' && current < thumbs.length - 1) {
-        thumbs[current + 1].click();
-      }
-      if (e.key === 'ArrowLeft' && current > 0) {
-        thumbs[current - 1].click();
-      }
+      var mainImgs = document.querySelectorAll('#xedc-viewer-stage .xedc-viewer__main-img');
+      if (!mainImgs.length) return;
+      if (e.key === 'ArrowRight') { switchToIndex(currentIndex + 1); }
+      if (e.key === 'ArrowLeft')  { switchToIndex(currentIndex - 1); }
     });
+  }
+
+  // ── 缩略图点击 ──
+  function initThumbs() {
+    var thumbs = document.querySelectorAll('#xedc-image-thumbs img');
+    if (!thumbs.length) return;
+
+    thumbs.forEach(function (thumb) {
+      thumb.addEventListener('click', function () {
+        var idx = parseInt(this.getAttribute('data-index') || '0', 10);
+        switchToIndex(idx);
+      });
+    });
+
+    // 初始化总数显示
+    var totalEl = document.getElementById('xedc-viewer-total');
+    if (totalEl && !totalEl.textContent) {
+      totalEl.textContent = thumbs.length;
+    }
   }
 
   function applyTransform() {
@@ -105,13 +162,12 @@
       'translate(' + translate.x + 'px, ' + translate.y + 'px) scale(' + scale + ')';
   }
 
-  // ── 批量选择 ──
+  // ── 批量多选 ──
   function initBatchSelect() {
-    var toggleBtn = document.getElementById('xedc-select-toggle');
+    var toggleBtn    = document.getElementById('xedc-select-toggle');
     var batchActions = document.querySelector('.xedc-batch-actions');
-    var checkboxes = document.querySelectorAll('.xedc-image-card__checkbox');
-    var countEl = document.getElementById('xedc-select-count');
-    var selectMode = false;
+    var countEl      = document.getElementById('xedc-select-count');
+    var selectMode   = false;
 
     if (!toggleBtn) return;
 
@@ -120,9 +176,9 @@
       toggleBtn.textContent = selectMode ? '取消多选' : '多选';
       toggleBtn.classList.toggle('xedc-btn--default', selectMode);
       if (batchActions) batchActions.style.display = selectMode ? 'flex' : 'none';
-      checkboxes.forEach(function (cb) {
+      document.querySelectorAll('.xedc-image-card__checkbox').forEach(function (cb) {
         cb.style.display = selectMode ? 'block' : 'none';
-        if (!selectMode) cb.querySelector('input').checked = false;
+        if (!selectMode) { var inp = cb.querySelector('input'); if (inp) inp.checked = false; }
       });
       updateCount();
     });
@@ -137,28 +193,28 @@
     }
   }
 
-  // ── 列数切换 ──
+  // ── 列数切换（瀑布流页）──
   function initColSwitch() {
     var masonry = document.getElementById('xedc-masonry');
-    var btns = document.querySelectorAll('.xedc-col-btn');
+    var btns    = document.querySelectorAll('.xedc-col-btn');
     if (!masonry || !btns.length) return;
 
     var saved = 3;
-    try { saved = parseInt(localStorage.getItem('xedc-masonry-cols') || '3'); } catch (e) {}
+    try { saved = parseInt(localStorage.getItem('xedc-masonry-cols') || '3', 10); } catch (e) {}
     setCol(saved);
 
     btns.forEach(function (btn) {
       btn.addEventListener('click', function () {
-        var cols = parseInt(this.getAttribute('data-cols'));
+        var cols = parseInt(this.getAttribute('data-cols'), 10);
         setCol(cols);
         try { localStorage.setItem('xedc-masonry-cols', cols); } catch (e) {}
       });
     });
 
     function setCol(cols) {
-      if (masonry) masonry.setAttribute('data-cols', cols);
+      masonry.setAttribute('data-cols', cols);
       btns.forEach(function (b) {
-        b.classList.toggle('is-active', parseInt(b.getAttribute('data-cols')) === cols);
+        b.classList.toggle('is-active', parseInt(b.getAttribute('data-cols'), 10) === cols);
       });
     }
   }
@@ -166,6 +222,7 @@
   Drupal.behaviors.xedcLightbox = {
     attach: function () {
       initViewer();
+      initThumbs();
       initBatchSelect();
       initColSwitch();
     }
