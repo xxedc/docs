@@ -10,9 +10,7 @@
 {% set _hues = [220, 280, 155, 30, 340, 190, 320, 55] %}
 {% set _orientation = node.field_orientation.value %}
 
-<article{{ attributes.addClass('xedc-video-card', _orientation == 'portrait' ? 'xedc-video-card--portrait' : '') }} data-nid="{{ nid }}">
-
-  {# 封面图 + 时长标签 #}
+<article{{ attributes.addClass('xedc-video-card', orientation == 'portrait' ? 'xedc-video-card--portrait' : '') }} data-nid="{{ nid }}">
   <div class="xedc-video-card__cover">
     <a href="{{ video_url }}" class="xedc-video-card__cover-link" tabindex="-1">
       {% if _cover_url %}
@@ -26,27 +24,25 @@
       {% endif %}
     </a>
 
-    {# 时长标签 #}
     {% if node.field_duration.value %}
       {% set duration = node.field_duration.value %}
       {% set minutes = (duration / 60)|round(0, 'floor') %}
       {% set seconds = duration % 60 %}
-      <span class="xedc-video-card__duration">
-        {{ minutes }}:{{ seconds < 10 ? '0' ~ seconds : seconds }}
+      <span class="xedc-video-card__duration">{{ minutes }}:{{ seconds < 10 ? '0' ~ seconds : seconds }}</span>
+    {% endif %}
+
+    {% set quality_val = node.field_quality.value %}
+    {% if quality_val %}
+      <span class="xedc-badge xedc-video-card__quality {{ quality_val == '720p' ? 'xedc-badge--success' : 'xedc-badge--default' }}">
+        {%- if quality_val == '4k' -%}4K
+        {%- elseif quality_val == '1080p' -%}1080P
+        {%- elseif quality_val == '720p' -%}720P
+        {%- elseif quality_val == '480p' -%}480P
+        {%- else -%}{{ quality_val|split('|')|last|upper }}
+        {%- endif -%}
       </span>
     {% endif %}
 
-    {# 画质角标 #}
-    {% set _quality = node.field_quality.value %}
-    {% if _quality == '4k' %}
-      <span class="xedc-badge xedc-badge--default xedc-video-card__quality" style="background:linear-gradient(135deg,oklch(0.55 0.22 27),oklch(0.5 0.2 45));">4K</span>
-    {% elseif _quality == '1080p' %}
-      <span class="xedc-badge xedc-badge--default xedc-video-card__quality">1080P</span>
-    {% elseif _quality == '720p' %}
-      <span class="xedc-badge xedc-badge--success xedc-video-card__quality">720P</span>
-    {% endif %}
-
-    {# Hover 播放按钮 #}
     <div class="xedc-video-card__play-overlay" aria-hidden="true">
       <svg width="52" height="52" viewBox="0 0 52 52">
         <circle cx="26" cy="26" r="26" fill="rgba(0,0,0,0.55)"/>
@@ -55,13 +51,11 @@
     </div>
   </div>
 
-  {# 信息区 #}
   <div class="xedc-video-card__info">
     <h3 class="xedc-video-card__title">
       <a href="{{ video_url }}">{{ label }}</a>
     </h3>
 
-    {# 发布者信息 #}
     <div class="xedc-video-card__author">
       {% if owner_picture_url %}
         <div class="xedc-avatar xedc-avatar--xs">
@@ -76,7 +70,6 @@
       <a href="/user/{{ _owner_uid }}" class="xedc-video-card__author-name">{{ _owner_name }}</a>
     </div>
 
-    {# 元数据：播放量 + 时间 #}
     <div class="xedc-video-card__meta">
       <span class="xedc-text-xs xedc-text-muted">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="display:inline;vertical-align:middle;">
@@ -87,7 +80,6 @@
       <span class="xedc-text-xs xedc-text-muted">{{ node.getCreatedTime()|date('Y-m-d') }}</span>
     </div>
 
-    {# 快捷操作 #}
     <div class="xedc-video-card__actions">
       {% if is_logged_in %}
         <button class="xedc-icon-btn xedc-like-btn" data-nid="{{ nid }}" aria-label="点赞">
@@ -98,5 +90,4 @@
       {% endif %}
     </div>
   </div>
-
 </article>

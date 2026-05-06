@@ -9,9 +9,13 @@
 {% set _owner_uid = owner_uid|default(0) %}
 {% set _hues = [220, 280, 155, 30, 340, 190, 320, 55] %}
 
-<article{{ attributes.addClass('xedc-image-card') }} data-nid="{{ nid }}" data-selectable>
+{% if cover_image_url %}
+  {% set first_image_url = cover_image_url %}
+{% elseif node.field_images.0.entity %}
+  {% set first_image_url = file_url(node.field_images.0.entity.fileUri) %}
+{% endif %}
 
-  {# 图片主体 #}
+<article{{ attributes.addClass('xedc-image-card') }} data-nid="{{ nid }}" data-selectable>
   <div class="xedc-image-card__img-wrap">
     <a href="{{ url }}" class="xedc-image-card__link">
       {% if _cover_url %}
@@ -29,7 +33,6 @@
       {% endif %}
     </a>
 
-    {# Hover 操作浮层 #}
     <div class="xedc-image-card__overlay" aria-hidden="true">
       <div class="xedc-image-card__overlay-actions">
         {% if is_logged_in %}
@@ -55,11 +58,9 @@
     </div>
   </div>
 
-  {# 图集信息 #}
   <div class="xedc-image-card__info">
     <a href="{{ url }}" class="xedc-image-card__title">{{ label }}</a>
 
-    {# 发布者信息 #}
     <div class="xedc-image-card__author">
       {% if owner_picture_url %}
         <div class="xedc-avatar xedc-avatar--xs">
@@ -84,5 +85,4 @@
       </span>
     </div>
   </div>
-
 </article>

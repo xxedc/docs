@@ -14,15 +14,16 @@
 <body{{ attributes.addClass('xedc-body', 'xedc-body--front') }}>
 {{ page_top }}
 
-{# ── 顶部导航栏 ── #}
 <header class="xedc-navbar" role="banner">
   <div class="xedc-container xedc-flex xedc-flex-between" style="height:56px;">
     <a href="{{ url('<front>') }}" class="xedc-navbar__logo" aria-label="{{ site_name }}">
       <span class="xedc-navbar__logo-text">{{ site_name }}</span>
     </a>
+
     <nav class="xedc-navbar__nav" role="navigation" aria-label="主导航">
       {{ drupal_menu('main') }}
     </nav>
+
     <div class="xedc-navbar__search">
       <form action="/search" method="get" role="search">
         <input type="search" name="q" placeholder="搜索内容..." class="xedc-search-input" aria-label="全站搜索" />
@@ -33,6 +34,7 @@
         </button>
       </form>
     </div>
+
     <div class="xedc-navbar__tools xedc-flex xedc-items-center xedc-gap-2">
       {% if is_logged_in %}
         <a href="/messages" class="xedc-navbar__icon-btn" aria-label="消息通知">
@@ -96,7 +98,6 @@
     {{ drupal_view('front_recommend', 'default') }}
   </main>
 
-  {# 右侧边栏（PC端）#}
   <aside class="xedc-front__sidebar" role="complementary">
 
     {# 精选内容 #}
@@ -113,22 +114,29 @@
       {{ drupal_view('hot_rank', 'block_1') }}
     </div>
 
-    {# 未登录显示登录引导 #}
+    <div class="xedc-sidebar__widget">
+      <h3 class="xedc-sidebar__title">快捷入口</h3>
+      <div class="xedc-sidebar-links">
+        <a href="/videos">视频频道</a>
+        <a href="/images">图片频道</a>
+        <a href="/articles">文章频道</a>
+        <a href="/search">全站搜索</a>
+      </div>
+    </div>
+
     {% if not is_logged_in %}
       <div class="xedc-sidebar__widget xedc-sidebar__login">
         <h3 class="xedc-sidebar__title">加入我们</h3>
-        <p class="xedc-text-sm xedc-text-muted">登录后享受个性化推荐</p>
+        <p class="xedc-text-sm xedc-text-muted">登录后查看个性化推荐。</p>
         <div class="xedc-flex xedc-gap-2" style="margin-top: var(--space-3);">
           <a href="/user/login" class="xedc-btn xedc-btn--default xedc-btn--sm">登录</a>
           <a href="/user/register" class="xedc-btn xedc-btn--outline xedc-btn--sm">注册</a>
         </div>
       </div>
     {% endif %}
-
   </aside>
 </div>
 
-{# ── Footer ── #}
 <footer class="xedc-footer" role="contentinfo">
   <div class="xedc-container">
     <nav class="xedc-footer__nav" aria-label="底部导航">
