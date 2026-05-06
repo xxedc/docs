@@ -190,3 +190,64 @@
 [data-theme="midnight"] .xedc-image-viewer {
   background: oklch(0 0 0);
 }
+
+/* ── 多图网格画廊 ── */
+.xedc-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--space-3);
+  padding: var(--space-3);
+  width: 100%;
+}
+.xedc-gallery-grid[data-count="1"] { grid-template-columns: 1fr; max-width: 720px; margin: 0 auto; }
+.xedc-gallery-grid[data-count="2"] { grid-template-columns: 1fr 1fr; }
+
+.xedc-gallery-grid__item {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  background: oklch(0.1 0 0);
+  cursor: zoom-in;
+}
+.xedc-gallery-grid__item img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.35s ease;
+}
+.xedc-gallery-grid__item:hover img { transform: scale(1.03); }
+
+.xedc-gallery-grid__num {
+  position: absolute;
+  bottom: var(--space-2);
+  right: var(--space-2);
+  background: oklch(0 0 0 / 0.55);
+  color: #fff;
+  font-size: var(--text-xs);
+  padding: 2px 7px;
+  border-radius: 999px;
+  backdrop-filter: blur(4px);
+  line-height: 1.6;
+}
+
+/* 单张图居中全宽 */
+.xedc-image-viewer__stage--single {
+  min-height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.xedc-image-viewer__stage--single img {
+  max-height: 72vh;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+@media (max-width: 640px) {
+  .xedc-gallery-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-2);
+    padding: var(--space-2);
+  }
+  .xedc-gallery-grid[data-count="1"] { grid-template-columns: 1fr; }
+}
