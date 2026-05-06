@@ -2,6 +2,8 @@ uuid: 11636531-7653-4af8-8b97-a13adf03e5d5
 langcode: zh-hans
 status: true
 dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
   module:
     - node
     - user
@@ -140,7 +142,9 @@ display:
       style:
         type: default
       row:
-        type: fields
+        type: 'entity:node'
+        options:
+          view_mode: teaser
       query:
         type: views_query
         options:

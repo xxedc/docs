@@ -5,8 +5,12 @@
 {% set video_url = url %}
 {% set nid = node.id() %}
 {% set _cover_entity = node.field_cover_image.0.entity %}
+{% set _owner = node.getOwner() %}
+{% set _owner_name = _owner.getDisplayName() %}
+{% set _hues = [220, 280, 155, 30, 340, 190, 320, 55] %}
+{% set _orientation = node.field_orientation.value %}
 
-<article{{ attributes.addClass('xedc-video-card') }} data-nid="{{ nid }}">
+<article{{ attributes.addClass('xedc-video-card', _orientation == 'portrait' ? 'xedc-video-card--portrait' : '') }} data-nid="{{ nid }}">
 
   {# 封面图 + 时长标签 #}
   <div class="xedc-video-card__cover">
@@ -56,6 +60,23 @@
     <h3 class="xedc-video-card__title">
       <a href="{{ video_url }}">{{ label }}</a>
     </h3>
+
+    {# 发布者信息 #}
+    <div class="xedc-video-card__author">
+      {% if _owner.user_picture.0.entity %}
+        <div class="xedc-avatar xedc-avatar--xs">
+          <img src="{{ file_url(_owner.user_picture.0.entity.fileUri) }}" alt="{{ _owner_name }}" />
+        </div>
+      {% else %}
+        <div class="xedc-avatar xedc-avatar--xs"
+             style="background:oklch(0.62 0.16 {{ _hues[_owner_name|length % 8] }});">
+          {{ _owner_name|slice(0,1)|upper }}
+        </div>
+      {% endif %}
+      <a href="/user/{{ node.getOwnerId() }}" class="xedc-video-card__author-name">{{ _owner_name }}</a>
+    </div>
+
+    {# 元数据：播放量 + 时间 #}
     <div class="xedc-video-card__meta">
       <span class="xedc-text-xs xedc-text-muted">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="display:inline;vertical-align:middle;">

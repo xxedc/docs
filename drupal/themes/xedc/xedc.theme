@@ -72,6 +72,7 @@ function xedc_preprocess_page(array &$variables): void {
 function xedc_preprocess_node(array &$variables): void {
   $node = $variables['node'];
   $variables['bundle'] = $node->bundle();
+  $variables['is_logged_in'] = \Drupal::currentUser()->isAuthenticated();
 
   if ($node->hasField('field_view_count')) {
     $variables['view_count'] = $node->get('field_view_count')->value ?? 0;

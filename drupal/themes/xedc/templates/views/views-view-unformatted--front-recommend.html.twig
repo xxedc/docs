@@ -1,0 +1,11 @@
+{#
+  views-view-unformatted--front-recommend.html.twig
+  首页推荐流 — 响应式混合内容网格
+#}
+<div class="xedc-front-feed">
+  {% for row in rows %}
+    <div class="xedc-front-feed__item">
+      {{ row.content }}
+    </div>
+  {% endfor %}
+</div>
