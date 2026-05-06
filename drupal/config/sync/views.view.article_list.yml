@@ -148,7 +148,7 @@ display:
           value:
             article: article
       style:
-        type: grid_responsive
+        type: default
       row:
         type: 'entity:node'
         options:
