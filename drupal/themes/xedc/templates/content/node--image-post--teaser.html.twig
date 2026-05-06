@@ -4,7 +4,7 @@
 #}
 {% set nid = node.id() %}
 {% set _cover_entity = node.field_cover_image.0.entity %}
-{% set _first_image = node.field_images.0.entity %}
+{% set _first_image = node.field_images.0.entity ?? node.field_image.0.entity %}
 {% set _owner = node.getOwner() %}
 {% set _owner_name = _owner.getDisplayName() %}
 {% set _hues = [220, 280, 155, 30, 340, 190, 320, 55] %}
@@ -59,9 +59,10 @@
 
   {# 图集信息 #}
   <div class="xedc-image-card__info">
+    <span class="xedc-type-badge xedc-type-badge--image">图片</span>
     <a href="{{ url }}" class="xedc-image-card__title">{{ label }}</a>
 
-    {# 发布者信息 #}
+    {# 发布者信息：左侧头像+名称，右侧时间 #}
     <div class="xedc-image-card__author">
       {% if _owner.user_picture.0.entity %}
         <div class="xedc-avatar xedc-avatar--xs">
@@ -74,7 +75,7 @@
         </div>
       {% endif %}
       <a href="/user/{{ node.getOwnerId() }}" class="xedc-image-card__author-name">{{ _owner_name }}</a>
-      <span class="xedc-text-xs xedc-text-muted">· {{ node.getCreatedTime()|date('m-d') }}</span>
+      <span class="xedc-text-xs xedc-text-muted" style="margin-left:auto;">{{ node.getCreatedTime()|date('m-d') }}</span>
     </div>
 
     <div class="xedc-image-card__meta">

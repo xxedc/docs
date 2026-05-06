@@ -136,6 +136,7 @@ body:has(.xedc-image-waterfall) { background: oklch(0.96 0 0); }
   flex-direction: column;
   justify-content: space-between;
   padding: var(--space-2);
+  pointer-events: none;
 }
 .xedc-image-card:hover .xedc-image-card__overlay { opacity: 1; }
 
@@ -143,8 +144,9 @@ body:has(.xedc-image-waterfall) { background: oklch(0.96 0 0); }
   display: flex;
   gap: var(--space-1);
   justify-content: flex-end;
+  pointer-events: auto;
 }
-.xedc-image-card__checkbox { align-self: flex-start; cursor: pointer; }
+.xedc-image-card__checkbox { align-self: flex-start; cursor: pointer; pointer-events: auto; }
 
 /* ── 图片信息区 ── */
 .xedc-image-card__info {
