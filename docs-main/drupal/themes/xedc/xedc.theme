@@ -1,0 +1,271 @@
+<?php
+
+/**
+ * @file
+ * xedc.theme — 主题预处理钩子
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+
+/**
+ * 构建用户头像信息。
+ */
+function xedc_build_avatar_data($account): array {
+  $name = '';
+  $picture_url = NULL;
+  $profile_url = NULL;
+  $initial = 'U';
+
+  if ($account) {
+    $name = method_exists($account, 'getDisplayName') ? (string) $account->getDisplayName() : '';
+    $name = trim($name) !== '' ? $name : 'User';
+    $profile_url = method_exists($account, 'toUrl') ? $account->toUrl()->toString() : NULL;
+    $initial = mb_substr($name, 0, 1);
+    if ($initial === '') {
+      $initial = 'U';
+    }
+
+    try {
+      if (method_exists($account, 'hasField') && $account->hasField('user_picture') && !$account->get('user_picture')->isEmpty()) {
+        $picture = $account->get('user_picture')->entity;
+        if ($picture) {
+          $picture_url = \Drupal::service('file_url_generator')->generateAbsoluteString($picture->getFileUri());
+        }
+      }
+    }
+    catch (\Throwable $e) {
+      // 忽略头像加载失败，回退到首字母。
+    }
+  }
+
+  return [
+    'name' => $name,
+    'profile_url' => $profile_url,
+    'picture_url' => $picture_url,
+    'initial' => $initial,
+  ];
+}
+
+/**
+ * 预处理 html.html.twig
+ */
+function xedc_preprocess_html(array &$variables): void {
+  $variables['#attached']['library'][] = 'xedc/theme-init';
+  $variables['#attached']['library'][] = 'xedc/fonts';
+  $variables['#attached']['library'][] = 'xedc/global-styles';
+  $variables['#attached']['library'][] = 'xedc/global-scripts';
+  $variables['#attached']['drupalSettings']['xedc']['defaultTheme'] = 'light';
+  $variables['html_attributes']->setAttribute('data-theme', 'light');
+}
+
+/**
+ * 预处理 page.html.twig
+ */
+function xedc_preprocess_page(array &$variables): void {
+  $config = \Drupal::config('system.site');
+  $variables['site_name'] = $config->get('name');
+  $variables['site_slogan'] = $config->get('slogan');
+  $variables['is_logged_in'] = \Drupal::currentUser()->isAuthenticated();
+  $variables['current_user'] = \Drupal::currentUser();
+
+  $current_user = \Drupal::currentUser();
+  if ($current_user->isAuthenticated()) {
+    $variables['current_user_name'] = $current_user->getDisplayName();
+    try {
+      $user_entity = \Drupal::entityTypeManager()->getStorage('user')->load($current_user->id());
+      if ($user_entity) {
+        $avatar = xedc_build_avatar_data($user_entity);
+        if (!empty($avatar['picture_url'])) {
+          $variables['current_user_picture'] = $avatar['picture_url'];
+        }
+      }
+    }
+    catch (\Throwable $e) {}
+  }
+
+  $node = \Drupal::routeMatch()->getParameter('node');
+  if ($node) {
+    switch ($node->bundle()) {
+      case 'video':
+        $variables['#attached']['library'][] = 'xedc/page-video-detail';
+        break;
+
+      case 'image_post':
+        $variables['#attached']['library'][] = 'xedc/page-image-detail';
+        break;
+
+      case 'article':
+        $variables['#attached']['library'][] = 'xedc/page-article-detail';
+        break;
+    }
+  }
+
+  if (\Drupal::service('path.matcher')->isFrontPage()) {
+    $variables['#attached']['library'][] = 'xedc/page-front';
+  }
+}
+
+/**
+ * 预处理 node.html.twig
+ */
+function xedc_preprocess_node(array &$variables): void {
+  $node = $variables['node'];
+  $variables['bundle'] = $node->bundle();
+  $variables['is_logged_in'] = \Drupal::currentUser()->isAuthenticated();
+
+  if ($node->hasField('field_view_count')) {
+    $variables['view_count'] = (int) ($node->get('field_view_count')->value ?? 0);
+  }
+  if ($node->hasField('field_like_count')) {
+    $variables['like_count'] = (int) ($node->get('field_like_count')->value ?? 0);
+  }
+
+  $owner = $node->getOwner();
+  if ($owner) {
+    $avatar = xedc_build_avatar_data($owner);
+    $variables['owner_name'] = $avatar['name'];
+    $variables['owner_profile_url'] = $avatar['profile_url'];
+    $variables['owner_avatar_url'] = $avatar['picture_url'];
+    $variables['owner_avatar_initial'] = $avatar['initial'];
+  }
+
+  if ($node->hasField('field_cover_image') && !$node->get('field_cover_image')->isEmpty()) {
+    $image = $node->get('field_cover_image')->entity;
+    if ($image) {
+      $variables['cover_image_url'] = \Drupal::service('file_url_generator')->generateAbsoluteString($image->getFileUri());
+    }
+  }
+}
+
+/**
+ * 预处理 paragraph.html.twig
+ */
+function xedc_preprocess_paragraph(array &$variables): void {
+  $paragraph = $variables['paragraph'];
+  $variables['bundle'] = $paragraph->bundle();
+  if ($paragraph->bundle() === 'code_block') {
+    $variables['#attached']['library'][] = 'xedc/prism';
+  }
+}
+
+/**
+ * 预处理 block.html.twig
+ */
+function xedc_preprocess_block(array &$variables): void {
+  if (isset($variables['elements']['#id'])) {
+    $variables['block_id'] = $variables['elements']['#id'];
+  }
+}
+
+/**
+ * 预处理 user 实体模板
+ */
+function xedc_preprocess_user(array &$variables): void {
+  $current_user = \Drupal::currentUser();
+  $viewed_user = $variables['user'];
+
+  $variables['is_own_profile'] = ($current_user->id() == $viewed_user->id());
+  $variables['current_user_id'] = $current_user->id();
+  $variables['is_logged_in'] = $current_user->isAuthenticated();
+  $variables['viewed_user_name'] = $viewed_user->getDisplayName();
+  $variables['viewed_user_id'] = $viewed_user->id();
+  $variables['viewed_user_url'] = $viewed_user->toUrl()->toString();
+
+  try {
+    $avatar = xedc_build_avatar_data($viewed_user);
+    if (!empty($avatar['picture_url'])) {
+      $variables['user_picture_url'] = $avatar['picture_url'];
+    }
+  }
+  catch (\Throwable $e) {}
+
+  $variables['#attached']['library'][] = 'xedc/page-profile';
+
+  $uid_val = (int) $viewed_user->id();
+  try {
+    $db = \Drupal::database();
+    $cnids = $db->select('flagging', 'f')
+      ->fields('f', ['entity_id'])
+      ->condition('flag_id', 'collect')
+      ->condition('uid', $uid_val)
+      ->orderBy('created', 'DESC')
+      ->range(0, 12)
+      ->execute()->fetchCol();
+    $variables['collected_items'] = [];
+    if (!empty($cnids)) {
+      foreach (\Drupal::entityTypeManager()->getStorage('node')->loadMultiple($cnids) as $n) {
+        $variables['collected_items'][] = [
+          'title' => $n->getTitle(),
+          'url' => $n->toUrl()->toString(),
+          'bundle' => $n->bundle(),
+        ];
+      }
+    }
+  }
+  catch (\Throwable $e) {
+    $variables['collected_items'] = [];
+  }
+
+  try {
+    $hnids = $db->select('xedc_history', 'h')
+      ->fields('h', ['nid'])
+      ->condition('uid', $uid_val)
+      ->orderBy('timestamp', 'DESC')
+      ->range(0, 12)
+      ->execute()->fetchCol();
+    $variables['history_items'] = [];
+    if (!empty($hnids)) {
+      foreach (\Drupal::entityTypeManager()->getStorage('node')->loadMultiple($hnids) as $n) {
+        $variables['history_items'][] = [
+          'title' => $n->getTitle(),
+          'url' => $n->toUrl()->toString(),
+          'bundle' => $n->bundle(),
+        ];
+      }
+    }
+  }
+  catch (\Throwable $e) {
+    $variables['history_items'] = [];
+  }
+}
+
+/**
+ * 预处理 views-view.html.twig
+ */
+function xedc_preprocess_views_view(array &$variables): void {
+  $library_map = [
+    'image_waterfall' => 'xedc/page-image-list',
+    'video_list' => 'xedc/page-video-list',
+    'article_list' => 'xedc/page-article-list',
+  ];
+  $view_id = $variables['view']->id();
+  if (isset($library_map[$view_id])) {
+    $variables['#attached']['library'][] = $library_map[$view_id];
+  }
+}
+
+/**
+ * JSON-LD 结构化数据
+ */
+function xedc_page_attachments_alter(array &$attachments): void {
+  $node = \Drupal::routeMatch()->getParameter('node');
+  if (!$node) {
+    return;
+  }
+
+  $json_ld = [
+    '@context' => 'https://schema.org',
+    '@type' => 'WebPage',
+    'name' => $node->getTitle(),
+    'url' => \Drupal::request()->getUri(),
+  ];
+
+  $attachments['#attached']['html_head'][] = [
+    [
+      '#tag' => 'script',
+      '#attributes' => ['type' => 'application/ld+json'],
+      '#value' => json_encode($json_ld, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+    ],
+    'json-ld-webpage',
+  ];
+}

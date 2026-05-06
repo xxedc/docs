@@ -1,0 +1,86 @@
+{#
+  node--image-post--teaser.html.twig — 图集卡片（瀑布流用）
+#}
+{% set nid = node.id() %}
+{% set owner_name = owner_name|default(node.getOwner().getDisplayName()) %}
+{% set owner_profile_url = owner_profile_url|default('/user/' ~ node.getOwnerId()) %}
+{% set owner_avatar_url = owner_avatar_url|default('') %}
+{% set owner_avatar_initial = owner_avatar_initial|default(owner_name|slice(0, 1)|upper) %}
+{% set first_image_url = '' %}
+
+{% if cover_image_url %}
+  {% set first_image_url = cover_image_url %}
+{% elseif node.field_images.0.entity %}
+  {% set first_image_url = file_url(node.field_images.0.entity.fileUri) %}
+{% endif %}
+
+<article{{ attributes.addClass('xedc-image-card') }} data-nid="{{ nid }}" data-selectable>
+  <div class="xedc-image-card__img-wrap">
+    <a href="{{ url }}" class="xedc-image-card__link">
+      {% if first_image_url %}
+        <img src="{{ first_image_url }}" alt="{{ label }}" loading="lazy" />
+      {% else %}
+        <div class="xedc-image-card__placeholder">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.5">
+            <rect x="3" y="3" width="18" height="18" rx="3"/>
+            <circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+        </div>
+      {% endif %}
+    </a>
+
+    <div class="xedc-image-card__overlay" aria-hidden="true">
+      <div class="xedc-image-card__overlay-actions">
+        {% if is_logged_in %}
+          <button class="xedc-icon-btn xedc-collect-btn" data-nid="{{ nid }}" aria-label="收藏">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+            </svg>
+          </button>
+        {% endif %}
+        {% if node.field_allow_download.value %}
+          <a href="{{ url }}?download=1" class="xedc-icon-btn" aria-label="下载">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+          </a>
+        {% endif %}
+      </div>
+
+      <label class="xedc-image-card__checkbox" style="display:none;">
+        <input type="checkbox" class="xedc-select-item" value="{{ nid }}" aria-label="选择此图片" />
+      </label>
+    </div>
+  </div>
+
+  <div class="xedc-image-card__info">
+    <a href="{{ url }}" class="xedc-image-card__title">{{ label }}</a>
+
+    <div class="xedc-image-card__author">
+      {% if owner_avatar_url %}
+        <a href="{{ owner_profile_url }}" class="xedc-avatar xedc-avatar--xs xedc-avatar--img" aria-label="{{ owner_name }}">
+          <img src="{{ owner_avatar_url }}" alt="{{ owner_name }}" />
+        </a>
+      {% else %}
+        <a href="{{ owner_profile_url }}" class="xedc-avatar xedc-avatar--xs" aria-label="{{ owner_name }}"
+           style="background:oklch(0.62 0.16 {{ [220,280,155,30,340,190,320,55][owner_name|length % 8] }});">
+          {{ owner_avatar_initial }}
+        </a>
+      {% endif %}
+      <a href="{{ owner_profile_url }}" class="xedc-image-card__author-name">{{ owner_name }}</a>
+      <span class="xedc-text-xs xedc-text-muted">· {{ node.getCreatedTime()|date('m-d') }}</span>
+    </div>
+
+    <div class="xedc-image-card__meta">
+      <span class="xedc-text-xs xedc-text-muted">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" style="display:inline;vertical-align:middle;margin-right:2px;">
+          <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
+        </svg>
+        {{ view_count|default(0) }}
+      </span>
+    </div>
+  </div>
+</article>

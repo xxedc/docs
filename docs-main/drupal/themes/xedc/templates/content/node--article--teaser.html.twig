@@ -1,0 +1,70 @@
+{#
+  node--article--teaser.html.twig — 文章卡片（列表用）
+#}
+{% set nid = node.id() %}
+{% set owner_name = owner_name|default(node.getOwner().getDisplayName()) %}
+{% set owner_profile_url = owner_profile_url|default('/user/' ~ node.getOwnerId()) %}
+{% set owner_avatar_url = owner_avatar_url|default('') %}
+{% set owner_avatar_initial = owner_avatar_initial|default(owner_name|slice(0, 1)|upper) %}
+
+<article{{ attributes.addClass('xedc-article-card', cover_image_url ? 'xedc-article-card--with-cover' : '') }} data-nid="{{ nid }}">
+  <div class="xedc-article-card__body">
+    <div class="xedc-article-card__author">
+      {% if owner_avatar_url %}
+        <a href="{{ owner_profile_url }}" class="xedc-avatar xedc-avatar--xs xedc-avatar--img" aria-label="{{ owner_name }}">
+          <img src="{{ owner_avatar_url }}" alt="{{ owner_name }}" />
+        </a>
+      {% else %}
+        <a href="{{ owner_profile_url }}" class="xedc-avatar xedc-avatar--xs" aria-label="{{ owner_name }}"
+           style="background:oklch(0.62 0.16 {{ [220,280,155,30,340,190,320,55][owner_name|length % 8] }});">
+          {{ owner_avatar_initial }}
+        </a>
+      {% endif %}
+      <a href="{{ owner_profile_url }}" class="xedc-article-card__author-name">{{ owner_name }}</a>
+      <span class="xedc-text-xs xedc-text-muted">· {{ node.getCreatedTime()|date('m-d') }}</span>
+    </div>
+
+    <h2 class="xedc-article-card__title">
+      <a href="{{ url }}">{{ label }}</a>
+    </h2>
+
+    {% if node.field_summary.value %}
+      <p class="xedc-article-card__summary xedc-line-clamp-2">
+        {{ node.field_summary.value }}
+      </p>
+    {% endif %}
+
+    <div class="xedc-article-card__meta">
+      {% if content.field_category|render|trim is not empty %}
+        <span class="xedc-badge xedc-badge--secondary">{{ content.field_category }}</span>
+      {% endif %}
+      {% if node.field_reading_time.value %}
+        <span class="xedc-article-card__stat">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          {{ node.field_reading_time.value }} 分钟
+        </span>
+      {% endif %}
+      <span class="xedc-article-card__stat">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
+        {{ view_count|default(0) }}
+      </span>
+      <span class="xedc-article-card__stat">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        {{ like_count|default(0) }}
+      </span>
+      {% if is_logged_in %}
+        <button class="xedc-icon-btn xedc-collect-btn" data-nid="{{ nid }}" aria-label="收藏" style="margin-left:auto;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        </button>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if cover_image_url %}
+    <div class="xedc-article-card__cover">
+      <a href="{{ url }}" tabindex="-1" aria-hidden="true">
+        <img src="{{ cover_image_url }}" alt="{{ label }}" loading="lazy" />
+      </a>
+    </div>
+  {% endif %}
+</article>
