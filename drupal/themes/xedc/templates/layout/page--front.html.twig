@@ -1,6 +1,5 @@
 {#
   page--front.html.twig — 首页专用模板
-  演示 Twig Tweak 大量调用
 #}
 <!DOCTYPE html>
 <html{{ html_attributes }}>
@@ -15,15 +14,16 @@
 <body{{ attributes.addClass('xedc-body', 'xedc-body--front') }}>
 {{ page_top }}
 
-{# ── 顶部导航栏 ── #}
 <header class="xedc-navbar" role="banner">
   <div class="xedc-container xedc-flex xedc-flex-between" style="height:56px;">
     <a href="{{ url('<front>') }}" class="xedc-navbar__logo" aria-label="{{ site_name }}">
       <span class="xedc-navbar__logo-text">{{ site_name }}</span>
     </a>
+
     <nav class="xedc-navbar__nav" role="navigation" aria-label="主导航">
       {{ drupal_menu('main') }}
     </nav>
+
     <div class="xedc-navbar__search">
       <form action="/search" method="get" role="search">
         <input type="search" name="q" placeholder="搜索视频、图片、文章..." class="xedc-search-input" aria-label="全站搜索" />
@@ -34,6 +34,7 @@
         </button>
       </form>
     </div>
+
     <div class="xedc-navbar__tools xedc-flex xedc-items-center xedc-gap-2">
       {% if is_logged_in %}
         <a href="/messages" class="xedc-navbar__icon-btn" aria-label="消息通知">
@@ -43,15 +44,12 @@
           </svg>
         </a>
       {% endif %}
-      {# 主题切换器 #}
       {% include 'xedc:theme-toggle' %}
       {% if is_logged_in %}
         {% set _hues = [220, 280, 155, 30, 340, 190, 320, 55] %}
         <a href="/user/{{ current_user.id() }}" class="xedc-navbar__avatar" aria-label="个人中心">
           {% if current_user_picture %}
-            <img class="xedc-avatar xedc-avatar--sm xedc-avatar--img"
-                 src="{{ current_user_picture }}"
-                 alt="{{ current_user_name }}" />
+            <img class="xedc-avatar xedc-avatar--sm xedc-avatar--img" src="{{ current_user_picture }}" alt="{{ current_user_name }}" />
           {% else %}
             <div class="xedc-avatar xedc-avatar--sm"
                  style="background:oklch(0.62 0.16 {{ _hues[(current_user_name|default('U')|length) % 8] }});">
@@ -66,19 +64,62 @@
   </div>
 </header>
 
-{# ── 系统消息 ── #}
 {% if page.highlighted %}
   <div class="xedc-highlighted xedc-container" role="alert">{{ page.highlighted }}</div>
 {% endif %}
 
-{# ── Banner 轮播区 ── #}
+<section class="xedc-front-hero">
+  <div class="xedc-container">
+    <div class="xedc-front-hero__card">
+      <div class="xedc-front-hero__content">
+        <span class="xedc-front-hero__eyebrow">Media Hub</span>
+        <h1 class="xedc-front-hero__title">{{ site_name }}</h1>
+        <p class="xedc-front-hero__subtitle">
+          {{ site_slogan|default('视频、图片、文章统一浏览。更清爽的首页，更快的发现内容。') }}
+        </p>
+
+        <form action="/search" method="get" class="xedc-front-hero__search" role="search">
+          <input type="search" name="q" class="xedc-search-input" placeholder="搜索你想看的内容..." aria-label="搜索内容" />
+          <button type="submit" class="xedc-btn xedc-btn--default xedc-btn--md">立即搜索</button>
+        </form>
+
+        <div class="xedc-front-hero__stats">
+          <div class="xedc-front-hero__stat">
+            <strong>视频</strong>
+            <span>精选播放</span>
+          </div>
+          <div class="xedc-front-hero__stat">
+            <strong>图片</strong>
+            <span>瀑布浏览</span>
+          </div>
+          <div class="xedc-front-hero__stat">
+            <strong>文章</strong>
+            <span>深度阅读</span>
+          </div>
+        </div>
+      </div>
+
+      <aside class="xedc-front-hero__aside">
+        <div class="xedc-front-hero__panel">
+          <h3>今日推荐</h3>
+          <p>首页内容已经按“综合门户”方式拆分为：顶部精选、分类入口、主推荐流和侧栏热榜。</p>
+          <a href="#main-content" class="xedc-btn xedc-btn--outline xedc-btn--sm">进入内容区</a>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
 <section class="xedc-front__banner">
   <div class="xedc-container">
+    <div class="xedc-section-head">
+      <h2>精选推荐</h2>
+      <span>横向浏览重点内容</span>
+    </div>
     {{ drupal_view('front_banner', 'block_1') }}
   </div>
 </section>
 
-{# ── 分类快捷导航 ── #}
 <section class="xedc-front__categories">
   <div class="xedc-container">
     <div class="xedc-category-nav" id="xedc-category-nav">
@@ -102,42 +143,44 @@
   </div>
 </section>
 
-{# ── 主体：推荐流 + 侧边栏 ── #}
 <div class="xedc-front__layout xedc-container">
-
-  {# 个性化推荐流 #}
   <main class="xedc-front__main" id="main-content" role="main">
-    <div class="xedc-front__section-title">
+    <div class="xedc-section-head">
       <h2>推荐内容</h2>
+      <span>文章、图片、视频混合流</span>
     </div>
     {{ drupal_view('front_recommend', 'default') }}
   </main>
 
-  {# 右侧边栏（PC端）#}
   <aside class="xedc-front__sidebar" role="complementary">
-
-    {# 实时热榜 TOP10 #}
     <div class="xedc-sidebar__widget">
       <h3 class="xedc-sidebar__title">🔥 热门榜单</h3>
       {{ drupal_view('hot_rank', 'block_1') }}
     </div>
 
-    {# 未登录显示登录引导 #}
+    <div class="xedc-sidebar__widget">
+      <h3 class="xedc-sidebar__title">快捷入口</h3>
+      <div class="xedc-sidebar-links">
+        <a href="/videos">视频频道</a>
+        <a href="/images">图片频道</a>
+        <a href="/articles">文章频道</a>
+        <a href="/search">全站搜索</a>
+      </div>
+    </div>
+
     {% if not is_logged_in %}
       <div class="xedc-sidebar__widget xedc-sidebar__login">
         <h3 class="xedc-sidebar__title">加入我们</h3>
-        <p class="xedc-text-sm xedc-text-muted">登录后享受个性化推荐</p>
+        <p class="xedc-text-sm xedc-text-muted">登录后查看个性化推荐。</p>
         <div class="xedc-flex xedc-gap-2" style="margin-top: var(--space-3);">
           <a href="/user/login" class="xedc-btn xedc-btn--default xedc-btn--sm">登录</a>
           <a href="/user/register" class="xedc-btn xedc-btn--outline xedc-btn--sm">注册</a>
         </div>
       </div>
     {% endif %}
-
   </aside>
 </div>
 
-{# ── Footer ── #}
 <footer class="xedc-footer" role="contentinfo">
   <div class="xedc-container">
     <nav class="xedc-footer__nav" aria-label="底部导航">
