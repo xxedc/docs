@@ -95,8 +95,8 @@
             </details>
           {% endif %}
 
-          {% if content.field_tags %}
-            <div class="xedc-flex xedc-gap-2" style="flex-wrap:wrap;margin-top:var(--space-3);">
+          {% if content.field_tags|render|trim is not empty %}
+            <div class="xedc-video-detail__tags xedc-flex xedc-gap-2" style="flex-wrap:wrap;margin-top:var(--space-3);">
               {{ content.field_tags }}
             </div>
           {% endif %}
