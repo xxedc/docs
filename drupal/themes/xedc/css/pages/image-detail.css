@@ -29,12 +29,71 @@
   justify-content: center;
 }
 
-.xedc-image-viewer__stage img {
+/* 多图画廊：所有主图默认隐藏，只有 .is-active 可见 */
+.xedc-viewer__main-img {
+  display: none;
+  max-width: 100%;
+  max-height: 72vh;
+  object-fit: contain;
+  transform-origin: center;
+  cursor: grab;
+  user-select: none;
+  transition: transform 0.2s ease;
+}
+.xedc-viewer__main-img.is-active {
+  display: block;
+}
+
+/* 兼容旧单图写法 */
+.xedc-image-viewer__stage img:not(.xedc-viewer__main-img) {
   max-width: 100%;
   max-height: 72vh;
   object-fit: contain;
   transform-origin: center;
 }
+
+/* ── 图片计数器 ── */
+.xedc-viewer-counter {
+  position: absolute;
+  top: var(--space-3);
+  left: 50%;
+  transform: translateX(-50%);
+  background: oklch(0 0 0 / 0.5);
+  color: #fff;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  backdrop-filter: blur(6px);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* ── Prev / Next 箭头 ── */
+.xedc-viewer-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: oklch(0 0 0 / 0.45);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  border: 1px solid oklch(1 0 0 / 0.2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition-fast), transform var(--transition-fast);
+}
+.xedc-viewer-nav:hover {
+  background: oklch(0 0 0 / 0.7);
+  transform: translateY(-50%) scale(1.1);
+}
+.xedc-viewer-nav--prev { left: var(--space-3); }
+.xedc-viewer-nav--next { right: var(--space-3); }
 
 /* ── 控制按钮 ── */
 .xedc-image-viewer__controls {

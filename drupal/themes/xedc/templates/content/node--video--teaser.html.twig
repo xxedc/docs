@@ -65,7 +65,7 @@
     <div class="xedc-video-card__author">
       {% if _owner.user_picture.0.entity %}
         <div class="xedc-avatar xedc-avatar--xs">
-          <img src="{{ file_url(_owner.user_picture.0.entity.fileUri) }}" alt="{{ _owner_name }}" />
+          <img src="{{ file_url(_owner.user_picture.0.entity.fileUri) }}" alt="{{ _owner_name }}" class="xedc-avatar__img" />
         </div>
       {% else %}
         <div class="xedc-avatar xedc-avatar--xs"

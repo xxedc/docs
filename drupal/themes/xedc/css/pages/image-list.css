@@ -122,6 +122,7 @@ body:has(.xedc-image-waterfall) { background: oklch(0.96 0 0); }
 }
 
 /* ── 悬浮操作层（底部渐变+标题）── */
+/* pointer-events: none 确保图片链接可点击，不被透明遮罩拦截 */
 .xedc-image-card__overlay {
   position: absolute;
   inset: 0;
@@ -136,6 +137,7 @@ body:has(.xedc-image-waterfall) { background: oklch(0.96 0 0); }
   flex-direction: column;
   justify-content: space-between;
   padding: var(--space-2);
+  pointer-events: none;
 }
 .xedc-image-card:hover .xedc-image-card__overlay { opacity: 1; }
 
@@ -143,8 +145,13 @@ body:has(.xedc-image-waterfall) { background: oklch(0.96 0 0); }
   display: flex;
   gap: var(--space-1);
   justify-content: flex-end;
+  pointer-events: auto;
 }
-.xedc-image-card__checkbox { align-self: flex-start; cursor: pointer; }
+.xedc-image-card__checkbox {
+  align-self: flex-start;
+  cursor: pointer;
+  pointer-events: auto;
+}
 
 /* ── 图片信息区 ── */
 .xedc-image-card__info {
@@ -177,12 +184,19 @@ body:has(.xedc-image-waterfall) { background: oklch(0.96 0 0); }
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 80px;
   transition: color 0.15s;
   text-decoration: none;
-  flex-shrink: 0;
+  flex: 1;
+  min-width: 0;
 }
 .xedc-image-card__author-name:hover { color: var(--primary); }
+
+/* 发布时间右对齐 */
+.xedc-image-card__date {
+  margin-left: auto;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
 
 .xedc-image-card__meta {
   margin-top: var(--space-1);
