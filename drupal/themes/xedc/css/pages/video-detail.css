@@ -174,7 +174,13 @@
 }
 
 /* ── 标签区 ── */
-.xedc-video-detail__info .xedc-flex {
+.xedc-video-detail__tags .field__label,
+.xedc-video-detail__tags .field__items + .field__label { display: none !important; }
+
+.xedc-video-detail__tags .field--name-field-tags .field__label { display: none !important; }
+
+.xedc-video-detail__info .xedc-flex,
+.xedc-video-detail__tags {
   flex-wrap: wrap;
   gap: var(--space-2);
   margin-top: var(--space-3);

@@ -1,9 +1,9 @@
 /* ================================================================
-   article-list.css — 文章列表页
+   article-list.css — 文章列表页（掘金/Medium 风格）
    ================================================================ */
 
 /* 页面底色 */
-body:has(.xedc-article-list) { background: var(--muted); }
+body:has(.xedc-article-list) { background: oklch(0.96 0 0); }
 
 .xedc-article-list { padding: var(--space-6) 0; }
 
@@ -20,7 +20,6 @@ body:has(.xedc-article-list) { background: var(--muted); }
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
 }
-
 .xedc-article-list__tabs::-webkit-scrollbar { display: none; }
 
 .xedc-tab {
@@ -33,10 +32,9 @@ body:has(.xedc-article-list) { background: var(--muted); }
   white-space: nowrap;
   flex-shrink: 0;
   transition: color 0.15s, border-color 0.15s;
+  text-decoration: none;
 }
-
 .xedc-tab:hover { color: var(--foreground); }
-
 .xedc-tab.is-active {
   color: var(--primary);
   border-bottom-color: var(--primary);
@@ -53,7 +51,8 @@ body:has(.xedc-article-list) { background: var(--muted); }
 
 .xedc-sort-btns {
   display: inline-flex;
-  background: var(--muted);
+  background: var(--card);
+  border: 1px solid var(--border);
   border-radius: 999px;
   padding: 3px;
   gap: 2px;
@@ -70,13 +69,11 @@ body:has(.xedc-article-list) { background: var(--muted); }
   cursor: pointer;
   transition: all 0.15s;
 }
-
 .xedc-sort-btn.is-active {
-  background: var(--card);
-  color: var(--foreground);
-  box-shadow: 0 1px 4px oklch(0 0 0 / 0.1);
+  background: linear-gradient(135deg, var(--primary), oklch(from var(--primary) l c calc(h + 30)));
+  color: var(--primary-foreground);
+  box-shadow: 0 2px 8px oklch(from var(--primary) l c h / 0.35);
 }
-
 .xedc-sort-btn:hover:not(.is-active) { color: var(--foreground); }
 
 /* ── 双栏布局 ── */
@@ -86,38 +83,49 @@ body:has(.xedc-article-list) { background: var(--muted); }
   gap: var(--space-8);
   align-items: start;
 }
-
 @media (max-width: 1024px) {
   .xedc-article-list__layout { grid-template-columns: 1fr; }
   .xedc-article-list__sidebar { display: none; }
 }
 
-/* ── 文章列表 Feed ── */
+/* ── 文章列表容器：强制单列，覆盖 Views grid_responsive ── */
 .xedc-article-feed {
-  display: flex;
-  flex-direction: column;
+  display: flex !important;
+  flex-direction: column !important;
   gap: var(--space-3);
 }
 
-/* ── 文章卡片（真正的卡片样式）── */
+/* 强制覆盖 Bootstrap grid 类（来自 views grid_responsive 格式）*/
+.xedc-article-feed .views-row { display: contents !important; }
+.xedc-article-feed [class*="col-"] {
+  float: none !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 0 !important;
+  flex: none !important;
+}
+
+/* ── 文章卡片 ── */
 .xedc-article-card {
   display: flex;
   gap: var(--space-4);
-  padding: var(--space-4);
+  padding: var(--space-4) var(--space-5);
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px oklch(0 0 0 / 0.05);
+  border-radius: 14px;
+  border-left: 3px solid transparent;
+  box-shadow: 0 1px 4px oklch(0 0 0 / 0.05);
   transition:
     box-shadow 0.2s ease,
     transform 0.2s ease,
-    border-color 0.2s ease;
+    border-left-color 0.2s ease;
+  text-decoration: none;
+  width: 100%;
 }
-
 .xedc-article-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px oklch(0 0 0 / 0.1);
-  border-color: oklch(from var(--primary) l c h / 0.35);
+  box-shadow: 0 6px 24px oklch(0 0 0 / 0.09);
+  border-left-color: var(--primary);
 }
 
 .xedc-article-card__body {
@@ -142,12 +150,10 @@ body:has(.xedc-article-list) { background: var(--muted); }
   line-height: var(--leading-snug);
   margin: 0;
 }
-
 .xedc-article-card__title a {
   color: var(--foreground);
   transition: color 0.15s;
 }
-
 .xedc-article-card__title a:hover { color: var(--primary); }
 
 /* ── 摘要 ── */
@@ -156,7 +162,6 @@ body:has(.xedc-article-list) { background: var(--muted); }
   color: var(--muted-foreground);
   line-height: var(--leading-relaxed);
   margin: 0;
-  flex: 1;
 }
 
 /* ── 底部元数据 ── */
@@ -168,33 +173,36 @@ body:has(.xedc-article-list) { background: var(--muted); }
   margin-top: var(--space-1);
 }
 
+.xedc-article-card__stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: var(--text-xs);
+  color: var(--muted-foreground);
+}
+
 /* ── 封面图（右侧）── */
 .xedc-article-card__cover {
   width: 120px;
-  height: 88px;
+  height: 90px;
   flex-shrink: 0;
-  border-radius: 8px;
+  border-radius: 10px;
   overflow: hidden;
   background: var(--muted);
 }
-
 .xedc-article-card__cover img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 0.35s ease;
 }
-
 .xedc-article-card:hover .xedc-article-card__cover img {
   transform: scale(1.06);
 }
 
 @media (max-width: 480px) {
   .xedc-article-card { padding: var(--space-3); }
-  .xedc-article-card__cover {
-    width: 88px;
-    height: 66px;
-  }
+  .xedc-article-card__cover { width: 88px; height: 66px; }
 }
 
 /* ── 侧边栏 ── */
@@ -205,14 +213,12 @@ body:has(.xedc-article-list) { background: var(--muted); }
   flex-direction: column;
   gap: var(--space-4);
 }
-
 .xedc-sidebar__widget {
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 14px;
   padding: var(--space-4);
 }
-
 .xedc-sidebar__title {
   font-size: var(--text-sm);
   font-weight: 700;
@@ -230,18 +236,8 @@ body:has(.xedc-article-list) { background: var(--muted); }
   padding: var(--space-16) var(--space-4);
   text-align: center;
 }
-
-.xedc-empty-state__icon {
-  font-size: 52px;
-  margin-bottom: var(--space-4);
-  opacity: 0.45;
-}
-
-.xedc-empty-state__title {
-  font-size: var(--text-lg);
-  font-weight: 600;
-  margin-bottom: var(--space-2);
-}
+.xedc-empty-state__icon { font-size: 52px; margin-bottom: var(--space-4); opacity: 0.45; }
+.xedc-empty-state__title { font-size: var(--text-lg); font-weight: 600; margin-bottom: var(--space-2); }
 
 /* ── 回到顶部 ── */
 .xedc-back-to-top {
@@ -251,7 +247,7 @@ body:has(.xedc-article-list) { background: var(--muted); }
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: var(--primary);
+  background: linear-gradient(135deg, var(--primary), oklch(from var(--primary) l c calc(h + 30)));
   color: var(--primary-foreground);
   border: none;
   cursor: pointer;
@@ -264,8 +260,4 @@ body:has(.xedc-article-list) { background: var(--muted); }
   align-items: center;
   justify-content: center;
 }
-
-.xedc-back-to-top.is-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
+.xedc-back-to-top.is-visible { opacity: 1; transform: translateY(0); }
