@@ -1,5 +1,6 @@
 {#
-  page--front.html.twig — 首页（简洁版）
+  page--user.html.twig — 用户页面（个人中心 / 编辑资料）
+  全宽无侧边栏布局
 #}
 <!DOCTYPE html>
 <html{{ html_attributes }}>
@@ -11,7 +12,7 @@
   {{ styles }}
   {{ scripts_top }}
 </head>
-<body{{ attributes.addClass('xedc-body', 'xedc-body--front') }}>
+<body{{ attributes.addClass('xedc-body', 'xedc-body--user') }}>
 {{ page_top }}
 
 {# ── 顶部导航栏 ── #}
@@ -71,62 +72,17 @@
   </div>
 </header>
 
-{# ── 分类过滤 Tab ── #}
-<div class="xedc-front-filter">
-  <div class="xedc-container">
-    <nav class="xedc-front-filter__nav" aria-label="内容分类">
-      <a href="/" class="xedc-front-filter__item is-active">推荐</a>
-      <a href="/videos" class="xedc-front-filter__item">视频</a>
-      <a href="/images" class="xedc-front-filter__item">图片</a>
-      <a href="/articles" class="xedc-front-filter__item">文章</a>
-    </nav>
-  </div>
-</div>
-
 {# ── 系统消息 ── #}
 {% if page.highlighted %}
-  <div class="xedc-highlighted xedc-container" role="alert">{{ page.highlighted }}</div>
+  <div class="xedc-highlighted" role="alert">
+    <div class="xedc-container">{{ page.highlighted }}</div>
+  </div>
 {% endif %}
 
-{# ── 主体：推荐流 + 侧边栏 ── #}
-<div class="xedc-front__layout xedc-container">
-
-  {# 推荐内容流 #}
-  <main class="xedc-front__main" id="main-content" role="main">
-    {{ drupal_view('front_recommend', 'default') }}
-  </main>
-
-  {# 右侧边栏（PC端）#}
-  <aside class="xedc-front__sidebar" role="complementary">
-
-    {# 精选内容 #}
-    <div class="xedc-sidebar__widget">
-      <h3 class="xedc-sidebar__title">✨ 精选内容</h3>
-      <div class="xedc-front-featured">
-        {{ drupal_view('front_banner', 'block_1') }}
-      </div>
-    </div>
-
-    {# 热门榜单 #}
-    <div class="xedc-sidebar__widget">
-      <h3 class="xedc-sidebar__title">🔥 热门榜单</h3>
-      {{ drupal_view('hot_rank', 'block_1') }}
-    </div>
-
-    {# 未登录显示登录引导 #}
-    {% if not is_logged_in %}
-      <div class="xedc-sidebar__widget xedc-sidebar__login">
-        <h3 class="xedc-sidebar__title">加入我们</h3>
-        <p class="xedc-text-sm xedc-text-muted">登录后享受个性化推荐</p>
-        <div class="xedc-flex xedc-gap-2" style="margin-top: var(--space-3);">
-          <a href="/user/login" class="xedc-btn xedc-btn--default xedc-btn--sm">登录</a>
-          <a href="/user/register" class="xedc-btn xedc-btn--outline xedc-btn--sm">注册</a>
-        </div>
-      </div>
-    {% endif %}
-
-  </aside>
-</div>
+{# ── 主内容（全宽）── #}
+<main class="xedc-user-page__main" id="main-content" role="main" tabindex="-1">
+  {{ page.content }}
+</main>
 
 {# ── Footer ── #}
 <footer class="xedc-footer" role="contentinfo">

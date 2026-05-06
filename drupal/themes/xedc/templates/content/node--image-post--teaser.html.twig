@@ -1,12 +1,12 @@
 {#
   node--image-post--teaser.html.twig — 图集卡片（瀑布流用）
-  封面图直接从 node entity 读取
+  封面图、作者信息均由 xedc_preprocess_node() 预加载
 #}
 {% set nid = node.id() %}
-{% set _cover_entity = node.field_cover_image.0.entity %}
-{% set _first_image = node.field_images.0.entity %}
-{% set _owner = node.getOwner() %}
-{% set _owner_name = _owner.getDisplayName() %}
+{% set _cover_url = cover_image_url|default('') %}
+{% set _first_img_url = image_urls[0]|default('') %}
+{% set _owner_name = owner_name|default('') %}
+{% set _owner_uid = owner_uid|default(0) %}
 {% set _hues = [220, 280, 155, 30, 340, 190, 320, 55] %}
 
 <article{{ attributes.addClass('xedc-image-card') }} data-nid="{{ nid }}" data-selectable>
@@ -14,10 +14,10 @@
   {# 图片主体 #}
   <div class="xedc-image-card__img-wrap">
     <a href="{{ url }}" class="xedc-image-card__link">
-      {% if _cover_entity %}
-        <img src="{{ file_url(_cover_entity.fileUri) }}" alt="{{ label }}" loading="lazy" />
-      {% elseif _first_image %}
-        <img src="{{ file_url(_first_image.fileUri) }}" alt="{{ label }}" loading="lazy" />
+      {% if _cover_url %}
+        <img src="{{ _cover_url }}" alt="{{ label }}" loading="lazy" />
+      {% elseif _first_img_url %}
+        <img src="{{ _first_img_url }}" alt="{{ label }}" loading="lazy" />
       {% else %}
         <div class="xedc-image-card__placeholder">
           <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.5">
@@ -49,8 +49,6 @@
           </a>
         {% endif %}
       </div>
-
-      {# 多选复选框 #}
       <label class="xedc-image-card__checkbox" style="display:none;">
         <input type="checkbox" class="xedc-select-item" value="{{ nid }}" aria-label="选择此图片" />
       </label>
@@ -63,17 +61,17 @@
 
     {# 发布者信息 #}
     <div class="xedc-image-card__author">
-      {% if _owner.user_picture.0.entity %}
+      {% if owner_picture_url %}
         <div class="xedc-avatar xedc-avatar--xs">
-          <img src="{{ file_url(_owner.user_picture.0.entity.fileUri) }}" alt="{{ _owner_name }}" />
+          <img src="{{ owner_picture_url }}" alt="{{ _owner_name }}" />
         </div>
       {% else %}
         <div class="xedc-avatar xedc-avatar--xs"
-             style="background:oklch(0.62 0.16 {{ _hues[_owner_name|length % 8] }});">
+             style="background:oklch(0.62 0.16 {{ _hues[(_owner_name|length) % 8] }});color:#fff;font-size:9px;line-height:1;display:flex;align-items:center;justify-content:center;">
           {{ _owner_name|slice(0,1)|upper }}
         </div>
       {% endif %}
-      <a href="/user/{{ node.getOwnerId() }}" class="xedc-image-card__author-name">{{ _owner_name }}</a>
+      <a href="/user/{{ _owner_uid }}" class="xedc-image-card__author-name">{{ _owner_name }}</a>
       <span class="xedc-text-xs xedc-text-muted">· {{ node.getCreatedTime()|date('m-d') }}</span>
     </div>
 

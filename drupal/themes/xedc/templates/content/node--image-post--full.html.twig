@@ -1,22 +1,12 @@
 {#
   node--image-post--full.html.twig — 图集详情页
-  直接从 node entity 读取 field_images 所有图片
+  image_urls 和作者信息由 xedc_preprocess_node() 预加载
 #}
 {% set nid = node.id() %}
-{% set _owner = node.getOwner() %}
-{% set _owner_name = _owner.getDisplayName() %}
+{% set _owner_name = owner_name|default('') %}
+{% set _owner_uid = owner_uid|default(0) %}
 {% set _hues = [220, 280, 155, 30, 340, 190, 320, 55] %}
-
-{# 收集所有图片（field_images 全部 + 封面图）#}
-{% set _all_images = [] %}
-{% for item in node.field_images %}
-  {% if item.entity %}
-    {% set _all_images = _all_images|merge([item.entity]) %}
-  {% endif %}
-{% endfor %}
-{% if _all_images is empty and node.field_cover_image.0.entity %}
-  {% set _all_images = [node.field_cover_image.0.entity] %}
-{% endif %}
+{% set _imgs = image_urls|default([]) %}
 
 <div class="xedc-image-detail">
   <div class="xedc-container">
@@ -27,19 +17,19 @@
     {# ── 作者 + 元数据 ── #}
     <div class="xedc-image-detail__meta-row">
       <div class="xedc-flex xedc-items-center xedc-gap-2">
-        {% if _owner.user_picture.0.entity %}
+        {% if owner_picture_url %}
           <div class="xedc-avatar xedc-avatar--sm">
-            <img src="{{ file_url(_owner.user_picture.0.entity.fileUri) }}" alt="{{ _owner_name }}" />
+            <img src="{{ owner_picture_url }}" alt="{{ _owner_name }}" />
           </div>
         {% else %}
           <div class="xedc-avatar xedc-avatar--sm"
-               style="background:oklch(0.62 0.16 {{ _hues[_owner_name|length % 8] }});">
+               style="background:oklch(0.62 0.16 {{ _hues[(_owner_name|length) % 8] }});color:#fff;font-size:13px;line-height:1;display:flex;align-items:center;justify-content:center;">
             {{ _owner_name|slice(0,1)|upper }}
           </div>
         {% endif %}
-        <a href="/user/{{ node.getOwnerId() }}" class="xedc-text-sm">{{ _owner_name }}</a>
+        <a href="/user/{{ _owner_uid }}" class="xedc-text-sm">{{ _owner_name }}</a>
         <span class="xedc-text-sm xedc-text-muted">{{ node.getCreatedTime()|date('Y-m-d') }}</span>
-        <span class="xedc-text-sm xedc-text-muted">{{ _all_images|length }} 张图片</span>
+        <span class="xedc-text-sm xedc-text-muted">{{ _imgs|length }} 张图片</span>
       </div>
       <div class="xedc-flex xedc-items-center xedc-gap-3">
         <span class="xedc-text-sm xedc-text-muted">
@@ -53,8 +43,8 @@
 
     {# ── 操作栏 ── #}
     <div class="xedc-image-detail__actions">
-      {% if node.field_allow_download.value and _all_images[0] is defined %}
-        <a href="{{ file_url(_all_images[0].fileUri) }}" download class="xedc-action-btn">
+      {% if node.field_allow_download.value and _imgs[0] is defined %}
+        <a href="{{ _imgs[0] }}" download class="xedc-action-btn">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
             <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
@@ -76,11 +66,11 @@
     </div>
 
     {# ── 图片展示区（瀑布/网格）── #}
-    {% if _all_images %}
+    {% if _imgs %}
       <div class="xedc-image-detail__gallery">
-        {% for img_entity in _all_images %}
+        {% for url in _imgs %}
           <div class="xedc-image-detail__gallery-item" data-index="{{ loop.index0 }}">
-            <img src="{{ file_url(img_entity.fileUri) }}"
+            <img src="{{ url }}"
                  alt="{{ label }} - 第{{ loop.index }}张"
                  loading="lazy"
                  onclick="xedcOpenLightbox({{ loop.index0 }})" />
@@ -108,8 +98,8 @@
     {# 图片 URL 数据（供 JS 使用）#}
     <script>
     var xedcImageUrls = [
-      {% for img_entity in _all_images %}
-        "{{ file_url(img_entity.fileUri) }}"{{ loop.last ? '' : ',' }}
+      {% for url in _imgs %}
+        "{{ url }}"{{ loop.last ? '' : ',' }}
       {% endfor %}
     ];
     var xedcCurrentIndex = 0;

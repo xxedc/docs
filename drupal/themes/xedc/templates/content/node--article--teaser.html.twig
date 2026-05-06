@@ -1,19 +1,20 @@
 {#
   node--article--teaser.html.twig — 文章卡片（竖版，列表/首页通用）
+  作者信息由 xedc_preprocess_node() 预加载
 #}
 {% set nid = node.id() %}
-{% set owner = node.getOwner() %}
-{% set owner_name = owner.getDisplayName() %}
+{% set _owner_name = owner_name|default('') %}
+{% set _owner_uid = owner_uid|default(0) %}
 {% set _hues = [220, 280, 155, 30, 340, 190, 320, 55] %}
-{% set _cover_entity = node.field_cover_image.0.entity %}
+{% set _cover_url = cover_image_url|default('') %}
 
 <article{{ attributes.addClass('xedc-article-card') }}>
 
   {# 封面图 #}
   <div class="xedc-article-card__cover">
     <a href="{{ url }}" class="xedc-article-card__cover-link" tabindex="-1">
-      {% if _cover_entity %}
-        <img src="{{ file_url(_cover_entity.fileUri) }}" alt="{{ label }}" loading="lazy" />
+      {% if _cover_url %}
+        <img src="{{ _cover_url }}" alt="{{ label }}" loading="lazy" />
       {% else %}
         <div class="xedc-article-card__cover-placeholder">
           <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.4">
@@ -36,8 +37,8 @@
       <a href="{{ url }}">{{ label }}</a>
     </h2>
 
-    {# 摘要（有封面图时显示）#}
-    {% if node.field_summary.value and not _cover_entity %}
+    {# 摘要（无封面图时显示）#}
+    {% if node.field_summary.value and not _cover_url %}
       <p class="xedc-article-card__summary">
         {{ node.field_summary.value|slice(0, 80) }}{% if node.field_summary.value|length > 80 %}...{% endif %}
       </p>
@@ -48,17 +49,17 @@
 
       {# 作者头像 + 名字 #}
       <div class="xedc-article-card__author">
-        {% if owner.user_picture.0.entity %}
+        {% if owner_picture_url %}
           <div class="xedc-avatar xedc-avatar--xs">
-            <img src="{{ file_url(owner.user_picture.0.entity.fileUri) }}" alt="{{ owner_name }}" />
+            <img src="{{ owner_picture_url }}" alt="{{ _owner_name }}" />
           </div>
         {% else %}
           <div class="xedc-avatar xedc-avatar--xs"
-               style="background:oklch(0.62 0.16 {{ _hues[owner_name|length % 8] }});">
-            {{ owner_name|slice(0,1)|upper }}
+               style="background:oklch(0.62 0.16 {{ _hues[(_owner_name|length) % 8] }});color:#fff;font-size:9px;line-height:1;display:flex;align-items:center;justify-content:center;">
+            {{ _owner_name|slice(0,1)|upper }}
           </div>
         {% endif %}
-        <a href="/user/{{ node.getOwnerId() }}" class="xedc-article-card__author-name">{{ owner_name }}</a>
+        <a href="/user/{{ _owner_uid }}" class="xedc-article-card__author-name">{{ _owner_name }}</a>
       </div>
 
       {# 元数据 #}
