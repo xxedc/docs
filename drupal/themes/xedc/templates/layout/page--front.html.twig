@@ -46,11 +46,18 @@
       {# 主题切换器 #}
       {% include 'xedc:theme-toggle' %}
       {% if is_logged_in %}
-        <a href="/user/{{ current_user.id() }}" class="xedc-navbar__icon-btn" aria-label="个人中心">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-            <circle cx="12" cy="7" r="4"/>
-          </svg>
+        {% set _hues = [220, 280, 155, 30, 340, 190, 320, 55] %}
+        <a href="/user/{{ current_user.id() }}" class="xedc-navbar__avatar" aria-label="个人中心">
+          {% if current_user_picture %}
+            <img class="xedc-avatar xedc-avatar--sm xedc-avatar--img"
+                 src="{{ current_user_picture }}"
+                 alt="{{ current_user_name }}" />
+          {% else %}
+            <div class="xedc-avatar xedc-avatar--sm"
+                 style="background:oklch(0.62 0.16 {{ _hues[(current_user_name|default('U')|length) % 8] }});">
+              {{ (current_user_name|default('U'))|slice(0,1)|upper }}
+            </div>
+          {% endif %}
         </a>
       {% else %}
         <a href="/user/login" class="xedc-btn xedc-btn--default xedc-btn--sm">登录</a>

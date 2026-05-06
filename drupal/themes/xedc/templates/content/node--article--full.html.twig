@@ -38,11 +38,18 @@
           {# 作者 + 元信息 #}
           <div class="xedc-article-detail__meta xedc-flex xedc-items-center xedc-gap-4">
             <div class="xedc-flex xedc-items-center xedc-gap-2">
-              <div class="xedc-avatar xedc-avatar--sm">
-                <span class="xedc-avatar__fallback">
-                  {{ node.getOwner().getDisplayName()|slice(0,1)|upper }}
-                </span>
-              </div>
+              {% set _owner = node.getOwner() %}
+              {% set _hues = [220, 280, 155, 30, 340, 190, 320, 55] %}
+              {% if _owner.user_picture.0.entity %}
+                <div class="xedc-avatar xedc-avatar--sm">
+                  <img src="{{ file_url(_owner.user_picture.0.entity.fileUri) }}" alt="{{ _owner.getDisplayName() }}" />
+                </div>
+              {% else %}
+                <div class="xedc-avatar xedc-avatar--sm"
+                     style="background:oklch(0.62 0.16 {{ _hues[_owner.getDisplayName()|length % 8] }});">
+                  {{ _owner.getDisplayName()|slice(0,1)|upper }}
+                </div>
+              {% endif %}
               <a href="/user/{{ node.getOwnerId() }}" class="xedc-text-sm">
                 {{ node.getOwner().getDisplayName() }}
               </a>
@@ -100,11 +107,18 @@
         {# 作者卡片 #}
         <div class="xedc-author-card xedc-card">
           <div class="xedc-card__body xedc-flex xedc-items-center xedc-gap-4">
-            <div class="xedc-avatar xedc-avatar--lg">
-              <span class="xedc-avatar__fallback">
-                {{ node.getOwner().getDisplayName()|slice(0,1)|upper }}
-              </span>
-            </div>
+            {% set _card_owner = node.getOwner() %}
+            {% set _hues = [220, 280, 155, 30, 340, 190, 320, 55] %}
+            {% if _card_owner.user_picture.0.entity %}
+              <div class="xedc-avatar xedc-avatar--lg">
+                <img src="{{ file_url(_card_owner.user_picture.0.entity.fileUri) }}" alt="{{ _card_owner.getDisplayName() }}" />
+              </div>
+            {% else %}
+              <div class="xedc-avatar xedc-avatar--lg"
+                   style="background:oklch(0.62 0.16 {{ _hues[_card_owner.getDisplayName()|length % 8] }});">
+                {{ _card_owner.getDisplayName()|slice(0,1)|upper }}
+              </div>
+            {% endif %}
             <div>
               <a href="/user/{{ node.getOwnerId() }}" class="xedc-author-card__name">
                 {{ node.getOwner().getDisplayName() }}

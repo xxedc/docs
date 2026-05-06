@@ -178,6 +178,29 @@
   font-weight: 700;
 }
 
+/* img 作为头像时确保圆形裁切 */
+.xedc-avatar--img {
+  border-radius: 50%;
+  overflow: hidden;
+}
+.xedc-avatar--img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* 导航栏头像链接 */
+.xedc-navbar__avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+.xedc-navbar__avatar:hover { opacity: 0.85; }
+
 /* ── 分页 ── */
 .xedc-pager {
   display: flex;

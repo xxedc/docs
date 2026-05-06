@@ -30,6 +30,22 @@ function xedc_preprocess_page(array &$variables): void {
   $variables['is_logged_in']  = \Drupal::currentUser()->isAuthenticated();
   $variables['current_user']  = \Drupal::currentUser();
 
+  // 加载当前用户头像 URL（供导航栏使用）
+  $current_user = \Drupal::currentUser();
+  if ($current_user->isAuthenticated()) {
+    $variables['current_user_name'] = $current_user->getDisplayName();
+    try {
+      $user_entity = \Drupal::entityTypeManager()->getStorage('user')->load($current_user->id());
+      if ($user_entity && $user_entity->hasField('user_picture') && !$user_entity->get('user_picture')->isEmpty()) {
+        $picture = $user_entity->get('user_picture')->entity;
+        if ($picture) {
+          $variables['current_user_picture'] = \Drupal::service('file_url_generator')
+            ->generateString($picture->getFileUri());
+        }
+      }
+    } catch (\Exception $e) {}
+  }
+
   $node = \Drupal::routeMatch()->getParameter('node');
   if ($node) {
     switch ($node->bundle()) {
@@ -105,6 +121,17 @@ function xedc_preprocess_user(array &$variables): void {
   $variables['viewed_user_name'] = $viewed_user->getDisplayName();
   $variables['viewed_user_id']   = $viewed_user->id();
   $variables['viewed_user_url']  = $viewed_user->toUrl()->toString();
+
+  // 加载被查看用户的头像 URL
+  try {
+    if ($viewed_user->hasField('user_picture') && !$viewed_user->get('user_picture')->isEmpty()) {
+      $picture = $viewed_user->get('user_picture')->entity;
+      if ($picture) {
+        $variables['user_picture_url'] = \Drupal::service('file_url_generator')
+          ->generateAbsoluteString($picture->getFileUri());
+      }
+    }
+  } catch (\Exception $e) {}
 
   // 附加个人中心 CSS/JS
   $variables['#attached']['library'][] = 'xedc/page-profile';

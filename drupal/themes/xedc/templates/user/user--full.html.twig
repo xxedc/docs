@@ -7,11 +7,17 @@
     <div class="xedc-profile__card xedc-card">
       <div class="xedc-card__body">
         <div class="xedc-profile__header xedc-flex xedc-items-center xedc-gap-4">
-          <div class="xedc-avatar xedc-avatar--xl">
-            <span class="xedc-avatar__fallback">
+          {% set _hues = [220, 280, 155, 30, 340, 190, 320, 55] %}
+          {% if user_picture_url %}
+            <div class="xedc-avatar xedc-avatar--xl">
+              <img src="{{ user_picture_url }}" alt="{{ viewed_user_name }}" />
+            </div>
+          {% else %}
+            <div class="xedc-avatar xedc-avatar--xl"
+                 style="background:oklch(0.62 0.16 {{ _hues[viewed_user_name|length % 8] }});">
               {{ viewed_user_name|slice(0,1)|upper }}
-            </span>
-          </div>
+            </div>
+          {% endif %}
           <div class="xedc-profile__info" style="flex:1;">
             <h1 class="xedc-profile__name">{{ viewed_user_name }}</h1>
             <div class="xedc-profile__stats xedc-flex xedc-gap-6" style="margin-top:var(--space-3);">

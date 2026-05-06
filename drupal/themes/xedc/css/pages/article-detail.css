@@ -25,7 +25,11 @@
 }
 
 /* 隐藏封面图、标签等区块的字段标签 */
-.xedc-article-detail .field__label { display: none; }
+.xedc-article-detail .field__label,
+.xedc-article-detail .field__label--above,
+.xedc-article-detail .field__label--inline,
+.xedc-article-detail__cover .field__label,
+.xedc-article-detail__header .field__label { display: none !important; }
 
 /* ── 主布局 ── */
 .xedc-article-detail { padding: var(--space-8) 0; }

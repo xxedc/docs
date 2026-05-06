@@ -104,12 +104,20 @@
           </div>
         </div>
 
-        {# 用户入口 #}
+        {# 用户头像入口 #}
         {% if is_logged_in %}
-          <a href="/user/me" class="xedc-navbar__avatar" aria-label="个人中心">
-            <div class="xedc-avatar xedc-avatar--sm">
-              {{ drupal_entity('user', current_user.id(), 'compact') }}
-            </div>
+          {% set _hues = [220, 280, 155, 30, 340, 190, 320, 55] %}
+          <a href="/user/{{ current_user.id() }}" class="xedc-navbar__avatar" aria-label="个人中心">
+            {% if current_user_picture %}
+              <img class="xedc-avatar xedc-avatar--sm xedc-avatar--img"
+                   src="{{ current_user_picture }}"
+                   alt="{{ current_user_name }}" />
+            {% else %}
+              <div class="xedc-avatar xedc-avatar--sm"
+                   style="background:oklch(0.62 0.16 {{ _hues[(current_user_name|default('U')|length) % 8] }});">
+                {{ (current_user_name|default('U'))|slice(0,1)|upper }}
+              </div>
+            {% endif %}
           </a>
         {% else %}
           <a href="/user/login" class="xedc-btn xedc-btn--primary xedc-btn--sm">登录</a>
