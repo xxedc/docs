@@ -103,6 +103,12 @@ function xedc_preprocess_page(array &$variables): void {
   if (\Drupal::service('path.matcher')->isFrontPage()) {
     $variables['#attached']['library'][] = 'xedc/page-front';
   }
+
+  // 用户相关页面（个人中心、编辑资料）附加 profile 样式
+  $route_name = \Drupal::routeMatch()->getRouteName();
+  if (str_starts_with($route_name, 'entity.user.') || str_starts_with($route_name, 'user.')) {
+    $variables['#attached']['library'][] = 'xedc/page-profile';
+  }
 }
 
 /**
@@ -120,20 +126,56 @@ function xedc_preprocess_node(array &$variables): void {
     $variables['like_count'] = (int) ($node->get('field_like_count')->value ?? 0);
   }
 
-  $owner = $node->getOwner();
-  if ($owner) {
-    $avatar = xedc_build_avatar_data($owner);
-    $variables['owner_name'] = $avatar['name'];
-    $variables['owner_profile_url'] = $avatar['profile_url'];
-    $variables['owner_avatar_url'] = $avatar['picture_url'];
-    $variables['owner_avatar_initial'] = $avatar['initial'];
-  }
+  $file_url_gen = \Drupal::service('file_url_generator');
 
   if ($node->hasField('field_cover_image') && !$node->get('field_cover_image')->isEmpty()) {
     $image = $node->get('field_cover_image')->entity;
     if ($image) {
-      $variables['cover_image_url'] = \Drupal::service('file_url_generator')->generateAbsoluteString($image->getFileUri());
+      $variables['cover_image_url'] = $file_url_gen->generateString($image->getFileUri());
     }
+  }
+
+  // Preload owner info so Twig templates don't need entity method calls.
+  try {
+    $owner = $node->getOwner();
+    if ($owner) {
+      $variables['owner_name']    = $owner->getDisplayName();
+      $variables['owner_uid']     = (int) $owner->id();
+      $variables['owner_picture_url'] = '';
+      if ($owner->hasField('user_picture') && !$owner->get('user_picture')->isEmpty()) {
+        $pic = $owner->get('user_picture')->entity;
+        if ($pic) {
+          $variables['owner_picture_url'] = $file_url_gen->generateString($pic->getFileUri());
+        }
+      }
+    }
+  }
+  catch (\Exception $e) {
+    $variables['owner_name']        = '';
+    $variables['owner_uid']         = 0;
+    $variables['owner_picture_url'] = '';
+  }
+
+  // For image_post: preload all gallery image URLs (tries several field names).
+  if ($node->bundle() === 'image_post') {
+    $image_urls = [];
+    foreach (['field_images', 'field_image', 'field_gallery', 'field_media_images'] as $fname) {
+      if ($node->hasField($fname) && !$node->get($fname)->isEmpty()) {
+        foreach ($node->get($fname) as $item) {
+          if (!empty($item->entity)) {
+            $image_urls[] = $file_url_gen->generateString($item->entity->getFileUri());
+          }
+        }
+        if (!empty($image_urls)) {
+          break;
+        }
+      }
+    }
+    // Fallback to cover image when no field_images found.
+    if (empty($image_urls) && !empty($variables['cover_image_url'])) {
+      $image_urls[] = $variables['cover_image_url'];
+    }
+    $variables['image_urls'] = $image_urls;
   }
 }
 

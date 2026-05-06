@@ -2,79 +2,43 @@
    front.css — 首页布局
    ================================================================ */
 
-/* ── Banner 精选区（横向滚动）── */
-.xedc-front__banner {
-  padding: var(--space-4) 0;
-  background: var(--background);
+/* ── 内容分类 Filter Tab ── */
+.xedc-front-filter {
   border-bottom: 1px solid var(--border);
+  background: var(--background);
+  position: sticky;
+  top: 56px;
+  z-index: calc(var(--z-sticky) - 1);
 }
 
-.xedc-front-banner-list {
+.xedc-front-filter__nav {
   display: flex;
-  gap: var(--space-3);
-  overflow-x: auto;
-  padding: var(--space-1) 0 var(--space-2);
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
-}
-.xedc-front-banner-list::-webkit-scrollbar { display: none; }
-
-.xedc-front-banner-list__item {
-  flex-shrink: 0;
-  width: 200px;
-  scroll-snap-align: start;
-}
-
-/* Banner 内卡片统一比例 */
-.xedc-front-banner-list .xedc-video-card__cover,
-.xedc-front-banner-list .xedc-article-card__cover {
-  aspect-ratio: 4 / 3;
-}
-.xedc-front-banner-list .xedc-video-card--portrait .xedc-video-card__cover {
-  aspect-ratio: 4 / 3;
-}
-
-/* ── 分类快捷导航 ── */
-.xedc-front__categories {
-  padding: var(--space-4) 0;
-}
-.xedc-category-nav {
-  display: flex;
-  gap: var(--space-3);
+  gap: 0;
   overflow-x: auto;
   scrollbar-width: none;
 }
-.xedc-category-nav::-webkit-scrollbar { display: none; }
+.xedc-front-filter__nav::-webkit-scrollbar { display: none; }
 
-.xedc-category-nav__item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-1);
-  padding: var(--space-3) var(--space-4);
-  border-radius: 14px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  color: var(--foreground);
+.xedc-front-filter__item {
+  padding: var(--space-3) var(--space-5);
   font-size: var(--text-sm);
-  font-weight: 600;
-  white-space: nowrap;
-  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-  min-width: 68px;
-  text-align: center;
+  font-weight: 500;
+  color: var(--muted-foreground);
   text-decoration: none;
-  box-shadow: var(--shadow-sm);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: color 0.15s, border-color 0.15s;
 }
-.xedc-category-nav__item:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 16px oklch(from var(--primary) l c h / 0.25);
-  background: linear-gradient(135deg, var(--primary), oklch(from var(--primary) l c calc(h + 25)));
-  color: var(--primary-foreground);
-  border-color: transparent;
+.xedc-front-filter__item:hover { color: var(--foreground); }
+.xedc-front-filter__item.is-active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+  font-weight: 700;
 }
-.xedc-category-nav__icon { font-size: 22px; line-height: 1; }
 
-/* ── 主体布局（推荐流 + 侧边栏）── */
+/* ── 主体布局 ── */
 .xedc-front__layout {
   display: grid;
   grid-template-columns: 1fr 260px;
@@ -93,28 +57,6 @@
   }
 }
 
-/* ── 节标题 ── */
-.xedc-front__section-title {
-  margin-bottom: var(--space-4);
-}
-.xedc-front__section-title h2 {
-  font-size: var(--text-lg);
-  font-weight: 700;
-  color: var(--foreground);
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-.xedc-front__section-title h2::before {
-  content: '';
-  display: inline-block;
-  width: 4px;
-  height: 1em;
-  background: linear-gradient(180deg, var(--primary), oklch(from var(--primary) calc(l + 0.1) c calc(h + 20)));
-  border-radius: 2px;
-  flex-shrink: 0;
-}
-
 /* ── 推荐流混合网格 ── */
 .xedc-front-feed {
   display: grid;
@@ -128,7 +70,6 @@
   .xedc-front-feed { grid-template-columns: repeat(2, 1fr); gap: var(--space-3); }
 }
 
-/* 确保 teaser article 元素在网格中正确显示 */
 .xedc-front-feed > article,
 .xedc-front-feed .xedc-video-card,
 .xedc-front-feed .xedc-article-card,
@@ -137,7 +78,7 @@
 }
 
 /* ── 侧边栏 ── */
-.xedc-front__sidebar { position: sticky; top: 72px; }
+.xedc-front__sidebar { position: sticky; top: 102px; }
 
 .xedc-sidebar__widget {
   background: var(--card);
@@ -181,7 +122,40 @@
   border-color: oklch(from var(--primary) 0.8 0.05 h / 0.35);
 }
 
-/* ── 相关内容列表（侧边栏热榜）── */
+/* ── 精选内容（侧边栏紧凑列表）── */
+.xedc-front-featured { overflow: hidden; }
+
+.xedc-featured-list { display: flex; flex-direction: column; gap: var(--space-2); }
+
+.xedc-featured-list__item .xedc-article-card,
+.xedc-featured-list__item .xedc-video-card,
+.xedc-featured-list__item .xedc-image-card {
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+/* Featured 内卡片压缩样式 */
+.xedc-featured-list__item .xedc-article-card__cover,
+.xedc-featured-list__item .xedc-video-card__cover {
+  aspect-ratio: 16 / 9;
+  border-radius: 6px 6px 0 0;
+}
+.xedc-featured-list__item .xedc-article-card__body,
+.xedc-featured-list__item .xedc-video-card__info {
+  padding: var(--space-2);
+}
+.xedc-featured-list__item .xedc-article-card__title,
+.xedc-featured-list__item .xedc-video-card__title {
+  font-size: var(--text-xs);
+  -webkit-line-clamp: 2;
+}
+.xedc-featured-list__item .xedc-article-card__footer,
+.xedc-featured-list__item .xedc-video-card__author,
+.xedc-featured-list__item .xedc-video-card__meta,
+.xedc-featured-list__item .xedc-video-card__actions,
+.xedc-featured-list__item .xedc-article-card__summary { display: none; }
+
+/* ── 热榜相关列表 ── */
 .xedc-related-list { display: flex; flex-direction: column; gap: var(--space-1); }
 .xedc-related-item {
   display: flex;
