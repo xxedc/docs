@@ -138,12 +138,14 @@ body:has(.xedc-image-waterfall) {
   color: oklch(0.6 0.05 250);
 }
 
+/* ── 悬浮操作层 ── */
 .xedc-image-card__overlay {
   position: absolute;
   inset: 0;
   background: linear-gradient(to bottom, oklch(0 0 0 / 0) 42%, oklch(0 0 0 / 0.68) 100%);
   opacity: 0;
-  transition: opacity 0.2s ease;
+  pointer-events: none;
+  transition: opacity 0.22s ease;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -151,6 +153,7 @@ body:has(.xedc-image-waterfall) {
 }
 .xedc-image-card:hover .xedc-image-card__overlay {
   opacity: 1;
+  pointer-events: auto;
 }
 
 .xedc-image-card__overlay-actions {
@@ -181,8 +184,28 @@ body:has(.xedc-image-waterfall) {
 .xedc-image-card__author {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: 5px;
   margin-top: var(--space-2);
+}
+.xedc-image-card__author .xedc-avatar,
+.xedc-image-card__author .xedc-avatar--xs {
+  width: 18px !important;
+  height: 18px !important;
+  min-width: 18px;
+  font-size: 9px !important;
+  border-radius: 50%;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+.xedc-image-card__author .xedc-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .xedc-image-card__author-name {
   font-size: 12px;
@@ -190,7 +213,8 @@ body:has(.xedc-image-waterfall) {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 120px;
+  max-width: 70px;
+  transition: color 0.15s;
   text-decoration: none;
   flex-shrink: 0;
 }
@@ -250,6 +274,16 @@ body:has(.xedc-image-waterfall) {
   padding: var(--space-6) 0 0;
 }
 
+/* ── 底部控制栏 ── */
+.xedc-image-waterfall__bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) 0;
+}
+
+/* ── 回到顶部 ── */
 .xedc-back-to-top {
   position: fixed;
   bottom: var(--space-8);
