@@ -5,6 +5,9 @@
 {% set nid = node.id() %}
 {% set _cover_entity = node.field_cover_image.0.entity %}
 {% set _first_image = node.field_images.0.entity %}
+{% set _owner = node.getOwner() %}
+{% set _owner_name = _owner.getDisplayName() %}
+{% set _hues = [220, 280, 155, 30, 340, 190, 320, 55] %}
 
 <article{{ attributes.addClass('xedc-image-card') }} data-nid="{{ nid }}" data-selectable>
 
@@ -57,6 +60,23 @@
   {# 图集信息 #}
   <div class="xedc-image-card__info">
     <a href="{{ url }}" class="xedc-image-card__title">{{ label }}</a>
+
+    {# 发布者信息 #}
+    <div class="xedc-image-card__author">
+      {% if _owner.user_picture.0.entity %}
+        <div class="xedc-avatar xedc-avatar--xs">
+          <img src="{{ file_url(_owner.user_picture.0.entity.fileUri) }}" alt="{{ _owner_name }}" />
+        </div>
+      {% else %}
+        <div class="xedc-avatar xedc-avatar--xs"
+             style="background:oklch(0.62 0.16 {{ _hues[_owner_name|length % 8] }});">
+          {{ _owner_name|slice(0,1)|upper }}
+        </div>
+      {% endif %}
+      <a href="/user/{{ node.getOwnerId() }}" class="xedc-image-card__author-name">{{ _owner_name }}</a>
+      <span class="xedc-text-xs xedc-text-muted">· {{ node.getCreatedTime()|date('m-d') }}</span>
+    </div>
+
     <div class="xedc-image-card__meta">
       <span class="xedc-text-xs xedc-text-muted">
         <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" style="display:inline;vertical-align:middle;margin-right:2px;">
@@ -64,11 +84,6 @@
         </svg>
         {{ view_count|default(0) }}
       </span>
-      {% if node.field_orientation.value %}
-        <span class="xedc-badge xedc-badge--outline" style="font-size:10px;padding:1px 5px;">
-          {{ node.field_orientation.value == 'landscape' ? '横' : (node.field_orientation.value == 'portrait' ? '竖' : '方') }}
-        </span>
-      {% endif %}
     </div>
   </div>
 

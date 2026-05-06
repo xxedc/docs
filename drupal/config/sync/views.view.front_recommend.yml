@@ -2,6 +2,8 @@ uuid: 5b2d47f4-e6b8-401e-8822-05b591636238
 langcode: zh-hans
 status: true
 dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
   module:
     - node
     - user
@@ -88,7 +90,7 @@ display:
         type: some
         options:
           offset: 0
-          items_per_page: 5
+          items_per_page: 12
       exposed_form:
         type: basic
         options:
@@ -138,9 +140,11 @@ display:
           expose:
             operator: ''
       style:
-        type: grid_responsive
+        type: default
       row:
-        type: fields
+        type: 'entity:node'
+        options:
+          view_mode: teaser
       query:
         type: views_query
         options:

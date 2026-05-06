@@ -163,6 +163,27 @@ body:has(.xedc-image-waterfall) { background: oklch(0.96 0 0); }
   text-decoration: none;
 }
 .xedc-image-card__title:hover { color: var(--primary); }
+
+/* ── 发布者信息 ── */
+.xedc-image-card__author {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+}
+.xedc-image-card__author-name {
+  font-size: 11px;
+  color: var(--muted-foreground);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 80px;
+  transition: color 0.15s;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.xedc-image-card__author-name:hover { color: var(--primary); }
+
 .xedc-image-card__meta {
   margin-top: var(--space-1);
   display: flex;
