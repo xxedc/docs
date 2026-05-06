@@ -1,23 +1,24 @@
 {#
   node--image-post--teaser.html.twig — 图集卡片（瀑布流用）
-  封面图直接从 node entity 读取
 #}
 {% set nid = node.id() %}
-{% set _cover_entity = node.field_cover_image.0.entity %}
-{% set _first_image = node.field_images.0.entity %}
-{% set _owner = node.getOwner() %}
-{% set _owner_name = _owner.getDisplayName() %}
-{% set _hues = [220, 280, 155, 30, 340, 190, 320, 55] %}
+{% set owner_name = owner_name|default(node.getOwner().getDisplayName()) %}
+{% set owner_profile_url = owner_profile_url|default('/user/' ~ node.getOwnerId()) %}
+{% set owner_avatar_url = owner_avatar_url|default('') %}
+{% set owner_avatar_initial = owner_avatar_initial|default(owner_name|slice(0, 1)|upper) %}
+{% set first_image_url = '' %}
+
+{% if cover_image_url %}
+  {% set first_image_url = cover_image_url %}
+{% elseif node.field_images.0.entity %}
+  {% set first_image_url = file_url(node.field_images.0.entity.fileUri) %}
+{% endif %}
 
 <article{{ attributes.addClass('xedc-image-card') }} data-nid="{{ nid }}" data-selectable>
-
-  {# 图片主体 #}
   <div class="xedc-image-card__img-wrap">
     <a href="{{ url }}" class="xedc-image-card__link">
-      {% if _cover_entity %}
-        <img src="{{ file_url(_cover_entity.fileUri) }}" alt="{{ label }}" loading="lazy" />
-      {% elseif _first_image %}
-        <img src="{{ file_url(_first_image.fileUri) }}" alt="{{ label }}" loading="lazy" />
+      {% if first_image_url %}
+        <img src="{{ first_image_url }}" alt="{{ label }}" loading="lazy" />
       {% else %}
         <div class="xedc-image-card__placeholder">
           <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.5">
@@ -29,7 +30,6 @@
       {% endif %}
     </a>
 
-    {# Hover 操作浮层 #}
     <div class="xedc-image-card__overlay" aria-hidden="true">
       <div class="xedc-image-card__overlay-actions">
         {% if is_logged_in %}
@@ -50,30 +50,27 @@
         {% endif %}
       </div>
 
-      {# 多选复选框 #}
       <label class="xedc-image-card__checkbox" style="display:none;">
         <input type="checkbox" class="xedc-select-item" value="{{ nid }}" aria-label="选择此图片" />
       </label>
     </div>
   </div>
 
-  {# 图集信息 #}
   <div class="xedc-image-card__info">
     <a href="{{ url }}" class="xedc-image-card__title">{{ label }}</a>
 
-    {# 发布者信息 #}
     <div class="xedc-image-card__author">
-      {% if _owner.user_picture.0.entity %}
-        <div class="xedc-avatar xedc-avatar--xs">
-          <img src="{{ file_url(_owner.user_picture.0.entity.fileUri) }}" alt="{{ _owner_name }}" />
-        </div>
+      {% if owner_avatar_url %}
+        <a href="{{ owner_profile_url }}" class="xedc-avatar xedc-avatar--xs xedc-avatar--img" aria-label="{{ owner_name }}">
+          <img src="{{ owner_avatar_url }}" alt="{{ owner_name }}" />
+        </a>
       {% else %}
-        <div class="xedc-avatar xedc-avatar--xs"
-             style="background:oklch(0.62 0.16 {{ _hues[_owner_name|length % 8] }});">
-          {{ _owner_name|slice(0,1)|upper }}
-        </div>
+        <a href="{{ owner_profile_url }}" class="xedc-avatar xedc-avatar--xs" aria-label="{{ owner_name }}"
+           style="background:oklch(0.62 0.16 {{ [220,280,155,30,340,190,320,55][owner_name|length % 8] }});">
+          {{ owner_avatar_initial }}
+        </a>
       {% endif %}
-      <a href="/user/{{ node.getOwnerId() }}" class="xedc-image-card__author-name">{{ _owner_name }}</a>
+      <a href="{{ owner_profile_url }}" class="xedc-image-card__author-name">{{ owner_name }}</a>
       <span class="xedc-text-xs xedc-text-muted">· {{ node.getCreatedTime()|date('m-d') }}</span>
     </div>
 
@@ -86,5 +83,4 @@
       </span>
     </div>
   </div>
-
 </article>
