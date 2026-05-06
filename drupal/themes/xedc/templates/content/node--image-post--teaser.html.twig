@@ -1,19 +1,21 @@
 {#
-  node--image-post--teaser.html.twig — 图集卡片（瀑布流用）
-  封面图直接从 node entity 读取
+  node--image-post--teaser.html.twig — 图集卡片（优化版）
+  修复：头像显示、链接跳转、作者信息完整
 #}
 {% set nid = node.id() %}
 {% set _cover_entity = node.field_cover_image.0.entity %}
 {% set _first_image = node.field_images.0.entity %}
 {% set _owner = node.getOwner() %}
 {% set _owner_name = _owner.getDisplayName() %}
+{% set _owner_uid = _owner.id() %}
+{% set _owner_picture = _owner.hasField('user_picture') and not _owner.get('user_picture').isEmpty() ? file_url(_owner.get('user_picture').0.entity.fileUri) : null %}
 {% set _hues = [220, 280, 155, 30, 340, 190, 320, 55] %}
 
 <article{{ attributes.addClass('xedc-image-card') }} data-nid="{{ nid }}" data-selectable>
 
-  {# 图片主体 #}
+  {# 图片主体 - 完整链接到内容页 #}
   <div class="xedc-image-card__img-wrap">
-    <a href="{{ url }}" class="xedc-image-card__link">
+    <a href="{{ url }}" class="xedc-image-card__link" title="{{ label }}">
       {% if _cover_entity %}
         <img src="{{ file_url(_cover_entity.fileUri) }}" alt="{{ label }}" loading="lazy" />
       {% elseif _first_image %}
@@ -49,42 +51,36 @@
           </a>
         {% endif %}
       </div>
-
-      {# 多选复选框 #}
       <label class="xedc-image-card__checkbox" style="display:none;">
-        <input type="checkbox" class="xedc-select-item" value="{{ nid }}" aria-label="选择此图片" />
+        <input type="checkbox" data-nid="{{ nid }}" />
       </label>
     </div>
   </div>
 
-  {# 图集信息 #}
+  {# 信息区 - 显示作者头像 + 标题 + 元数据 #}
   <div class="xedc-image-card__info">
-    <a href="{{ url }}" class="xedc-image-card__title">{{ label }}</a>
+    <h3 class="xedc-image-card__title">
+      <a href="{{ url }}">{{ label }}</a>
+    </h3>
 
-    {# 发布者信息 #}
+    {# 发布者信息 - 修复头像显示 #}
     <div class="xedc-image-card__author">
-      {% if _owner.user_picture.0.entity %}
-        <div class="xedc-avatar xedc-avatar--xs">
-          <img src="{{ file_url(_owner.user_picture.0.entity.fileUri) }}" alt="{{ _owner_name }}" />
+      {% if _owner_picture %}
+        <div class="xedc-avatar xedc-avatar--img">
+          <img src="{{ _owner_picture }}" alt="{{ _owner_name }}" />
         </div>
       {% else %}
-        <div class="xedc-avatar xedc-avatar--xs"
-             style="background:oklch(0.62 0.16 {{ _hues[_owner_name|length % 8] }});">
+        <div class="xedc-avatar" style="background:oklch(0.62 0.16 {{ _hues[_owner_name|length % 8] }});">
           {{ _owner_name|slice(0,1)|upper }}
         </div>
       {% endif %}
-      <a href="/user/{{ node.getOwnerId() }}" class="xedc-image-card__author-name">{{ _owner_name }}</a>
-      <span class="xedc-text-xs xedc-text-muted">· {{ node.getCreatedTime()|date('m-d') }}</span>
+      <a href="/user/{{ _owner_uid }}" class="xedc-image-card__author-name">{{ _owner_name }}</a>
     </div>
 
-    <div class="xedc-image-card__meta">
-      <span class="xedc-text-xs xedc-text-muted">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" style="display:inline;vertical-align:middle;margin-right:2px;">
-          <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
-        </svg>
-        {{ view_count|default(0) }}
-      </span>
-    </div>
+    {% if node.hasField('created') %}
+      <div class="xedc-image-card__meta">
+        <span class="xedc-text-xs xedc-text-muted">{{ node.getCreatedTime()|date('Y-m-d') }}</span>
+      </div>
+    {% endif %}
   </div>
-
 </article>
