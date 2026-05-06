@@ -1,6 +1,5 @@
 {#
-  node--article--teaser.html.twig — 文章卡片（列表用）
-  封面图直接从 node entity 读取，绕过 display mode 限制
+  node--article--teaser.html.twig — 文章卡片（竖版，列表/首页通用）
 #}
 {% set nid = node.id() %}
 {% set owner = node.getOwner() %}
@@ -8,75 +7,75 @@
 {% set _hues = [220, 280, 155, 30, 340, 190, 320, 55] %}
 {% set _cover_entity = node.field_cover_image.0.entity %}
 
-<article{{ attributes.addClass('xedc-article-card', _cover_entity ? 'xedc-article-card--with-cover' : '') }}>
+<article{{ attributes.addClass('xedc-article-card') }}>
 
-  <div class="xedc-article-card__body">
-
-    {# 作者信息行 #}
-    <div class="xedc-article-card__author">
-      {# 头像：优先显示用户图片，无则显示彩色首字母 #}
-      {% if owner.user_picture.0.entity %}
-        <div class="xedc-avatar xedc-avatar--xs">
-          <img src="{{ file_url(owner.user_picture.0.entity.fileUri) }}" alt="{{ owner_name }}" />
-        </div>
+  {# 封面图 #}
+  <div class="xedc-article-card__cover">
+    <a href="{{ url }}" class="xedc-article-card__cover-link" tabindex="-1">
+      {% if _cover_entity %}
+        <img src="{{ file_url(_cover_entity.fileUri) }}" alt="{{ label }}" loading="lazy" />
       {% else %}
-        <div class="xedc-avatar xedc-avatar--xs"
-             style="background:oklch(0.62 0.16 {{ _hues[owner_name|length % 8] }});">
-          {{ owner_name|slice(0,1)|upper }}
+        <div class="xedc-article-card__cover-placeholder">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.4">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <polyline points="10 9 9 9 8 9"/>
+          </svg>
         </div>
       {% endif %}
-      <a href="/user/{{ node.getOwnerId() }}" class="xedc-text-sm xedc-text-muted">{{ owner_name }}</a>
-      <span class="xedc-text-xs xedc-text-muted">·</span>
-      <span class="xedc-text-xs xedc-text-muted">{{ node.getCreatedTime()|date('m-d') }}</span>
-    </div>
+    </a>
+  </div>
+
+  {# 卡片内容区 #}
+  <div class="xedc-article-card__body">
 
     {# 标题 #}
     <h2 class="xedc-article-card__title">
       <a href="{{ url }}">{{ label }}</a>
     </h2>
 
-    {# 摘要 #}
-    {% if node.field_summary.value %}
-      <p class="xedc-article-card__summary xedc-line-clamp-2">
-        {{ node.field_summary.value }}
+    {# 摘要（有封面图时显示）#}
+    {% if node.field_summary.value and not _cover_entity %}
+      <p class="xedc-article-card__summary">
+        {{ node.field_summary.value|slice(0, 80) }}{% if node.field_summary.value|length > 80 %}...{% endif %}
       </p>
     {% endif %}
 
-    {# 底部元数据 #}
-    <div class="xedc-article-card__meta">
-      {% if content.field_category|render|trim is not empty %}
-        <span class="xedc-badge xedc-badge--default">{{ content.field_category }}</span>
-      {% endif %}
-      {% if node.field_reading_time.value %}
+    {# 底部信息：作者 + 元数据 #}
+    <div class="xedc-article-card__footer">
+
+      {# 作者头像 + 名字 #}
+      <div class="xedc-article-card__author">
+        {% if owner.user_picture.0.entity %}
+          <div class="xedc-avatar xedc-avatar--xs">
+            <img src="{{ file_url(owner.user_picture.0.entity.fileUri) }}" alt="{{ owner_name }}" />
+          </div>
+        {% else %}
+          <div class="xedc-avatar xedc-avatar--xs"
+               style="background:oklch(0.62 0.16 {{ _hues[owner_name|length % 8] }});">
+            {{ owner_name|slice(0,1)|upper }}
+          </div>
+        {% endif %}
+        <a href="/user/{{ node.getOwnerId() }}" class="xedc-article-card__author-name">{{ owner_name }}</a>
+      </div>
+
+      {# 元数据 #}
+      <div class="xedc-article-card__meta">
         <span class="xedc-article-card__stat">
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          {{ node.field_reading_time.value }} 分钟
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
+          {{ view_count|default(0) }}
         </span>
-      {% endif %}
-      <span class="xedc-article-card__stat">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
-        {{ view_count|default(0) }}
-      </span>
-      <span class="xedc-article-card__stat">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-        {{ like_count|default(0) }}
-      </span>
-      {% if is_logged_in %}
-        <button class="xedc-icon-btn xedc-collect-btn" data-nid="{{ nid }}" aria-label="收藏" style="margin-left:auto;">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-        </button>
-      {% endif %}
-    </div>
+        {% if node.field_reading_time.value %}
+          <span class="xedc-article-card__stat">
+            {{ node.field_reading_time.value }}分钟
+          </span>
+        {% endif %}
+        <span class="xedc-article-card__stat xedc-article-card__date">{{ node.getCreatedTime()|date('m-d') }}</span>
+      </div>
 
+    </div>
   </div>
-
-  {# 封面图（右侧）— 直接从 entity 读取文件 URI #}
-  {% if _cover_entity %}
-    <div class="xedc-article-card__cover">
-      <a href="{{ url }}" tabindex="-1">
-        <img src="{{ file_url(_cover_entity.fileUri) }}" alt="{{ label }}" loading="lazy" />
-      </a>
-    </div>
-  {% endif %}
 
 </article>

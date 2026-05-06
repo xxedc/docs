@@ -121,7 +121,7 @@ body:has(.xedc-image-waterfall) { background: oklch(0.96 0 0); }
   color: oklch(0.6 0.05 250);
 }
 
-/* ── 悬浮操作层（底部渐变+标题）── */
+/* ── 悬浮操作层 ── */
 .xedc-image-card__overlay {
   position: absolute;
   inset: 0;
@@ -131,13 +131,17 @@ body:has(.xedc-image-waterfall) { background: oklch(0.96 0 0); }
     oklch(0 0 0 / 0.7) 100%
   );
   opacity: 0;
+  pointer-events: none;
   transition: opacity 0.22s ease;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   padding: var(--space-2);
 }
-.xedc-image-card:hover .xedc-image-card__overlay { opacity: 1; }
+.xedc-image-card:hover .xedc-image-card__overlay {
+  opacity: 1;
+  pointer-events: auto;
+}
 
 .xedc-image-card__overlay-actions {
   display: flex;
@@ -168,8 +172,28 @@ body:has(.xedc-image-waterfall) { background: oklch(0.96 0 0); }
 .xedc-image-card__author {
   display: flex;
   align-items: center;
-  gap: var(--space-1);
+  gap: 5px;
   margin-top: var(--space-2);
+}
+.xedc-image-card__author .xedc-avatar,
+.xedc-image-card__author .xedc-avatar--xs {
+  width: 18px !important;
+  height: 18px !important;
+  min-width: 18px;
+  font-size: 9px !important;
+  border-radius: 50%;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+.xedc-image-card__author .xedc-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .xedc-image-card__author-name {
   font-size: 11px;
@@ -177,7 +201,7 @@ body:has(.xedc-image-waterfall) { background: oklch(0.96 0 0); }
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 80px;
+  max-width: 70px;
   transition: color 0.15s;
   text-decoration: none;
   flex-shrink: 0;
@@ -222,6 +246,15 @@ body:has(.xedc-image-waterfall) { background: oklch(0.96 0 0); }
 }
 .xedc-empty-state__icon { font-size: 56px; margin-bottom: var(--space-4); opacity: 0.5; }
 .xedc-empty-state__title { font-size: var(--text-xl); font-weight: 600; margin-bottom: var(--space-2); }
+
+/* ── 底部控制栏 ── */
+.xedc-image-waterfall__bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) 0;
+}
 
 /* ── 回到顶部 ── */
 .xedc-back-to-top {
