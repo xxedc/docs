@@ -2,6 +2,9 @@
    video-detail.css — 视频详情页样式
    ================================================================ */
 
+/* 隐藏字段标签（画质、标签等） */
+.xedc-video-detail .field__label { display: none; }
+
 .xedc-video-detail { padding: var(--space-6) 0; }
 
 .xedc-video-detail__layout {

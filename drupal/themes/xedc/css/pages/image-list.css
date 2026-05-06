@@ -2,7 +2,13 @@
    image-list.css — 图片列表/瀑布流页样式
    ================================================================ */
 
+/* 页面底色 */
+body:has(.xedc-image-waterfall) { background: var(--muted); }
+
 .xedc-image-waterfall { padding: var(--space-6) 0; }
+
+/* 隐藏字段标签 */
+.xedc-image-card .field__label { display: none; }
 
 /* ── 工具栏 ── */
 .xedc-list-toolbar {

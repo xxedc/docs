@@ -24,6 +24,9 @@
   transition: width 100ms linear;
 }
 
+/* 隐藏封面图、标签等区块的字段标签 */
+.xedc-article-detail .field__label { display: none; }
+
 /* ── 主布局 ── */
 .xedc-article-detail { padding: var(--space-8) 0; }
 
