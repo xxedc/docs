@@ -151,74 +151,14 @@
 @media (max-width: 768px)  { .xedc-front-feed { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 480px)  { .xedc-front-feed { grid-template-columns: 1fr; } }
 
-/* 所有卡片等宽：统一单列，不再 span 2 */
-.xedc-front-feed__item {
-  display: flex;
-  flex-direction: column;
+/* 文章卡片在推荐流中占两列（视觉权重更高）*/
+.xedc-front-feed__item:has(.xedc-article-card) {
+  grid-column: span 2;
 }
-.xedc-front-feed__item > * { flex: 1; }
-
-/* 图片卡片：小红书竖版比例 */
-.xedc-front-feed .xedc-image-card__img-wrap {
-  aspect-ratio: 3 / 4;
-  overflow: hidden;
-}
-.xedc-front-feed .xedc-image-card__img-wrap img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* 视频卡片：横版比例 */
-.xedc-front-feed .xedc-video-card__thumb {
-  aspect-ratio: 16 / 9;
-  overflow: hidden;
-}
-.xedc-front-feed .xedc-video-card__thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* 文章卡片：固定封面图尺寸（已有 120×90px，保持不变）*/
-
-/* ── 内容类型标识徽章 ── */
-.xedc-type-badge {
-  display: inline-flex;
-  align-items: center;
-  font-size: 10px;
-  font-weight: 600;
-  padding: 2px 7px;
-  border-radius: 4px;
-  margin-bottom: var(--space-1);
-  letter-spacing: 0.02em;
-}
-.xedc-type-badge--image {
-  background: oklch(0.9 0.07 250);
-  color: oklch(0.38 0.18 250);
-}
-.xedc-type-badge--video {
-  background: oklch(0.92 0.06 27);
-  color: oklch(0.38 0.18 27);
-}
-.xedc-type-badge--article {
-  background: oklch(0.92 0.05 145);
-  color: oklch(0.35 0.14 145);
-}
-[data-theme="dark"] .xedc-type-badge--image,
-[data-theme="midnight"] .xedc-type-badge--image {
-  background: oklch(0.3 0.1 250);
-  color: oklch(0.75 0.12 250);
-}
-[data-theme="dark"] .xedc-type-badge--video,
-[data-theme="midnight"] .xedc-type-badge--video {
-  background: oklch(0.28 0.08 27);
-  color: oklch(0.78 0.12 27);
-}
-[data-theme="dark"] .xedc-type-badge--article,
-[data-theme="midnight"] .xedc-type-badge--article {
-  background: oklch(0.28 0.07 145);
-  color: oklch(0.75 0.1 145);
+@media (max-width: 768px) {
+  .xedc-front-feed__item:has(.xedc-article-card) {
+    grid-column: span 1;
+  }
 }
 
 /* ── 侧边栏组件 ── */

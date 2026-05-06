@@ -83,89 +83,9 @@ function xedc_preprocess_node(array &$variables): void {
   if ($node->hasField('field_cover_image') && !$node->get('field_cover_image')->isEmpty()) {
     $image = $node->get('field_cover_image')->entity;
     if ($image) {
-      $variables['cover_image_url'] = $file_url_gen->generateString($image->getFileUri());
+      $variables['cover_image_url'] = \Drupal::service('file_url_generator')
+        ->generateAbsoluteString($image->getFileUri());
     }
-  }
-
-  // Preload owner info so Twig templates don't need entity method calls.
-  try {
-    $owner = $node->getOwner();
-    if ($owner) {
-      $variables['owner_name']    = $owner->getDisplayName();
-      $variables['owner_uid']     = (int) $owner->id();
-      $variables['owner_picture_url'] = '';
-      if ($owner->hasField('user_picture') && !$owner->get('user_picture')->isEmpty()) {
-        $pic = $owner->get('user_picture')->entity;
-        if ($pic) {
-          $variables['owner_picture_url'] = $file_url_gen->generateString($pic->getFileUri());
-        }
-      }
-    }
-  }
-  catch (\Exception $e) {
-    $variables['owner_name']        = '';
-    $variables['owner_uid']         = 0;
-    $variables['owner_picture_url'] = '';
-  }
-
-  // For image_post: preload all gallery image URLs.
-  if ($node->bundle() === 'image_post') {
-    $image_urls = [];
-
-    // 1. Try common field names first.
-    foreach (['field_images', 'field_image', 'field_gallery', 'field_media_images', 'field_photos', 'field_pictures'] as $fname) {
-      if ($node->hasField($fname) && !$node->get($fname)->isEmpty()) {
-        foreach ($node->get($fname) as $item) {
-          if (!empty($item->entity) && method_exists($item->entity, 'getFileUri')) {
-            $uri = $item->entity->getFileUri();
-            if ($uri) {
-              $image_urls[] = $file_url_gen->generateString($uri);
-            }
-          }
-        }
-        if (!empty($image_urls)) {
-          break;
-        }
-      }
-    }
-
-    // 2. If still empty, auto-scan ALL image/file fields (skip cover).
-    if (empty($image_urls)) {
-      try {
-        foreach ($node->getFields() as $fname => $field_items) {
-          if ($fname === 'field_cover_image' || !str_starts_with($fname, 'field_')) {
-            continue;
-          }
-          if ($field_items->isEmpty()) {
-            continue;
-          }
-          $ftype = $field_items->getFieldDefinition()->getType();
-          if (!in_array($ftype, ['image', 'file'], TRUE)) {
-            continue;
-          }
-          foreach ($field_items as $item) {
-            $entity = $item->entity ?? NULL;
-            if ($entity && method_exists($entity, 'getFileUri')) {
-              $uri = $entity->getFileUri();
-              if ($uri) {
-                $image_urls[] = $file_url_gen->generateString($uri);
-              }
-            }
-          }
-          if (!empty($image_urls)) {
-            break;
-          }
-        }
-      }
-      catch (\Exception $e) {}
-    }
-
-    // 3. Last resort: fall back to the cover image.
-    if (empty($image_urls) && !empty($variables['cover_image_url'])) {
-      $image_urls[] = $variables['cover_image_url'];
-    }
-
-    $variables['image_urls'] = $image_urls;
   }
 }
 
