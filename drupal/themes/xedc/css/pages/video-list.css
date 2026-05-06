@@ -2,7 +2,13 @@
    video-list.css — 视频列表页样式
    ================================================================ */
 
+/* 页面底色：让白色卡片有层次感 */
+body:has(.xedc-video-list) { background: var(--muted); }
+
 .xedc-video-list { padding: var(--space-6) 0; }
+
+/* 隐藏 Views 自动渲染的字段标签 */
+.xedc-video-card .field__label { display: none; }
 
 /* ── 工具栏 ── */
 .xedc-list-toolbar {

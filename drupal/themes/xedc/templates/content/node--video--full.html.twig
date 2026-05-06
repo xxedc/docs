@@ -34,8 +34,16 @@
           <div class="xedc-video-detail__meta xedc-flex xedc-items-center xedc-gap-4">
             <span class="xedc-text-sm xedc-text-muted">👁 {{ view_count|default(0) }} 次播放</span>
             <span class="xedc-text-sm xedc-text-muted">{{ node.getCreatedTime()|date('Y年m月d日') }}</span>
-            {% if content.field_quality|render|trim is not empty %}
-              <span class="xedc-badge xedc-badge--secondary">{{ content.field_quality }}</span>
+            {% set quality_val = node.field_quality.value %}
+            {% if quality_val %}
+              <span class="xedc-badge xedc-badge--secondary">
+                {%- if quality_val == '4k' -%}4K
+                {%- elseif quality_val == '1080p' -%}1080P
+                {%- elseif quality_val == '720p' -%}720P
+                {%- elseif quality_val == '480p' -%}480P
+                {%- else -%}{{ quality_val|split('|')|last|upper }}
+                {%- endif -%}
+              </span>
             {% endif %}
           </div>
 

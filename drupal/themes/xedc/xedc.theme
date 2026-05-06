@@ -156,6 +156,21 @@ function xedc_theme_suggestions_user_alter(array &$suggestions, array $variables
 }
 
 /**
+ * 为 Views 列表页附加对应的 CSS/JS 库
+ */
+function xedc_preprocess_views_view(array &$variables): void {
+  $library_map = [
+    'image_waterfall' => 'xedc/page-image-list',
+    'video_list'      => 'xedc/page-video-list',
+    'article_list'    => 'xedc/page-article-list',
+  ];
+  $view_id = $variables['view']->id();
+  if (isset($library_map[$view_id])) {
+    $variables['#attached']['library'][] = $library_map[$view_id];
+  }
+}
+
+/**
  * JSON-LD 结构化数据
  */
 function xedc_page_attachments_alter(array &$attachments): void {

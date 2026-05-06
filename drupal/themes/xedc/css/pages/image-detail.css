@@ -2,6 +2,9 @@
    image-detail.css — 图片详情/灯箱页样式
    ================================================================ */
 
+/* 隐藏字段标签 */
+.xedc-image-detail .field__label { display: none; }
+
 .xedc-image-detail { padding: var(--space-6) 0; }
 
 /* ── 图片查看器 ── */
