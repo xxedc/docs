@@ -1,9 +1,11 @@
 {#
   views-view-unformatted--front-banner.html.twig
-  精选内容 — 侧边栏紧凑列表
+  首页Banner — 横向滚动特色内容
 #}
-<div class="xedc-featured-list">
+<div class="xedc-front-banner-list">
   {% for row in rows %}
-    <div class="xedc-featured-list__item">{{ row.content }}</div>
+    <div class="xedc-front-banner-list__item">
+      {{ row.content }}
+    </div>
   {% endfor %}
 </div>
