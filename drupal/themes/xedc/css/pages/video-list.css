@@ -44,17 +44,19 @@ body:has(.xedc-video-list) { background: oklch(0.96 0 0); }
 /* ── 视频网格 ── */
 .xedc-video-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: var(--space-4);
 }
-@media (max-width: 1280px) { .xedc-video-grid { grid-template-columns: repeat(3, 1fr); } }
-@media (max-width: 768px)  { .xedc-video-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 480px)  { .xedc-video-grid { grid-template-columns: 1fr; } }
 
 /* 列表模式 */
 .xedc-video-grid[data-mode="list"] { grid-template-columns: 1fr; }
 .xedc-video-grid[data-mode="list"] .xedc-video-card { flex-direction: row; }
 .xedc-video-grid[data-mode="list"] .xedc-video-card__cover { width: 240px; flex-shrink: 0; aspect-ratio: 16/9; }
+@media (max-width: 640px) {
+  .xedc-video-grid[data-mode="list"] .xedc-video-card { flex-direction: column; }
+  .xedc-video-grid[data-mode="list"] .xedc-video-card__cover { width: 100%; }
+}
 
 /* ── 视频卡片 ── */
 .xedc-video-card {
