@@ -1,5 +1,25 @@
-<div class="xedc-profile">
+<div class="xedc-profile" data-xedc-profile>
+  <section class="xedc-zen-hero" data-xedc-zen-hero>
+    <canvas class="xedc-zen-hero__canvas" data-xedc-zen-canvas></canvas>
+    <div class="xedc-zen-hero__inner">
+      <div class="xedc-zen-hero__time" data-xedc-zen-time></div>
+      <div class="xedc-zen-hero__greeting" data-xedc-zen-greeting></div>
+    </div>
+  </section>
+
   <div class="xedc-container">
+    <nav class="xedc-crumbs" aria-label="面包屑" data-xedc-crumbs>
+      <a class="xedc-crumbs__item" href="{{ url('<front>') }}">
+        <span class="xedc-crumbs__icon" aria-hidden="true">🏠</span>
+        <span class="xedc-crumbs__label">首页</span>
+      </a>
+      <span class="xedc-crumbs__sep" aria-hidden="true">›</span>
+      <a class="xedc-crumbs__item" href="/user/{{ viewed_user_id }}">
+        <span class="xedc-crumbs__label">个人中心</span>
+      </a>
+      <span class="xedc-crumbs__sep" aria-hidden="true">›</span>
+      <span class="xedc-crumbs__item is-current" data-xedc-crumb-current>个人中心</span>
+    </nav>
     <div class="xedc-profile__card xedc-card">
       <div class="xedc-card__body">
         <div class="xedc-profile__header">
@@ -48,10 +68,7 @@
           </div>
 
           <div class="xedc-profile__actions">
-            {% if is_own_profile %}
-              <a href="/user/{{ viewed_user_id }}/edit" class="xedc-btn xedc-btn--outline xedc-btn--sm">编辑资料</a>
-              <a href="/publish" class="xedc-btn xedc-btn--default xedc-btn--sm">投稿发布</a>
-            {% elseif is_logged_in %}
+            {% if not is_own_profile and is_logged_in %}
               <button class="xedc-btn xedc-btn--default xedc-btn--sm xedc-follow-btn" data-uid="{{ viewed_user_id }}">关注</button>
               <a href="/messages" class="xedc-btn xedc-btn--outline xedc-btn--sm">私信</a>
             {% endif %}
@@ -78,7 +95,7 @@
               <a class="xedc-content-card xedc-content-card--{{ item.bundle }}" href="{{ item.url }}">
                 <div class="xedc-content-card__media">
                   {% if item.cover_url %}
-                    <img src="{{ item.cover_url }}" alt="{{ item.title }}" loading="lazy" />
+                    <img src="{{ item.cover_url }}" alt="{{ item.title }}" loading="lazy" data-xedc-media />
                   {% else %}
                     <div class="xedc-content-card__placeholder"></div>
                   {% endif %}
@@ -115,7 +132,11 @@
                     {% include 'xedc:avatar' with { size: 'xs', src: item.owner_picture_url|default(null), name: item.owner_name|default(''), url: item.owner_url|default('') } only %}
                     <div class="xedc-content-card__meta-text">
                       <span class="xedc-content-card__author">{{ item.owner_name }}</span>
-                      <span class="xedc-content-card__time">{{ item.created|date('Y-m-d') }}</span>
+                      <span class="xedc-content-card__meta-line">
+                        <span class="xedc-content-card__time">{{ item.created|date('Y-m-d') }}</span>
+                        <span class="xedc-content-card__dot" aria-hidden="true">·</span>
+                        <span class="xedc-content-card__views">{{ item.view_count|default(0) }} 浏览</span>
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -131,13 +152,20 @@
       </div>
 
       <div class="xedc-tab-panel" id="tab-collects" style="display:none;">
+        <div class="xedc-subtabs" role="tablist" aria-label="收藏分类" data-xedc-collects-tabs>
+          <button class="xedc-subtab is-active" role="tab" data-xedc-filter="all">全部 ({{ collects_type_counts.all|default(0) }})</button>
+          <button class="xedc-subtab" role="tab" data-xedc-filter="video">视频 ({{ collects_type_counts.video|default(0) }})</button>
+          <button class="xedc-subtab" role="tab" data-xedc-filter="image_post">图片 ({{ collects_type_counts.image_post|default(0) }})</button>
+          <button class="xedc-subtab" role="tab" data-xedc-filter="article">文章 ({{ collects_type_counts.article|default(0) }})</button>
+        </div>
+
         {% if collected_items %}
-          <div class="xedc-profile-grid">
+          <div class="xedc-profile-grid" data-xedc-filter-container>
             {% for item in collected_items %}
-              <a class="xedc-content-card xedc-content-card--{{ item.bundle }}" href="{{ item.url }}">
+              <a class="xedc-content-card xedc-content-card--{{ item.bundle }}" href="{{ item.url }}" data-xedc-bundle="{{ item.bundle }}">
                 <div class="xedc-content-card__media">
                   {% if item.cover_url %}
-                    <img src="{{ item.cover_url }}" alt="{{ item.title }}" loading="lazy" />
+                    <img src="{{ item.cover_url }}" alt="{{ item.title }}" loading="lazy" data-xedc-media />
                   {% else %}
                     <div class="xedc-content-card__placeholder"></div>
                   {% endif %}
@@ -166,9 +194,15 @@
                     {% include 'xedc:avatar' with { size: 'xs', src: item.owner_picture_url|default(null), name: item.owner_name|default(''), url: item.owner_url|default('') } only %}
                     <div class="xedc-content-card__meta-text">
                       <span class="xedc-content-card__author">{{ item.owner_name }}</span>
-                      {% if item.event_ts %}
-                        <span class="xedc-content-card__time">{{ item.event_label }} {{ item.event_ts|date('Y-m-d H:i') }}</span>
-                      {% endif %}
+                      <span class="xedc-content-card__meta-line">
+                        {% if item.event_ts %}
+                          <span class="xedc-content-card__time">{{ item.event_label }} {{ item.event_ts|date('Y-m-d H:i') }}</span>
+                        {% else %}
+                          <span class="xedc-content-card__time">{{ item.created|date('Y-m-d') }}</span>
+                        {% endif %}
+                        <span class="xedc-content-card__dot" aria-hidden="true">·</span>
+                        <span class="xedc-content-card__views">{{ item.view_count|default(0) }} 浏览</span>
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -176,9 +210,17 @@
             {% endfor %}
           </div>
         {% else %}
-          <div class="xedc-empty-state" style="padding:var(--space-8) 0;">
-            <div class="xedc-empty-state__icon">🔖</div>
-            <p class="xedc-text-sm xedc-text-muted">暂无收藏内容</p>
+          <div class="xedc-empty-state xedc-empty-state--illustrated">
+            <div class="xedc-empty-state__art" aria-hidden="true">
+              <svg width="180" height="120" viewBox="0 0 180 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M26 88c18-26 41-39 70-39s52 13 70 39" stroke="currentColor" stroke-opacity=".18" stroke-width="10" stroke-linecap="round"/>
+                <path d="M50 82c10-15 23-23 40-23s30 8 40 23" stroke="currentColor" stroke-opacity=".26" stroke-width="10" stroke-linecap="round"/>
+                <path d="M90 22c10 0 18 8 18 18s-8 18-18 18-18-8-18-18 8-18 18-18Z" fill="currentColor" fill-opacity=".14"/>
+              </svg>
+            </div>
+            <div class="xedc-empty-state__title">还没有收藏</div>
+            <p class="xedc-text-sm xedc-text-muted">去浏览内容，遇到喜欢的就点一下收藏。</p>
+            <a class="xedc-btn xedc-btn--default xedc-btn--sm" href="{{ url('<front>') }}">去逛逛</a>
           </div>
         {% endif %}
       </div>
@@ -219,44 +261,57 @@
         </div>
 
         <div class="xedc-tab-panel" id="tab-history" style="display:none;">
-          {% if history_items %}
-            <div class="xedc-profile-grid">
-              {% for item in history_items %}
-                <a class="xedc-content-card xedc-content-card--{{ item.bundle }}" href="{{ item.url }}">
-                  <div class="xedc-content-card__media">
-                    {% if item.cover_url %}
-                      <img src="{{ item.cover_url }}" alt="{{ item.title }}" loading="lazy" />
-                    {% else %}
-                      <div class="xedc-content-card__placeholder"></div>
-                    {% endif %}
-                    {% if item.bundle == 'video' %}
-                      <div class="xedc-content-card__overlay">
-                        <span class="xedc-content-card__play"></span>
-                        {% if item.duration %}
-                          {% set _m = item.duration // 60 %}
-                          {% set _s = item.duration % 60 %}
-                          <span class="xedc-content-card__duration">{{ _m }}:{{ '%02d'|format(_s) }}</span>
-                        {% endif %}
-                      </div>
-                    {% elseif item.bundle == 'image_post' and item.image_count %}
-                      <div class="xedc-content-card__overlay">
-                        <span class="xedc-content-card__count">{{ item.image_count }} 张</span>
-                      </div>
-                    {% endif %}
+          {% if history_groups %}
+            <div class="xedc-history" data-xedc-history>
+              {% for group in history_groups %}
+                <div class="xedc-history__group">
+                  <div class="xedc-history__title">{{ group.label }}</div>
+                  <div class="xedc-profile-grid">
+                    {% for item in group.items %}
+                      <a class="xedc-content-card xedc-content-card--{{ item.bundle }}" href="{{ item.url }}">
+                        <div class="xedc-content-card__media">
+                          {% if item.cover_url %}
+                            <img src="{{ item.cover_url }}" alt="{{ item.title }}" loading="lazy" data-xedc-media />
+                          {% else %}
+                            <div class="xedc-content-card__placeholder"></div>
+                          {% endif %}
+                          {% if item.bundle == 'video' %}
+                            <div class="xedc-content-card__overlay">
+                              <span class="xedc-content-card__play"></span>
+                              {% if item.duration %}
+                                {% set _m = item.duration // 60 %}
+                                {% set _s = item.duration % 60 %}
+                                <span class="xedc-content-card__duration">{{ _m }}:{{ '%02d'|format(_s) }}</span>
+                              {% endif %}
+                            </div>
+                          {% elseif item.bundle == 'image_post' and item.image_count %}
+                            <div class="xedc-content-card__overlay">
+                              <span class="xedc-content-card__count">{{ item.image_count }} 张</span>
+                            </div>
+                          {% endif %}
+                        </div>
+                        <div class="xedc-content-card__body">
+                          <div class="xedc-content-card__title">{{ item.title }}</div>
+                          <div class="xedc-content-card__meta">
+                            {% include 'xedc:avatar' with { size: 'xs', src: item.owner_picture_url|default(null), name: item.owner_name|default(''), url: item.owner_url|default('') } only %}
+                            <div class="xedc-content-card__meta-text">
+                              <span class="xedc-content-card__author">{{ item.owner_name }}</span>
+                              <span class="xedc-content-card__meta-line">
+                                {% if item.event_ts %}
+                                  <span class="xedc-content-card__time">{{ item.event_label }} {{ item.event_ts|date('Y-m-d H:i') }}</span>
+                                {% else %}
+                                  <span class="xedc-content-card__time">{{ item.created|date('Y-m-d') }}</span>
+                                {% endif %}
+                                <span class="xedc-content-card__dot" aria-hidden="true">·</span>
+                                <span class="xedc-content-card__views">{{ item.view_count|default(0) }} 浏览</span>
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </a>
+                    {% endfor %}
                   </div>
-                  <div class="xedc-content-card__body">
-                    <div class="xedc-content-card__title">{{ item.title }}</div>
-                    <div class="xedc-content-card__meta">
-                      {% include 'xedc:avatar' with { size: 'xs', src: item.owner_picture_url|default(null), name: item.owner_name|default(''), url: item.owner_url|default('') } only %}
-                      <div class="xedc-content-card__meta-text">
-                        <span class="xedc-content-card__author">{{ item.owner_name }}</span>
-                        {% if item.event_ts %}
-                          <span class="xedc-content-card__time">{{ item.event_label }} {{ item.event_ts|date('Y-m-d H:i') }}</span>
-                        {% endif %}
-                      </div>
-                    </div>
-                  </div>
-                </a>
+                </div>
               {% endfor %}
             </div>
           {% else %}

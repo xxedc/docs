@@ -122,15 +122,15 @@
             </div>
           {% endset %}
           {% set _items %}
-            <a class="xedc-dropdown__item" href="/user/{{ current_user.id() }}">👤 个人主页</a>
+            <a class="xedc-dropdown__item" href="/user/{{ current_user.id() }}">👤 个人中心</a>
+            <a class="xedc-dropdown__item" href="/user/{{ current_user.id() }}?tab=history">🕒 浏览历史</a>
             <a class="xedc-dropdown__item" href="/user/{{ current_user.id() }}?tab=collects">🔖 收藏</a>
-            <a class="xedc-dropdown__item" href="/user/{{ current_user.id() }}?tab=drafts">🗂️ 草稿箱</a>
-            <a class="xedc-dropdown__item" href="/publish">➕ 投稿发布</a>
+            <a class="xedc-dropdown__item" href="/user/{{ current_user.id() }}?tab=posts">✍️ 我的文章</a>
             <div class="xedc-dropdown__separator"></div>
             <a class="xedc-dropdown__item" href="/user/{{ current_user.id() }}/edit">⚙️ 设置</a>
             <a class="xedc-dropdown__item xedc-dropdown__item--destructive" href="/user/logout">退出登录</a>
           {% endset %}
-          {% include 'xedc:dropdown' with { id: 'xedc-user-menu', align: 'right', trigger: _trigger, items: _items } only %}
+          {% include 'xedc:dropdown' with { id: 'xedc-user-menu', align: 'right', trigger: _trigger, items: _items, extra_classes: 'xedc-dropdown--user' } only %}
         {% else %}
           <a href="/user/login" class="xedc-btn xedc-btn--primary xedc-btn--sm">登录</a>
         {% endif %}
