@@ -1,46 +1,57 @@
-{#
-  user--full.html.twig — 个人中心 / 用户主页
-#}
 <div class="xedc-profile">
   <div class="xedc-container">
-
     <div class="xedc-profile__card xedc-card">
       <div class="xedc-card__body">
-        <div class="xedc-profile__header xedc-flex xedc-items-center xedc-gap-4">
+        <div class="xedc-profile__header">
           {% set _hues = [220, 280, 155, 30, 340, 190, 320, 55] %}
-          {% if user_picture_url %}
-            <div class="xedc-avatar xedc-avatar--xl">
-              <img src="{{ user_picture_url }}" alt="{{ viewed_user_name }}" />
+          <div class="xedc-profile__avatar">
+            {% if user_picture_url %}
+              <div class="xedc-avatar xedc-avatar--xl">
+                <img src="{{ user_picture_url }}" alt="{{ viewed_user_name }}" />
+              </div>
+            {% else %}
+              <div class="xedc-avatar xedc-avatar--xl" style="background:oklch(0.62 0.16 {{ _hues[viewed_user_name|length % 8] }});">
+                {{ viewed_user_name|slice(0,1)|upper }}
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="xedc-profile__info">
+            <div class="xedc-profile__name-row">
+              <h1 class="xedc-profile__name">{{ viewed_user_name }}</h1>
             </div>
-          {% else %}
-            <div class="xedc-avatar xedc-avatar--xl"
-                 style="background:oklch(0.62 0.16 {{ _hues[viewed_user_name|length % 8] }});">
-              {{ viewed_user_name|slice(0,1)|upper }}
-            </div>
-          {% endif %}
-          <div class="xedc-profile__info" style="flex:1;">
-            <h1 class="xedc-profile__name">{{ viewed_user_name }}</h1>
-            <div class="xedc-profile__stats xedc-flex xedc-gap-6" style="margin-top:var(--space-3);">
+
+            {% if bio %}
+              <div class="xedc-profile__bio xedc-text-sm xedc-text-muted">{{ bio }}</div>
+            {% else %}
+              <div class="xedc-profile__bio xedc-text-sm xedc-text-muted">这个人很酷，还没有留下简介。</div>
+            {% endif %}
+
+            <div class="xedc-profile__stats">
               <div class="xedc-profile__stat">
-                <span class="xedc-profile__stat-num">0</span>
+                <span class="xedc-profile__stat-num">{{ following_count|default(0) }}</span>
                 <span class="xedc-text-xs xedc-text-muted">关注</span>
               </div>
               <div class="xedc-profile__stat">
-                <span class="xedc-profile__stat-num">0</span>
+                <span class="xedc-profile__stat-num">{{ followers_count|default(0) }}</span>
                 <span class="xedc-text-xs xedc-text-muted">粉丝</span>
               </div>
               <div class="xedc-profile__stat">
-                <span class="xedc-profile__stat-num">{{ collected_items|length }}</span>
+                <span class="xedc-profile__stat-num">{{ like_received_total|default(0) }}</span>
+                <span class="xedc-text-xs xedc-text-muted">获赞</span>
+              </div>
+              <div class="xedc-profile__stat">
+                <span class="xedc-profile__stat-num">{{ collects_count|default(0) }}</span>
                 <span class="xedc-text-xs xedc-text-muted">收藏</span>
               </div>
             </div>
           </div>
-          <div class="xedc-profile__actions xedc-flex xedc-gap-2">
+
+          <div class="xedc-profile__actions">
             {% if is_own_profile %}
-              <a href="/user/{{ viewed_user_id }}/edit"
-                 class="xedc-btn xedc-btn--outline xedc-btn--sm">编辑资料</a>
-              <a href="/publish" class="xedc-btn xedc-btn--default xedc-btn--sm">发布内容</a>
-            {% elseif logged_in %}
+              <a href="/user/{{ viewed_user_id }}/edit" class="xedc-btn xedc-btn--outline xedc-btn--sm">编辑资料</a>
+              <a href="/publish" class="xedc-btn xedc-btn--default xedc-btn--sm">投稿发布</a>
+            {% elseif is_logged_in %}
               <button class="xedc-btn xedc-btn--default xedc-btn--sm xedc-follow-btn" data-uid="{{ viewed_user_id }}">关注</button>
               <a href="/messages" class="xedc-btn xedc-btn--outline xedc-btn--sm">私信</a>
             {% endif %}
@@ -49,40 +60,118 @@
       </div>
     </div>
 
-    {# Tab 导航 #}
-    <div class="xedc-profile__tabs xedc-flex" style="margin-top:var(--space-4);">
-      <button class="xedc-profile-tab is-active" data-tab="posts">TA的内容</button>
-      <button class="xedc-profile-tab" data-tab="collects">
-        收藏 {% if collected_items %}({{ collected_items|length }}){% endif %}
-      </button>
+    <div class="xedc-profile__tabs">
+      <button class="xedc-profile-tab is-active" data-tab="posts">TA的内容{% if posts_count %} ({{ posts_count }}){% endif %}</button>
+      <button class="xedc-profile-tab" data-tab="collects">收藏{% if collects_count %} ({{ collects_count }}){% endif %}</button>
       {% if is_own_profile %}
-        <button class="xedc-profile-tab" data-tab="history">
-          历史 {% if history_items %}({{ history_items|length }}){% endif %}
-        </button>
+        <button class="xedc-profile-tab" data-tab="drafts">草稿箱{% if drafts_count %} ({{ drafts_count }}){% endif %}</button>
+        <button class="xedc-profile-tab" data-tab="history">历史{% if history_count %} ({{ history_count }}){% endif %}</button>
       {% endif %}
     </div>
 
-    <div class="xedc-profile__content" style="margin-top:var(--space-4);">
+    <div class="xedc-profile__content">
 
-      {# TA的内容 #}
       <div class="xedc-tab-panel is-active" id="tab-posts">
-        <div class="xedc-empty-state" style="padding:var(--space-8) 0;">
-          <p class="xedc-text-sm xedc-text-muted">暂无投稿内容</p>
-        </div>
+        {% if posts_items %}
+          <div class="xedc-profile-grid">
+            {% for item in posts_items %}
+              <a class="xedc-content-card xedc-content-card--{{ item.bundle }}" href="{{ item.url }}">
+                <div class="xedc-content-card__media">
+                  {% if item.cover_url %}
+                    <img src="{{ item.cover_url }}" alt="{{ item.title }}" loading="lazy" />
+                  {% else %}
+                    <div class="xedc-content-card__placeholder"></div>
+                  {% endif %}
+                  {% if item.bundle == 'video' %}
+                    <div class="xedc-content-card__overlay">
+                      <span class="xedc-content-card__play"></span>
+                      {% if item.duration %}
+                        {% set _m = item.duration // 60 %}
+                        {% set _s = item.duration % 60 %}
+                        <span class="xedc-content-card__duration">{{ _m }}:{{ '%02d'|format(_s) }}</span>
+                      {% endif %}
+                    </div>
+                  {% elseif item.bundle == 'image_post' and item.image_count %}
+                    <div class="xedc-content-card__overlay">
+                      <span class="xedc-content-card__count">{{ item.image_count }} 张</span>
+                    </div>
+                  {% endif %}
+                </div>
+
+                {% if item.bundle == 'image_post' and item.thumbs|length > 1 %}
+                  <div class="xedc-content-card__thumbs">
+                    {% for t in item.thumbs %}
+                      <img src="{{ t }}" alt="" loading="lazy" />
+                    {% endfor %}
+                  </div>
+                {% endif %}
+
+                <div class="xedc-content-card__body">
+                  <div class="xedc-content-card__title">{{ item.title }}</div>
+                  {% if item.bundle == 'article' and item.excerpt %}
+                    <div class="xedc-content-card__excerpt">{{ item.excerpt }}</div>
+                  {% endif %}
+                  <div class="xedc-content-card__meta">
+                    {% include 'xedc:avatar' with { size: 'xs', src: item.owner_picture_url|default(null), name: item.owner_name|default(''), url: item.owner_url|default('') } only %}
+                    <div class="xedc-content-card__meta-text">
+                      <span class="xedc-content-card__author">{{ item.owner_name }}</span>
+                      <span class="xedc-content-card__time">{{ item.created|date('Y-m-d') }}</span>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="xedc-empty-state" style="padding:var(--space-8) 0;">
+            <div class="xedc-empty-state__icon">🗂️</div>
+            <p class="xedc-text-sm xedc-text-muted">暂无投稿内容</p>
+          </div>
+        {% endif %}
       </div>
 
-      {# 收藏 #}
       <div class="xedc-tab-panel" id="tab-collects" style="display:none;">
         {% if collected_items %}
-          <div class="xedc-related-list">
+          <div class="xedc-profile-grid">
             {% for item in collected_items %}
-              <a href="{{ item.url }}" class="xedc-related-item">
-                <span class="xedc-related-item__icon">
-                  {% if item.bundle == 'video' %}🎬
-                  {% elseif item.bundle == 'image_post' %}🖼️
-                  {% else %}📝{% endif %}
-                </span>
-                <span class="xedc-related-item__title">{{ item.title }}</span>
+              <a class="xedc-content-card xedc-content-card--{{ item.bundle }}" href="{{ item.url }}">
+                <div class="xedc-content-card__media">
+                  {% if item.cover_url %}
+                    <img src="{{ item.cover_url }}" alt="{{ item.title }}" loading="lazy" />
+                  {% else %}
+                    <div class="xedc-content-card__placeholder"></div>
+                  {% endif %}
+                  {% if item.bundle == 'video' %}
+                    <div class="xedc-content-card__overlay">
+                      <span class="xedc-content-card__play"></span>
+                      {% if item.duration %}
+                        {% set _m = item.duration // 60 %}
+                        {% set _s = item.duration % 60 %}
+                        <span class="xedc-content-card__duration">{{ _m }}:{{ '%02d'|format(_s) }}</span>
+                      {% endif %}
+                    </div>
+                  {% elseif item.bundle == 'image_post' and item.image_count %}
+                    <div class="xedc-content-card__overlay">
+                      <span class="xedc-content-card__count">{{ item.image_count }} 张</span>
+                    </div>
+                  {% endif %}
+                </div>
+
+                <div class="xedc-content-card__body">
+                  <div class="xedc-content-card__title">{{ item.title }}</div>
+                  {% if item.bundle == 'article' and item.excerpt %}
+                    <div class="xedc-content-card__excerpt">{{ item.excerpt }}</div>
+                  {% endif %}
+                  <div class="xedc-content-card__meta">
+                    {% include 'xedc:avatar' with { size: 'xs', src: item.owner_picture_url|default(null), name: item.owner_name|default(''), url: item.owner_url|default('') } only %}
+                    <div class="xedc-content-card__meta-text">
+                      <span class="xedc-content-card__author">{{ item.owner_name }}</span>
+                      {% if item.event_ts %}
+                        <span class="xedc-content-card__time">{{ item.event_label }} {{ item.event_ts|date('Y-m-d H:i') }}</span>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
               </a>
             {% endfor %}
           </div>
@@ -94,19 +183,79 @@
         {% endif %}
       </div>
 
-      {# 历史记录 #}
       {% if is_own_profile %}
+        <div class="xedc-tab-panel" id="tab-drafts" style="display:none;">
+          {% if draft_items %}
+            <div class="xedc-profile-grid">
+              {% for item in draft_items %}
+                <a class="xedc-content-card xedc-content-card--{{ item.bundle }}" href="{{ item.url }}">
+                  <div class="xedc-content-card__media">
+                    {% if item.cover_url %}
+                      <img src="{{ item.cover_url }}" alt="{{ item.title }}" loading="lazy" />
+                    {% else %}
+                      <div class="xedc-content-card__placeholder"></div>
+                    {% endif %}
+                    <div class="xedc-content-card__overlay">
+                      <span class="xedc-content-card__draft">草稿</span>
+                    </div>
+                  </div>
+                  <div class="xedc-content-card__body">
+                    <div class="xedc-content-card__title">{{ item.title }}</div>
+                    <div class="xedc-content-card__meta">
+                      <div class="xedc-content-card__meta-text">
+                        <span class="xedc-content-card__time">{{ item.created|date('Y-m-d H:i') }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="xedc-empty-state" style="padding:var(--space-8) 0;">
+              <div class="xedc-empty-state__icon">🗂️</div>
+              <p class="xedc-text-sm xedc-text-muted">暂无草稿</p>
+            </div>
+          {% endif %}
+        </div>
+
         <div class="xedc-tab-panel" id="tab-history" style="display:none;">
           {% if history_items %}
-            <div class="xedc-related-list">
+            <div class="xedc-profile-grid">
               {% for item in history_items %}
-                <a href="{{ item.url }}" class="xedc-related-item">
-                  <span class="xedc-related-item__icon">
-                    {% if item.bundle == 'video' %}🎬
-                    {% elseif item.bundle == 'image_post' %}🖼️
-                    {% else %}📝{% endif %}
-                  </span>
-                  <span class="xedc-related-item__title">{{ item.title }}</span>
+                <a class="xedc-content-card xedc-content-card--{{ item.bundle }}" href="{{ item.url }}">
+                  <div class="xedc-content-card__media">
+                    {% if item.cover_url %}
+                      <img src="{{ item.cover_url }}" alt="{{ item.title }}" loading="lazy" />
+                    {% else %}
+                      <div class="xedc-content-card__placeholder"></div>
+                    {% endif %}
+                    {% if item.bundle == 'video' %}
+                      <div class="xedc-content-card__overlay">
+                        <span class="xedc-content-card__play"></span>
+                        {% if item.duration %}
+                          {% set _m = item.duration // 60 %}
+                          {% set _s = item.duration % 60 %}
+                          <span class="xedc-content-card__duration">{{ _m }}:{{ '%02d'|format(_s) }}</span>
+                        {% endif %}
+                      </div>
+                    {% elseif item.bundle == 'image_post' and item.image_count %}
+                      <div class="xedc-content-card__overlay">
+                        <span class="xedc-content-card__count">{{ item.image_count }} 张</span>
+                      </div>
+                    {% endif %}
+                  </div>
+                  <div class="xedc-content-card__body">
+                    <div class="xedc-content-card__title">{{ item.title }}</div>
+                    <div class="xedc-content-card__meta">
+                      {% include 'xedc:avatar' with { size: 'xs', src: item.owner_picture_url|default(null), name: item.owner_name|default(''), url: item.owner_url|default('') } only %}
+                      <div class="xedc-content-card__meta-text">
+                        <span class="xedc-content-card__author">{{ item.owner_name }}</span>
+                        {% if item.event_ts %}
+                          <span class="xedc-content-card__time">{{ item.event_label }} {{ item.event_ts|date('Y-m-d H:i') }}</span>
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
                 </a>
               {% endfor %}
             </div>

@@ -131,6 +131,8 @@ function xedc_preprocess_block(array &$variables): void {
 function xedc_preprocess_user(array &$variables): void {
   $current_user = \Drupal::currentUser();
   $viewed_user  = $variables['user'];
+  $uid_val = (int) $viewed_user->id();
+  $file_url_generator = \Drupal::service('file_url_generator');
 
   $variables['is_own_profile']   = ($current_user->id() == $viewed_user->id());
   $variables['current_user_id']  = $current_user->id();
@@ -139,54 +141,285 @@ function xedc_preprocess_user(array &$variables): void {
   $variables['viewed_user_id']   = $viewed_user->id();
   $variables['viewed_user_url']  = $viewed_user->toUrl()->toString();
 
-  // 加载被查看用户的头像 URL
   try {
     if ($viewed_user->hasField('user_picture') && !$viewed_user->get('user_picture')->isEmpty()) {
       $picture = $viewed_user->get('user_picture')->entity;
       if ($picture) {
-        $variables['user_picture_url'] = \Drupal::service('file_url_generator')
-          ->generateAbsoluteString($picture->getFileUri());
+        $variables['user_picture_url'] = $file_url_generator->generateAbsoluteString($picture->getFileUri());
       }
     }
   } catch (\Exception $e) {}
 
-  // 附加个人中心 CSS/JS
   $variables['#attached']['library'][] = 'xedc/page-profile';
 
-  // 查询收藏列表
-  $uid_val = (int) $viewed_user->id();
+  $variables['bio'] = '';
   try {
     $db = \Drupal::database();
-    $cnids = $db->select('flagging', 'f')
-      ->fields('f', ['entity_id'])
-      ->condition('flag_id', 'collect')
-      ->condition('uid', $uid_val)
-      ->orderBy('created', 'DESC')
-      ->range(0, 12)
-      ->execute()->fetchCol();
-    $variables['collected_items'] = [];
-    if (!empty($cnids)) {
-      foreach (\Drupal::entityTypeManager()->getStorage('node')->loadMultiple($cnids) as $n) {
-        $variables['collected_items'][] = ['title' => $n->getTitle(), 'url' => $n->toUrl()->toString(), 'bundle' => $n->bundle()];
-      }
+    if ($viewed_user->hasField('field_bio') && !$viewed_user->get('field_bio')->isEmpty()) {
+      $variables['bio'] = (string) ($viewed_user->get('field_bio')->value ?? '');
     }
-  } catch (\Exception $e) { $variables['collected_items'] = []; }
 
-  // 查询历史记录
-  try {
-    $hnids = $db->select('xedc_history', 'h')
-      ->fields('h', ['nid'])
-      ->condition('uid', $uid_val)
-      ->orderBy('timestamp', 'DESC')
-      ->range(0, 12)
-      ->execute()->fetchCol();
-    $variables['history_items'] = [];
-    if (!empty($hnids)) {
-      foreach (\Drupal::entityTypeManager()->getStorage('node')->loadMultiple($hnids) as $n) {
-        $variables['history_items'][] = ['title' => $n->getTitle(), 'url' => $n->toUrl()->toString(), 'bundle' => $n->bundle()];
+    $variables['following_count'] = (int) $db->select('xedc_follows', 'f')
+      ->condition('f.follower_id', $uid_val)
+      ->countQuery()
+      ->execute()
+      ->fetchField();
+    $variables['followers_count'] = (int) $db->select('xedc_follows', 'f')
+      ->condition('f.followee_id', $uid_val)
+      ->countQuery()
+      ->execute()
+      ->fetchField();
+
+    $sum = $db->select('node__field_like_count', 'lc');
+    $sum->addExpression('COALESCE(SUM(lc.field_like_count_value), 0)', 'total');
+    $sum->join('node_field_data', 'n', 'n.nid = lc.entity_id');
+    $sum->condition('n.uid', $uid_val);
+    $sum->condition('n.status', 1);
+    $sum->condition('n.type', ['article', 'video', 'image_post'], 'IN');
+    $variables['like_received_total'] = (int) $sum->execute()->fetchField();
+  } catch (\Exception $e) {
+    $variables['following_count'] = 0;
+    $variables['followers_count'] = 0;
+    $variables['like_received_total'] = 0;
+  }
+
+  $variables['posts_items'] = [];
+  $variables['draft_items'] = [];
+  $variables['collected_items'] = [];
+  $variables['history_items'] = [];
+
+  $build_card = function (NodeInterface $n, ?int $event_ts = NULL, ?string $event_label = NULL) use ($file_url_generator): array {
+    $owner = $n->getOwner();
+    $owner_name = $owner ? $owner->getDisplayName() : '';
+    $owner_url = $owner ? $owner->toUrl()->toString() : '';
+    $owner_picture_url = NULL;
+    if ($owner && $owner->hasField('user_picture') && !$owner->get('user_picture')->isEmpty()) {
+      $picture = $owner->get('user_picture')->entity;
+      if ($picture) {
+        $owner_picture_url = $file_url_generator->generateAbsoluteString($picture->getFileUri());
       }
     }
-  } catch (\Exception $e) { $variables['history_items'] = []; }
+
+    $bundle = $n->bundle();
+    $cover_url = NULL;
+    $thumbs = [];
+    $image_count = 0;
+    if ($bundle === 'image_post') {
+      if ($n->hasField('field_cover_image') && !$n->get('field_cover_image')->isEmpty()) {
+        $f = $n->get('field_cover_image')->entity;
+        if ($f) {
+          $cover_url = $file_url_generator->generateAbsoluteString($f->getFileUri());
+        }
+      }
+      if (!$cover_url && $n->hasField('field_image') && !$n->get('field_image')->isEmpty()) {
+        $f0 = $n->get('field_image')->first()?->entity;
+        if ($f0) {
+          $cover_url = $file_url_generator->generateAbsoluteString($f0->getFileUri());
+        }
+      }
+      if ($n->hasField('field_image') && !$n->get('field_image')->isEmpty()) {
+        $image_count = $n->get('field_image')->count();
+        $i = 0;
+        foreach ($n->get('field_image') as $item) {
+          $f = $item->entity;
+          if ($f) {
+            $thumbs[] = $file_url_generator->generateAbsoluteString($f->getFileUri());
+            $i++;
+            if ($i >= 4) {
+              break;
+            }
+          }
+        }
+      }
+    }
+    else {
+      if ($n->hasField('field_cover_image') && !$n->get('field_cover_image')->isEmpty()) {
+        $f = $n->get('field_cover_image')->entity;
+        if ($f) {
+          $cover_url = $file_url_generator->generateAbsoluteString($f->getFileUri());
+        }
+      }
+    }
+
+    $duration = NULL;
+    if ($bundle === 'video' && $n->hasField('field_duration') && !$n->get('field_duration')->isEmpty()) {
+      $duration = (int) ($n->get('field_duration')->value ?? 0);
+    }
+
+    $excerpt = NULL;
+    if ($bundle === 'article' && $n->hasField('field_summary') && !$n->get('field_summary')->isEmpty()) {
+      $excerpt = (string) ($n->get('field_summary')->value ?? '');
+    }
+
+    return [
+      'nid' => (int) $n->id(),
+      'title' => $n->getTitle(),
+      'url' => $n->toUrl()->toString(),
+      'bundle' => $bundle,
+      'created' => (int) $n->getCreatedTime(),
+      'event_ts' => $event_ts,
+      'event_label' => $event_label,
+      'owner_name' => $owner_name,
+      'owner_url' => $owner_url,
+      'owner_picture_url' => $owner_picture_url,
+      'cover_url' => $cover_url,
+      'thumbs' => $thumbs,
+      'image_count' => $image_count,
+      'duration' => $duration,
+      'excerpt' => $excerpt,
+    ];
+  };
+
+  try {
+    $nids = \Drupal::entityQuery('node')
+      ->accessCheck(TRUE)
+      ->condition('uid', $uid_val)
+      ->condition('status', 1)
+      ->condition('type', ['article', 'video', 'image_post'], 'IN')
+      ->sort('created', 'DESC')
+      ->range(0, 24)
+      ->execute();
+    $variables['posts_count'] = (int) \Drupal::entityQuery('node')
+      ->accessCheck(TRUE)
+      ->condition('uid', $uid_val)
+      ->condition('status', 1)
+      ->condition('type', ['article', 'video', 'image_post'], 'IN')
+      ->count()
+      ->execute();
+    $nodes = $nids ? \Drupal::entityTypeManager()->getStorage('node')->loadMultiple($nids) : [];
+    foreach ($nids as $nid) {
+      $n = $nodes[$nid] ?? NULL;
+      if ($n instanceof NodeInterface) {
+        $variables['posts_items'][] = $build_card($n, (int) $n->getCreatedTime(), '发布');
+      }
+    }
+  } catch (\Exception $e) {
+    $variables['posts_count'] = 0;
+  }
+
+  if ($variables['is_own_profile']) {
+    try {
+      $draft_nids = \Drupal::entityQuery('node')
+        ->accessCheck(TRUE)
+        ->condition('uid', $uid_val)
+        ->condition('status', 0)
+        ->condition('type', ['article', 'video', 'image_post'], 'IN')
+        ->sort('created', 'DESC')
+        ->range(0, 24)
+        ->execute();
+      $variables['drafts_count'] = (int) \Drupal::entityQuery('node')
+        ->accessCheck(TRUE)
+        ->condition('uid', $uid_val)
+        ->condition('status', 0)
+        ->condition('type', ['article', 'video', 'image_post'], 'IN')
+        ->count()
+        ->execute();
+      $draft_nodes = $draft_nids ? \Drupal::entityTypeManager()->getStorage('node')->loadMultiple($draft_nids) : [];
+      foreach ($draft_nids as $nid) {
+        $n = $draft_nodes[$nid] ?? NULL;
+        if ($n instanceof NodeInterface) {
+          $variables['draft_items'][] = $build_card($n, (int) $n->getCreatedTime(), '草稿');
+        }
+      }
+    } catch (\Exception $e) {
+      $variables['drafts_count'] = 0;
+    }
+  }
+  else {
+    $variables['drafts_count'] = 0;
+  }
+
+  try {
+    $db = \Drupal::database();
+    $collect_rows = [];
+    $collect_total = 0;
+    try {
+      $collect_rows = $db->select('xedc_collects', 'c')
+        ->fields('c', ['nid', 'timestamp'])
+        ->condition('c.uid', $uid_val)
+        ->orderBy('c.timestamp', 'DESC')
+        ->range(0, 24)
+        ->execute()
+        ->fetchAll();
+      $collect_total = (int) $db->select('xedc_collects', 'c2')
+        ->condition('c2.uid', $uid_val)
+        ->countQuery()
+        ->execute()
+        ->fetchField();
+    } catch (\Exception $e) {
+      $collect_rows = $db->select('flagging', 'f')
+        ->fields('f', ['entity_id', 'created'])
+        ->condition('f.flag_id', 'collect')
+        ->condition('f.uid', $uid_val)
+        ->orderBy('f.created', 'DESC')
+        ->range(0, 24)
+        ->execute()
+        ->fetchAll();
+      $collect_total = (int) $db->select('flagging', 'f2')
+        ->condition('f2.flag_id', 'collect')
+        ->condition('f2.uid', $uid_val)
+        ->countQuery()
+        ->execute()
+        ->fetchField();
+    }
+
+    $collect_nids = [];
+    $collect_ts = [];
+    foreach ($collect_rows as $r) {
+      $nid = (int) ($r->nid ?? $r->entity_id ?? 0);
+      $ts = (int) ($r->timestamp ?? $r->created ?? 0);
+      if ($nid) {
+        $collect_nids[] = $nid;
+        $collect_ts[$nid] = $ts;
+      }
+    }
+    $variables['collects_count'] = $collect_total;
+    $collect_nodes = $collect_nids ? \Drupal::entityTypeManager()->getStorage('node')->loadMultiple($collect_nids) : [];
+    foreach ($collect_nids as $nid) {
+      $n = $collect_nodes[$nid] ?? NULL;
+      if ($n instanceof NodeInterface && $n->access('view')) {
+        $variables['collected_items'][] = $build_card($n, $collect_ts[$nid] ?? NULL, '收藏');
+      }
+    }
+  } catch (\Exception $e) {
+    $variables['collects_count'] = 0;
+  }
+
+  try {
+    $db = \Drupal::database();
+    $history_rows = $db->select('xedc_history', 'h')
+      ->fields('h', ['nid', 'timestamp'])
+      ->condition('h.uid', $uid_val)
+      ->orderBy('h.timestamp', 'DESC')
+      ->range(0, 24)
+      ->execute()
+      ->fetchAll();
+
+    $history_nids = [];
+    $history_ts = [];
+    foreach ($history_rows as $r) {
+      $nid = (int) ($r->nid ?? 0);
+      $ts = (int) ($r->timestamp ?? 0);
+      if ($nid) {
+        $history_nids[] = $nid;
+        $history_ts[$nid] = $ts;
+      }
+    }
+    $variables['history_count'] = (int) $db->select('xedc_history', 'h2')
+      ->condition('h2.uid', $uid_val)
+      ->countQuery()
+      ->execute()
+      ->fetchField();
+    $history_nodes = $history_nids ? \Drupal::entityTypeManager()->getStorage('node')->loadMultiple($history_nids) : [];
+    foreach ($history_nids as $nid) {
+      $n = $history_nodes[$nid] ?? NULL;
+      if ($n instanceof NodeInterface && $n->access('view')) {
+        $variables['history_items'][] = $build_card($n, $history_ts[$nid] ?? NULL, '浏览');
+      }
+    }
+  } catch (\Exception $e) {
+    $variables['history_count'] = 0;
+  }
 }
 
 /**
