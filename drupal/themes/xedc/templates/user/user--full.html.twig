@@ -4,9 +4,8 @@
     <div class="xedc-zen-hero__inner">
       <div class="xedc-zen-hero__row">
         <div class="xedc-zen-hero__time" data-xedc-zen-time></div>
-        <div class="xedc-zen-hero__animal" data-xedc-zen-animal>
+        <div class="xedc-zen-hero__animal" data-xedc-zen-animal aria-label="">
           <div class="xedc-zen-hero__animal-icon" data-xedc-zen-animal-icon></div>
-          <div class="xedc-zen-hero__animal-text" data-xedc-zen-animal-text></div>
         </div>
       </div>
       <div class="xedc-zen-hero__greeting" data-xedc-zen-greeting></div>
@@ -166,7 +165,7 @@
         </div>
 
         {% if collected_items %}
-          <div class="xedc-profile-grid" data-xedc-filter-container>
+          <div class="xedc-profile-grid" data-xedc-filter-container data-xedc-filter="all">
             {% for item in collected_items %}
               <a class="xedc-content-card xedc-content-card--{{ item.bundle }}" href="{{ item.url }}" data-xedc-bundle="{{ item.bundle }}">
                 <div class="xedc-content-card__media">
