@@ -39,7 +39,7 @@
           </button>
         {% endif %}
         {% if node.field_allow_download.value %}
-          <a href="{{ url }}?download=1" class="xedc-icon-btn" aria-label="下载">
+          <a href="{{ path('xedc_core.image_post_download', {'nid': nid}) }}" class="xedc-icon-btn" aria-label="下载">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
               <polyline points="7 10 12 15 17 10"/>

@@ -3,6 +3,9 @@
   工具栏、分页、列数控制都在这里；样式模板只负责渲染卡片网格。
 #}
 {{ attach_library('xedc/page-image-list') }}
+{% set _category = active_category|default('all') %}
+{% set _sort = active_sort|default('new') %}
+{% set _categories = categories|default([]) %}
 <div class="xedc-image-waterfall">
 
   {# 顶部工具栏：列数 + 多选 #}
@@ -25,6 +28,21 @@
       </div>
     </div>
   </div>
+
+  <div class="xedc-image-waterfall__filters xedc-flex xedc-flex-between xedc-gap-3">
+    {% include '@xedc/block/block--tabs.html.twig' with { categories: _categories, active_key: _category } %}
+    <div class="xedc-image-waterfall__sort">
+      <a class="xedc-sort-chip{% if _sort == 'new' %} is-active{% endif %}" href="{{ sort_new_url|default('/images') }}">最新发布</a>
+      <a class="xedc-sort-chip{% if _sort == 'hot' %} is-active{% endif %}" href="{{ sort_hot_url|default('/images?sort=hot') }}">最多浏览</a>
+      <a class="xedc-sort-chip{% if _sort == 'random' %} is-active{% endif %}" href="{{ sort_random_url|default('/images?sort=random') }}">随机查看</a>
+    </div>
+  </div>
+
+  {% if active_search is defined and active_search %}
+    <div class="xedc-image-waterfall__search-hint">
+      搜索：{{ active_search }}
+    </div>
+  {% endif %}
 
   {# 瀑布流内容区 #}
   {% if rows %}

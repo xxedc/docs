@@ -17,15 +17,21 @@
         entries.forEach(function (entry) {
           if (entry.isIntersecting) {
             var img = entry.target;
-            if (img.dataset.src) {
-              img.src = img.dataset.src;
-              img.removeAttribute('data-src');
+            var hasDataSrc = !!img.dataset.src;
+            if (!hasDataSrc && img.complete && img.naturalWidth > 0) {
+              img.style.opacity = '1';
+              io.unobserve(img);
+              return;
             }
             img.style.opacity = '0';
             img.addEventListener('load', function () {
               img.style.transition = 'opacity 0.3s ease';
               img.style.opacity = '1';
             }, { once: true });
+            if (hasDataSrc) {
+              img.src = img.dataset.src;
+              img.removeAttribute('data-src');
+            }
             io.unobserve(img);
           }
         });
