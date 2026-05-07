@@ -1,5 +1,14 @@
-{#
-  views-view-unformatted--article-list.html.twig
-  文章列表行 — 直接输出 teaser，不加额外包裹层
-#}
-{% for row in rows %}{{ row.content }}{% endfor %}
+{% if rows %}
+  <div class="xedc-feed__featured">
+    {{ rows[0].content }}
+  </div>
+  {% if rows|length > 1 %}
+    <div class="xedc-feed__grid">
+      {% for row in rows|slice(1) %}
+        <div class="xedc-feed__item">
+          {{ row.content }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endif %}

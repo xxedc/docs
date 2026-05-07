@@ -1,0 +1,44 @@
+<div class="xedc-sidebar-panel">
+  <section class="xedc-sidebar-panel__section">
+    <h3 class="xedc-sidebar-panel__title">🔥 热门文章</h3>
+    <div class="xedc-sidebar-panel__body">
+      {{ hot_rank|default('') }}
+    </div>
+  </section>
+
+  <section class="xedc-sidebar-panel__section">
+    <h3 class="xedc-sidebar-panel__title">👤 推荐作者</h3>
+    <div class="xedc-sidebar-panel__body">
+      <div class="xedc-author-list">
+        {% for a in recommended_authors|default([]) %}
+          <a class="xedc-author-item" href="{{ a.url }}">
+            {% if a.picture %}
+              <img class="xedc-author-item__avatar" src="{{ a.picture }}" alt="{{ a.name }}" loading="lazy" />
+            {% else %}
+              <span class="xedc-author-item__avatar xedc-author-item__avatar--fallback">{{ a.name|slice(0,1)|upper }}</span>
+            {% endif %}
+            <span class="xedc-author-item__name">{{ a.name }}</span>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <section class="xedc-sidebar-panel__section">
+    <h3 class="xedc-sidebar-panel__title">🏷 热门标签</h3>
+    <div class="xedc-sidebar-panel__body">
+      <div class="xedc-tag-list">
+        {% for t in hot_tags|default([]) %}
+          <a class="xedc-tag" href="{{ t.url }}">#{{ t.name }}</a>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <section class="xedc-sidebar-panel__section xedc-sidebar-panel__section--ad">
+    <h3 class="xedc-sidebar-panel__title">📢</h3>
+    <div class="xedc-sidebar-panel__body">
+      <a class="xedc-ad-slot" href="/user/register">发布内容 / 申请推荐位</a>
+    </div>
+  </section>
+</div>

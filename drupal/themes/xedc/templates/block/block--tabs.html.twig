@@ -1,0 +1,6 @@
+{% set _active = active_key|default('all') %}
+<nav class="xedc-tabs" role="tablist">
+  {% for c in categories|default([]) %}
+    <a href="{{ c.url }}" class="xedc-tab{% if (c.key|default('') == _active) %} is-active{% endif %}" role="tab">{{ c.label }}</a>
+  {% endfor %}
+</nav>
