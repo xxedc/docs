@@ -147,11 +147,22 @@ fi
 if [ "$CONFIG_COUNT" -lt 5 ]; then
     log_warn "config/sync/ 文件不足（${CONFIG_COUNT} 个），跳过 cim"
 else
-    if ! run "$DRUSH" -r "$WEB_ROOT" cim -y 2>> "$LOG_FILE"; then
-        log_warn "配置导入有警告，请检查日志"
+    PREVIEW_FILE="$(mktemp)"
+    if "$DRUSH" -r "$WEB_ROOT" cim --preview=list > "$PREVIEW_FILE" 2>> "$LOG_FILE"; then
+        if grep -qE '\|\s*[^|]+\s*\|\s*[^|]+\s*\|\s*Delete\s*\|' "$PREVIEW_FILE"; then
+            log_warn "检测到配置删除操作，已跳过导入（避免破坏现有结构），请检查日志"
+            cat "$PREVIEW_FILE" >> "$LOG_FILE"
+        else
+            if ! run "$DRUSH" -r "$WEB_ROOT" cim -y 2>> "$LOG_FILE"; then
+                log_warn "配置导入失败或有警告，请检查日志"
+            else
+                log_success "配置导入完成"
+            fi
+        fi
     else
-        log_success "配置导入完成"
+        log_warn "配置预览失败，跳过导入，请检查日志"
     fi
+    rm -f "$PREVIEW_FILE"
 fi
 
 

@@ -9,12 +9,20 @@
   width: 100%;
   height: 240px;
   overflow: hidden;
+  --zen-accent: oklch(0.75 0.12 90);
+  --zen-accent-2: oklch(0.74 0.10 250);
   background:
     radial-gradient(1200px 420px at 20% -10%, oklch(0.9 0.08 90 / 0.55), transparent 60%),
     radial-gradient(900px 420px at 90% 20%, oklch(0.88 0.1 250 / 0.42), transparent 55%),
     linear-gradient(180deg, color-mix(in oklch, var(--background) 92%, transparent), color-mix(in oklch, var(--background) 75%, transparent));
   border-bottom: 1px solid color-mix(in oklch, var(--border) 70%, transparent);
 }
+
+.xedc-zen-hero[data-xedc-zen-period="dawn"] { --zen-accent: oklch(0.80 0.12 85); --zen-accent-2: oklch(0.78 0.10 250); }
+.xedc-zen-hero[data-xedc-zen-period="noon"] { --zen-accent: oklch(0.76 0.14 55); --zen-accent-2: oklch(0.78 0.10 200); }
+.xedc-zen-hero[data-xedc-zen-period="afternoon"] { --zen-accent: oklch(0.78 0.12 150); --zen-accent-2: oklch(0.74 0.08 110); }
+.xedc-zen-hero[data-xedc-zen-period="night"] { --zen-accent: oklch(0.78 0.08 260); --zen-accent-2: oklch(0.86 0.06 110); }
+.xedc-zen-hero[data-xedc-zen-period="midnight"] { --zen-accent: oklch(0.76 0.10 300); --zen-accent-2: oklch(0.78 0.08 200); }
 
 .xedc-zen-hero__canvas {
   position: absolute;
@@ -59,10 +67,13 @@
   padding: 10px;
   border-radius: 20px;
   border: 1px solid color-mix(in oklch, var(--border) 68%, transparent);
-  background: color-mix(in oklch, var(--background) 72%, transparent);
+  background:
+    radial-gradient(60px 60px at 30% 25%, color-mix(in oklch, var(--zen-accent) 22%, transparent), transparent 60%),
+    radial-gradient(70px 70px at 75% 70%, color-mix(in oklch, var(--zen-accent-2) 18%, transparent), transparent 62%),
+    color-mix(in oklch, var(--background) 72%, transparent);
   backdrop-filter: blur(18px) saturate(1.3);
   box-shadow: 0 16px 36px oklch(0 0 0 / 0.12);
-  color: color-mix(in oklch, var(--foreground) 88%, transparent);
+  color: color-mix(in oklch, var(--zen-accent) 42%, var(--foreground));
 }
 
 .xedc-zen-hero__animal-icon {
@@ -291,7 +302,7 @@
 }
 
 .xedc-content-card {
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
   border-radius: 14px;
   overflow: hidden;
@@ -301,7 +312,11 @@
   box-shadow: var(--shadow-sm);
   transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
   color: inherit;
+  width: 100%;
   break-inside: avoid;
+  break-inside: avoid-column;
+  page-break-inside: avoid;
+  -webkit-column-break-inside: avoid;
   margin: 0 0 var(--space-4);
 }
 
