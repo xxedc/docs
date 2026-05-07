@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 
 /**
@@ -213,6 +214,66 @@ function xedc_preprocess_views_view(array &$variables): void {
     return;
   }
 
+  $request = \Drupal::requestStack()->getCurrentRequest();
+  $active_category = (string) ($request?->query->get('category') ?? 'all');
+  $active_sort = (string) ($request?->query->get('sort') ?? 'hot');
+  if ($active_category === '') {
+    $active_category = 'all';
+  }
+  if (!in_array($active_sort, ['hot', 'new'], TRUE)) {
+    $active_sort = 'hot';
+  }
+
+  $route_name = 'view.article_list.page_1';
+  $base_query = [];
+  if ($active_sort !== 'hot') {
+    $base_query['sort'] = $active_sort;
+  }
+
+  $variables['active_category'] = $active_category;
+  $variables['active_sort'] = $active_sort;
+  $variables['categories'] = [];
+  $variables['sort_hot_url'] = Url::fromRoute($route_name, [], [
+    'query' => $active_category !== 'all' ? ['category' => $active_category] : [],
+  ])->toString();
+  $variables['sort_new_url'] = Url::fromRoute($route_name, [], [
+    'query' => array_filter([
+      'category' => $active_category !== 'all' ? $active_category : NULL,
+      'sort' => 'new',
+    ]),
+  ])->toString();
+
+  try {
+    $tree = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree('categories', 0, NULL, FALSE);
+    $variables['categories'][] = [
+      'key' => 'all',
+      'label' => 'All',
+      'url' => Url::fromRoute($route_name, [], ['query' => $base_query])->toString(),
+    ];
+    foreach ($tree as $item) {
+      $tid = (int) ($item->tid ?? 0);
+      if (!$tid) {
+        continue;
+      }
+      $variables['categories'][] = [
+        'key' => (string) $tid,
+        'label' => (string) ($item->name ?? ''),
+        'url' => Url::fromRoute($route_name, [], [
+          'query' => array_merge($base_query, ['category' => $tid]),
+        ])->toString(),
+      ];
+    }
+    $variables['#cache']['tags'][] = 'taxonomy_term_list:categories';
+  } catch (\Exception $e) {
+    $variables['categories'] = [
+      [
+        'key' => 'all',
+        'label' => 'All',
+        'url' => Url::fromRoute($route_name)->toString(),
+      ],
+    ];
+  }
+
   $variables['recommended_authors'] = [];
   $variables['hot_tags'] = [];
 
@@ -303,6 +364,32 @@ function xedc_preprocess_views_view(array &$variables): void {
     $variables['recommended_authors'] = $authors;
     $variables['hot_tags'] = $tags;
   } catch (\Exception $e) {}
+}
+
+function xedc_views_query_alter(\Drupal\views\ViewExecutable $view, \Drupal\views\Plugin\views\query\QueryPluginBase $query): void {
+  if ($view->id() !== 'article_list') {
+    return;
+  }
+  if (!$query instanceof \Drupal\views\Plugin\views\query\Sql) {
+    return;
+  }
+
+  $request = \Drupal::requestStack()->getCurrentRequest();
+  $category = $request?->query->get('category');
+  if ($category && $category !== 'all' && ctype_digit((string) $category)) {
+    $category_table = $query->ensureTable('node__field_category', $view->relationship);
+    if ($category_table) {
+      $query->addWhere(0, $category_table . '.field_category_target_id', (int) $category, '=');
+    }
+  }
+
+  $sort = (string) ($request?->query->get('sort') ?? '');
+  if ($sort !== 'new') {
+    $view_count_table = $query->ensureTable('node__field_view_count', $view->relationship);
+    if ($view_count_table) {
+      $query->addOrderBy($view_count_table, 'field_view_count_value', 'DESC');
+    }
+  }
 }
 
 /**
