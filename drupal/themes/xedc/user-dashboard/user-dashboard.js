@@ -58,39 +58,6 @@
     });
   }
 
-  function animateFilterChange(cardsToShow, cardsToHide) {
-    cardsToHide.forEach(function (el) {
-      if (el.dataset.xedcHidden === '1') return;
-      el.classList.add('is-filter-hiding');
-    });
-    cardsToShow.forEach(function (el) {
-      if (el.dataset.xedcHidden !== '1') return;
-      el.dataset.xedcHidden = '0';
-      el.hidden = false;
-      el.classList.add('is-filter-showing');
-    });
-
-    window.requestAnimationFrame(function () {
-      cardsToHide.forEach(function (el) {
-        el.classList.add('is-filtered-out');
-      });
-      cardsToShow.forEach(function (el) {
-        el.classList.remove('is-filtered-out');
-      });
-    });
-
-    window.setTimeout(function () {
-      cardsToHide.forEach(function (el) {
-        el.hidden = true;
-        el.dataset.xedcHidden = '1';
-        el.classList.remove('is-filter-hiding');
-      });
-      cardsToShow.forEach(function (el) {
-        el.classList.remove('is-filter-showing');
-      });
-    }, 180);
-  }
-
   function initCollectsFilter(context) {
     var tabs = context.querySelector ? context.querySelector('[data-xedc-collects-tabs]') : null;
     if (!tabs || tabs.dataset.xedcFilterInit) return;
@@ -100,9 +67,7 @@
     if (!container) return;
 
     var cards = Array.prototype.slice.call(container.querySelectorAll('[data-xedc-bundle]'));
-    cards.forEach(function (c) {
-      c.dataset.xedcHidden = '0';
-    });
+    var rafId = 0;
 
     function setActive(btn) {
       Array.prototype.forEach.call(tabs.querySelectorAll('.xedc-subtab'), function (b) {
@@ -111,15 +76,34 @@
     }
 
     function applyFilter(key) {
-      var show = [];
-      var hide = [];
+      if (rafId) {
+        window.cancelAnimationFrame(rafId);
+        rafId = 0;
+      }
+
+      cards.forEach(function (c) {
+        c.classList.remove('is-filter-enter');
+      });
+
       cards.forEach(function (c) {
         var b = c.getAttribute('data-xedc-bundle') || '';
         var shouldShow = key === 'all' ? true : b === key;
-        if (shouldShow) show.push(c);
-        else hide.push(c);
+        if (!shouldShow) {
+          c.hidden = true;
+        } else {
+          if (c.hidden) {
+            c.hidden = false;
+            c.classList.add('is-filter-enter');
+          }
+        }
       });
-      animateFilterChange(show, hide);
+
+      rafId = window.requestAnimationFrame(function () {
+        cards.forEach(function (c) {
+          c.classList.remove('is-filter-enter');
+        });
+        rafId = 0;
+      });
     }
 
     Array.prototype.forEach.call(tabs.querySelectorAll('[data-xedc-filter]'), function (btn) {
@@ -185,7 +169,9 @@
     var canvas = hero.querySelector('[data-xedc-zen-canvas]');
     var timeEl = hero.querySelector('[data-xedc-zen-time]');
     var greetingEl = hero.querySelector('[data-xedc-zen-greeting]');
-    if (!canvas || !timeEl || !greetingEl) return;
+    var animalTextEl = hero.querySelector('[data-xedc-zen-animal-text]');
+    var animalIconEl = hero.querySelector('[data-xedc-zen-animal-icon]');
+    if (!canvas || !timeEl || !greetingEl || !animalTextEl || !animalIconEl) return;
 
     var ctx = canvas.getContext('2d', { alpha: true });
     var dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
@@ -493,6 +479,12 @@
       var period = getPeriod(now.getHours());
       timeEl.textContent = pad2(now.getHours()) + ':' + pad2(now.getMinutes());
       greetingEl.textContent = period.greeting;
+      animalTextEl.textContent = period.animal;
+      hero.setAttribute('data-xedc-zen-period', period.key);
+      if (animalIconEl.dataset.xedcAnimalKey !== period.key) {
+        animalIconEl.dataset.xedcAnimalKey = period.key;
+        animalIconEl.innerHTML = getAnimalSvg(period.key);
+      }
 
       drawFireflies(t);
 
@@ -544,6 +536,22 @@
     });
 
     window.requestAnimationFrame(render);
+  }
+
+  function getAnimalSvg(key) {
+    if (key === 'dawn') {
+      return '<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14 36c6-2 10-7 12-18" stroke="currentColor" stroke-opacity=".55" stroke-width="2.2" stroke-linecap="round"/><path d="M26 18c5-6 10-7 14-6" stroke="currentColor" stroke-opacity=".48" stroke-width="2.2" stroke-linecap="round"/><path class="wing" d="M21 24c6 1 11 5 14 11" stroke="currentColor" stroke-opacity=".45" stroke-width="2.2" stroke-linecap="round"/><path d="M18 36v-6" stroke="currentColor" stroke-opacity=".55" stroke-width="2.2" stroke-linecap="round"/></svg>';
+    }
+    if (key === 'noon') {
+      return '<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 26c5-7 15-7 20 0" stroke="currentColor" stroke-opacity=".5" stroke-width="2.2" stroke-linecap="round"/><path d="M18 26c3 6 9 9 14 9" stroke="currentColor" stroke-opacity=".44" stroke-width="2.2" stroke-linecap="round"/><path class="tail" d="M15 23c-2 2-3 4-3 6 2-1 4-1 6 0" stroke="currentColor" stroke-opacity=".55" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    }
+    if (key === 'afternoon') {
+      return '<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 30c0-7 6-12 14-12s14 5 14 12" stroke="currentColor" stroke-opacity=".5" stroke-width="2.2" stroke-linecap="round"/><path d="M18 16c-2-3-1-6 2-7" stroke="currentColor" stroke-opacity=".45" stroke-width="2.2" stroke-linecap="round"/><path d="M36 16c2-3 1-6-2-7" stroke="currentColor" stroke-opacity=".45" stroke-width="2.2" stroke-linecap="round"/><path class="mouth" d="M25 30c2 1 4 1 6 0" stroke="currentColor" stroke-opacity=".55" stroke-width="2.2" stroke-linecap="round"/></svg>';
+    }
+    if (key === 'night') {
+      return '<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M30 10c4 1 7 5 7 10 0 6-5 11-11 11-5 0-9-3-10-7" stroke="currentColor" stroke-opacity=".55" stroke-width="2.2" stroke-linecap="round"/><path d="M18 30c2 3 7 5 12 5" stroke="currentColor" stroke-opacity=".42" stroke-width="2.2" stroke-linecap="round"/><path class="star" d="M14 14l1 2 2 .6-2 .6-1 2-.9-2-2-.6 2-.6.9-2Z" fill="currentColor" fill-opacity=".28"/></svg>';
+    }
+    return '<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 30c0-6 5-11 12-11s12 5 12 11" stroke="currentColor" stroke-opacity=".46" stroke-width="2.2" stroke-linecap="round"/><path class="antler" d="M22 18c-2-4-6-6-10-6 3 2 4 4 4 7-2-2-4-2-6-1 4 2 6 5 7 9" stroke="currentColor" stroke-opacity=".55" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path class="antler" d="M30 18c2-4 6-6 10-6-3 2-4 4-4 7 2-2 4-2 6-1-4 2-6 5-7 9" stroke="currentColor" stroke-opacity=".55" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   }
 
   Drupal.behaviors.xedcUserDashboard = {

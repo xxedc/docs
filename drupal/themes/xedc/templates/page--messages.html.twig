@@ -6,13 +6,37 @@
     <a href="{{ url('<front>') }}" class="xedc-navbar__logo">
       <span class="xedc-navbar__logo-text">{{ site_name }}</span>
     </a>
-    <div class="xedc-flex xedc-items-center xedc-gap-2">
+    <div class="xedc-navbar__tools xedc-flex xedc-items-center xedc-gap-2">
       {% include 'xedc:theme-toggle' %}
-      <a href="/user/{{ current_user.id() }}" class="xedc-navbar__icon-btn">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-        </svg>
-      </a>
+      {% if is_logged_in %}
+        {% set _hues = [220, 280, 155, 30, 340, 190, 320, 55] %}
+        {% set _trigger %}
+          <div class="xedc-navbar__avatar" aria-label="个人中心">
+            {% if current_user_picture %}
+              <img class="xedc-avatar xedc-avatar--sm xedc-avatar--img"
+                   src="{{ current_user_picture }}"
+                   alt="{{ current_user_name }}" />
+            {% else %}
+              <div class="xedc-avatar xedc-avatar--sm"
+                   style="background:oklch(0.62 0.16 {{ _hues[(current_user_name|default('U')|length) % 8] }});">
+                {{ (current_user_name|default('U'))|slice(0,1)|upper }}
+              </div>
+            {% endif %}
+          </div>
+        {% endset %}
+        {% set _items %}
+          <a class="xedc-dropdown__item" href="/user/{{ current_user.id() }}">👤 个人中心</a>
+          <a class="xedc-dropdown__item" href="/user/{{ current_user.id() }}?tab=history">🕒 浏览历史</a>
+          <a class="xedc-dropdown__item" href="/user/{{ current_user.id() }}?tab=collects">🔖 收藏</a>
+          <a class="xedc-dropdown__item" href="/user/{{ current_user.id() }}?tab=posts">✍️ 我的文章</a>
+          <div class="xedc-dropdown__separator"></div>
+          <a class="xedc-dropdown__item" href="/user/{{ current_user.id() }}/edit">⚙️ 设置</a>
+          <a class="xedc-dropdown__item xedc-dropdown__item--destructive" href="/user/logout">退出登录</a>
+        {% endset %}
+        {% include 'xedc:dropdown' with { id: 'xedc-user-menu', align: 'right', trigger: _trigger, items: _items, extra_classes: 'xedc-dropdown--user' } only %}
+      {% else %}
+        <a href="/user/login" class="xedc-btn xedc-btn--default xedc-btn--sm">登录</a>
+      {% endif %}
     </div>
   </div>
 </header>
