@@ -64,6 +64,9 @@ function xedc_preprocess_page(array &$variables): void {
 
   if (\Drupal::service('path.matcher')->isFrontPage()) {
     $variables['#attached']['library'][] = 'xedc/page-front';
+    $variables['#attached']['library'][] = 'xedc/page-video-list';
+    $variables['#attached']['library'][] = 'xedc/page-image-list';
+    $variables['#attached']['library'][] = 'xedc/page-article-list';
   }
 }
 
