@@ -1,16 +1,7 @@
-<div class="xedc-front-hero">
-  {% if rows[0] is defined %}
-    <div class="xedc-front-hero__featured">
-      {{ rows[0].content }}
+<div class="xedc-front-banner-row" aria-label="精选内容">
+  {% for row in rows %}
+    <div class="xedc-front-banner-row__item">
+      {{ row.content }}
     </div>
-  {% endif %}
-  {% if rows|length > 1 %}
-    <div class="xedc-front-hero__rail">
-      {% for row in rows|slice(1) %}
-        <div class="xedc-front-hero__rail-item">
-          {{ row.content }}
-        </div>
-      {% endfor %}
-    </div>
-  {% endif %}
+  {% endfor %}
 </div>
