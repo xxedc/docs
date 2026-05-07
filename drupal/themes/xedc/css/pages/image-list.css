@@ -7,6 +7,12 @@ body:has(.xedc-image-waterfall) { background: oklch(0.96 0 0); }
 
 .xedc-image-waterfall { padding: var(--space-6) 0; }
 
+.xedc-image-waterfall__bottom {
+  margin-top: var(--space-6);
+  display: flex;
+  justify-content: flex-end;
+}
+
 /* 隐藏字段标签 */
 .xedc-image-card .field__label { display: none; }
 

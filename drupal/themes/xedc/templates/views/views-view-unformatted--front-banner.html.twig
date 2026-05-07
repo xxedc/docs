@@ -1,11 +1,16 @@
-{#
-  views-view-unformatted--front-banner.html.twig
-  首页Banner — 横向滚动特色内容
-#}
-<div class="xedc-front-banner-list">
-  {% for row in rows %}
-    <div class="xedc-front-banner-list__item">
-      {{ row.content }}
+<div class="xedc-front-hero">
+  {% if rows[0] is defined %}
+    <div class="xedc-front-hero__featured">
+      {{ rows[0].content }}
     </div>
-  {% endfor %}
+  {% endif %}
+  {% if rows|length > 1 %}
+    <div class="xedc-front-hero__rail">
+      {% for row in rows|slice(1) %}
+        <div class="xedc-front-hero__rail-item">
+          {{ row.content }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
 </div>

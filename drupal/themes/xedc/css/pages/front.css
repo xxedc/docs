@@ -14,44 +14,81 @@
 }
 
 /* Banner 横向滚动列表 */
-.xedc-front-banner-list {
-  display: flex;
-  gap: var(--space-4);
-  overflow-x: auto;
-  padding-bottom: var(--space-2);
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+.xedc-front-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+  gap: var(--space-5);
+  align-items: start;
 }
-.xedc-front-banner-list::-webkit-scrollbar { display: none; }
-
-.xedc-front-banner-list__item {
-  flex-shrink: 0;
-  width: 260px;
-  scroll-snap-align: start;
+@media (max-width: 1024px) {
+  .xedc-front-hero {
+    grid-template-columns: 1fr;
+  }
 }
 
-/* Banner 内的卡片尺寸调整 */
-.xedc-front-banner-list .xedc-video-card,
-.xedc-front-banner-list .xedc-article-card,
-.xedc-front-banner-list .xedc-image-card {
+.xedc-front-hero__featured,
+.xedc-front-hero__rail-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.xedc-front-hero__featured > * {
   height: 100%;
 }
 
-.xedc-front-banner-list .xedc-article-card {
+.xedc-front-hero__rail {
+  display: flex;
   flex-direction: column;
+  gap: var(--space-4);
 }
 
-.xedc-front-banner-list .xedc-article-card__cover {
-  width: 100%;
-  height: 140px;
-  flex-shrink: 0;
+.xedc-front-hero__featured .xedc-video-card,
+.xedc-front-hero__featured .xedc-article-card,
+.xedc-front-hero__featured .xedc-image-card {
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
 }
 
-.xedc-front-banner-list .xedc-article-card__cover img {
+.xedc-front-hero__rail-item .xedc-video-card,
+.xedc-front-hero__rail-item .xedc-article-card,
+.xedc-front-hero__rail-item .xedc-image-card {
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.xedc-front-hero__featured .xedc-video-card__cover,
+.xedc-front-hero__featured .xedc-article-card__cover,
+.xedc-front-hero__featured .xedc-image-card__img-wrap {
+  aspect-ratio: 16 / 9;
+}
+.xedc-front-hero__featured .xedc-image-card__img-wrap img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+.xedc-front-hero__featured .xedc-image-card__img-wrap a {
+  display: block;
+  height: 100%;
+}
+
+.xedc-front-hero__rail-item .xedc-video-card__cover,
+.xedc-front-hero__rail-item .xedc-article-card__cover,
+.xedc-front-hero__rail-item .xedc-image-card__img-wrap {
+  aspect-ratio: 4 / 3;
+}
+.xedc-front-hero__rail-item .xedc-image-card__img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.xedc-front-hero__rail-item .xedc-image-card__img-wrap a {
+  display: block;
+  height: 100%;
 }
 
 /* ── 分类导航 ── */
@@ -72,11 +109,11 @@
 
 .xedc-category-nav__item {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  gap: var(--space-1);
-  padding: var(--space-3) var(--space-5);
-  border-radius: 14px;
+  gap: var(--space-2);
+  padding: 10px 14px;
+  border-radius: 999px;
   background: var(--card);
   border: 1px solid var(--border);
   color: var(--foreground);
@@ -102,7 +139,18 @@
   border-color: transparent;
   box-shadow: 0 4px 12px oklch(from var(--primary) l c h / 0.35);
 }
-.xedc-category-nav__icon { font-size: 22px; line-height: 1; }
+.xedc-category-nav__icon {
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.xedc-category-nav__icon svg {
+  width: 18px;
+  height: 18px;
+}
 
 /* ── 主体布局 ── */
 .xedc-front__layout {
@@ -144,11 +192,9 @@
 /* ── 推荐流内容网格 ── */
 .xedc-front-feed {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: var(--space-4);
 }
-@media (max-width: 1280px) { .xedc-front-feed { grid-template-columns: repeat(3, 1fr); } }
-@media (max-width: 768px)  { .xedc-front-feed { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 480px)  { .xedc-front-feed { grid-template-columns: 1fr; } }
 
 /* 推荐流所有卡片单列，保持统一网格节奏 */
