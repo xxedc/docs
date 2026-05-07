@@ -34,6 +34,95 @@ body:has(.xedc-image-waterfall) .xedc-container { max-width: 1320px; }
   backdrop-filter: blur(10px);
 }
 
+.xedc-image-waterfall__filters {
+  align-items: center;
+  padding: 0 0 var(--space-3);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: var(--space-4);
+}
+
+.xedc-image-waterfall__search-hint {
+  margin: calc(var(--space-3) * -1) 0 var(--space-4);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--muted-foreground);
+}
+
+.xedc-image-waterfall__sort {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.xedc-tabs {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  padding: 2px 0;
+}
+.xedc-tabs::-webkit-scrollbar { display: none; }
+
+.xedc-tabs .xedc-tab {
+  display: inline-flex;
+  align-items: center;
+  height: 34px;
+  padding: 0 var(--space-4);
+  border-radius: 999px;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--muted-foreground);
+  text-decoration: none;
+  border: 1px solid transparent;
+  background: transparent;
+  white-space: nowrap;
+  transition: transform 0.25s ease, background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+.xedc-tabs .xedc-tab:hover {
+  transform: translateY(-1px);
+  background: var(--card);
+  border-color: var(--border);
+  color: var(--foreground);
+}
+.xedc-tabs .xedc-tab.is-active {
+  background: linear-gradient(135deg, var(--primary), oklch(from var(--primary) l c calc(h + 30)));
+  color: var(--primary-foreground);
+  border-color: transparent;
+  box-shadow: 0 4px 14px oklch(from var(--primary) l c h / 0.32);
+}
+
+.xedc-sort-chip {
+  height: 32px;
+  padding: 0 var(--space-4);
+  border-radius: 999px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--muted-foreground);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, color 0.25s ease, background 0.25s ease;
+}
+.xedc-sort-chip:hover {
+  transform: translateY(-1px);
+  color: var(--foreground);
+  box-shadow: var(--shadow-sm);
+}
+.xedc-sort-chip.is-active {
+  background: var(--foreground);
+  color: var(--background);
+  border-color: var(--foreground);
+}
+
+@media (max-width: 640px) {
+  .xedc-image-waterfall__sort { display: none; }
+}
+
 /* ── 列数控制按钮 ── */
 .xedc-col-control { gap: var(--space-1) !important; }
 

@@ -130,16 +130,13 @@
     {# ── 操作栏 ── #}
     <div class="xedc-image-detail__actions">
       {% if node.field_allow_download.value %}
-        {% set _dl_entity = node.field_image.0.entity %}
-        {% if _dl_entity %}
-          <a href="{{ file_url(_dl_entity.fileUri) }}" download class="xedc-action-btn">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-              <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
-            </svg>
-            下载
-          </a>
-        {% endif %}
+        <a href="{{ path('xedc_core.image_post_download', {'nid': node.id()}) }}" class="xedc-action-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          下载
+        </a>
       {% endif %}
 
       {% if logged_in %}

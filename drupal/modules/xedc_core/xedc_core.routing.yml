@@ -52,6 +52,25 @@ xedc_core.search_suggest:
     _access: 'TRUE'
   methods: [GET]
 
+xedc_core.image_post_download:
+  path: '/download/image-post/{nid}'
+  defaults:
+    _controller: '\Drupal\xedc_core\Controller\DownloadController::imagePostZip'
+    _title: '下载图集'
+  requirements:
+    _access: 'TRUE'
+    nid: '\d+'
+  methods: [GET]
+
+xedc_core.image_posts_download:
+  path: '/download/image-posts'
+  defaults:
+    _controller: '\Drupal\xedc_core\Controller\DownloadController::imagePostsZip'
+    _title: '批量下载图集'
+  requirements:
+    _access: 'TRUE'
+  methods: [GET]
+
 # 未读消息计数
 xedc_core.unread_count:
   path: '/api/unread-count'

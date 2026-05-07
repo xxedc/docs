@@ -66,6 +66,8 @@ page-image-list:
       css/pages/image-list.css: {}
   js:
     js/masonry.js: { attributes: { defer: true } }
+    js/lightbox.js: { attributes: { defer: true } }
+    js/image-list-filters.js: { attributes: { defer: true } }
     js/infinite-scroll.js: { attributes: { defer: true } }
   dependencies:
     - core/drupal
