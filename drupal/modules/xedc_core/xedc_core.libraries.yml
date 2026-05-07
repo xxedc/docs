@@ -1,0 +1,7 @@
+interactions:
+  version: VERSION
+  js:
+    js/xedc-interactions.js: { attributes: { defer: true } }
+  dependencies:
+    - core/drupal
+    - core/drupalSettings

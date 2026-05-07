@@ -152,6 +152,7 @@ page-profile:
       css/pages/profile.css: {}
   js:
     js/profile-tabs.js: { attributes: { defer: true } }
+    user-dashboard/user-dashboard.js: { attributes: { defer: true } }
   dependencies:
     - core/drupal
 

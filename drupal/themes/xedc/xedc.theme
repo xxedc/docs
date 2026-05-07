@@ -187,6 +187,8 @@ function xedc_preprocess_user(array &$variables): void {
   $variables['draft_items'] = [];
   $variables['collected_items'] = [];
   $variables['history_items'] = [];
+  $variables['history_groups'] = [];
+  $variables['collects_type_counts'] = ['all' => 0, 'video' => 0, 'image_post' => 0, 'article' => 0];
 
   $build_card = function (NodeInterface $n, ?int $event_ts = NULL, ?string $event_label = NULL) use ($file_url_generator): array {
     $owner = $n->getOwner();
@@ -251,6 +253,11 @@ function xedc_preprocess_user(array &$variables): void {
       $excerpt = (string) ($n->get('field_summary')->value ?? '');
     }
 
+    $view_count = 0;
+    if ($n->hasField('field_view_count') && !$n->get('field_view_count')->isEmpty()) {
+      $view_count = (int) ($n->get('field_view_count')->value ?? 0);
+    }
+
     return [
       'nid' => (int) $n->id(),
       'title' => $n->getTitle(),
@@ -267,6 +274,7 @@ function xedc_preprocess_user(array &$variables): void {
       'image_count' => $image_count,
       'duration' => $duration,
       'excerpt' => $excerpt,
+      'view_count' => $view_count,
     ];
   };
 
@@ -331,54 +339,65 @@ function xedc_preprocess_user(array &$variables): void {
 
   try {
     $db = \Drupal::database();
-    $collect_rows = [];
-    $collect_total = 0;
+    $collect_ts = [];
+    $collect_nids = [];
+
     try {
-      $collect_rows = $db->select('xedc_collects', 'c')
+      $rows = $db->select('xedc_collects', 'c')
         ->fields('c', ['nid', 'timestamp'])
         ->condition('c.uid', $uid_val)
         ->orderBy('c.timestamp', 'DESC')
-        ->range(0, 24)
+        ->range(0, 96)
         ->execute()
         ->fetchAll();
-      $collect_total = (int) $db->select('xedc_collects', 'c2')
-        ->condition('c2.uid', $uid_val)
-        ->countQuery()
-        ->execute()
-        ->fetchField();
-    } catch (\Exception $e) {
-      $collect_rows = $db->select('flagging', 'f')
+      foreach ($rows as $r) {
+        $nid = (int) ($r->nid ?? 0);
+        $ts = (int) ($r->timestamp ?? 0);
+        if ($nid) {
+          $collect_ts[$nid] = max($collect_ts[$nid] ?? 0, $ts);
+        }
+      }
+    } catch (\Exception $e) {}
+
+    try {
+      $rows = $db->select('flagging', 'f')
         ->fields('f', ['entity_id', 'created'])
         ->condition('f.flag_id', 'collect')
         ->condition('f.uid', $uid_val)
         ->orderBy('f.created', 'DESC')
-        ->range(0, 24)
+        ->range(0, 96)
         ->execute()
         ->fetchAll();
-      $collect_total = (int) $db->select('flagging', 'f2')
-        ->condition('f2.flag_id', 'collect')
-        ->condition('f2.uid', $uid_val)
-        ->countQuery()
-        ->execute()
-        ->fetchField();
-    }
-
-    $collect_nids = [];
-    $collect_ts = [];
-    foreach ($collect_rows as $r) {
-      $nid = (int) ($r->nid ?? $r->entity_id ?? 0);
-      $ts = (int) ($r->timestamp ?? $r->created ?? 0);
-      if ($nid) {
-        $collect_nids[] = $nid;
-        $collect_ts[$nid] = $ts;
+      foreach ($rows as $r) {
+        $nid = (int) ($r->entity_id ?? 0);
+        $ts = (int) ($r->created ?? 0);
+        if ($nid) {
+          $collect_ts[$nid] = max($collect_ts[$nid] ?? 0, $ts);
+        }
       }
-    }
-    $variables['collects_count'] = $collect_total;
+    } catch (\Exception $e) {}
+
+    arsort($collect_ts);
+    $collect_nids = array_slice(array_keys($collect_ts), 0, 48);
+    $variables['collects_count'] = count($collect_ts);
     $collect_nodes = $collect_nids ? \Drupal::entityTypeManager()->getStorage('node')->loadMultiple($collect_nids) : [];
     foreach ($collect_nids as $nid) {
       $n = $collect_nodes[$nid] ?? NULL;
       if ($n instanceof NodeInterface && $n->access('view')) {
         $variables['collected_items'][] = $build_card($n, $collect_ts[$nid] ?? NULL, '收藏');
+      }
+    }
+
+    $variables['collects_type_counts'] = [
+      'all' => count($variables['collected_items']),
+      'video' => 0,
+      'image_post' => 0,
+      'article' => 0,
+    ];
+    foreach ($variables['collected_items'] as $item) {
+      $b = (string) ($item['bundle'] ?? '');
+      if (isset($variables['collects_type_counts'][$b])) {
+        $variables['collects_type_counts'][$b]++;
       }
     }
   } catch (\Exception $e) {
@@ -417,6 +436,29 @@ function xedc_preprocess_user(array &$variables): void {
         $variables['history_items'][] = $build_card($n, $history_ts[$nid] ?? NULL, '浏览');
       }
     }
+
+    $groups = [
+      'today' => ['label' => '今天', 'items' => []],
+      'yesterday' => ['label' => '昨天', 'items' => []],
+      'older' => ['label' => '更早', 'items' => []],
+    ];
+    $tz = new \DateTimeZone(date_default_timezone_get());
+    $now = new \DateTimeImmutable('now', $tz);
+    $start_today = $now->setTime(0, 0, 0)->getTimestamp();
+    $start_yesterday = $now->modify('-1 day')->setTime(0, 0, 0)->getTimestamp();
+    foreach ($variables['history_items'] as $item) {
+      $ts = (int) ($item['event_ts'] ?? 0);
+      if ($ts >= $start_today) {
+        $groups['today']['items'][] = $item;
+      }
+      elseif ($ts >= $start_yesterday) {
+        $groups['yesterday']['items'][] = $item;
+      }
+      else {
+        $groups['older']['items'][] = $item;
+      }
+    }
+    $variables['history_groups'] = array_values(array_filter($groups, static fn($g) => !empty($g['items'])));
   } catch (\Exception $e) {
     $variables['history_count'] = 0;
   }
