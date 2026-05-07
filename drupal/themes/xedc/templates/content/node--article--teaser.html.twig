@@ -15,9 +15,9 @@
     {# 作者信息行 #}
     <div class="xedc-article-card__author">
       {# 头像：优先显示用户图片，无则显示彩色首字母 #}
-      {% if owner.user_picture.0.entity %}
+      {% if owner_picture_url %}
         <div class="xedc-avatar xedc-avatar--xs">
-          <img src="{{ file_url(owner.user_picture.0.entity.fileUri) }}" alt="{{ owner_name }}" class="xedc-avatar__img" />
+          <img src="{{ owner_picture_url }}" alt="{{ owner_name }}" class="xedc-avatar__img" />
         </div>
       {% else %}
         <div class="xedc-avatar xedc-avatar--xs"
