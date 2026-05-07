@@ -14,11 +14,13 @@ global-styles:
       css/components/search-suggest.css: { weight: -80 }
       css/components/hot-rank.css: { weight: -75 }
       components/avatar/avatar.css: { weight: -70 }
+      components/dropdown/dropdown.css: { weight: -69 }
 
 global-scripts:
   version: VERSION
   js:
     js/theme-toggle.js: { attributes: { defer: true } }
+    components/dropdown/dropdown.js: { attributes: { defer: true } }
   dependencies:
     - core/drupal
 
