@@ -5,7 +5,12 @@
 /* 页面底色 */
 body:has(.xedc-image-waterfall) { background: oklch(0.96 0 0); }
 
-.xedc-image-waterfall { padding: var(--space-6) 0; }
+.xedc-image-waterfall {
+  --image-navbar-height: 56px;
+  padding: var(--space-4) 0 var(--space-8);
+}
+
+body:has(.xedc-image-waterfall) .xedc-container { max-width: 1320px; }
 
 .xedc-image-waterfall__bottom {
   margin-top: var(--space-6);
@@ -17,11 +22,16 @@ body:has(.xedc-image-waterfall) { background: oklch(0.96 0 0); }
 .xedc-image-card .field__label { display: none; }
 
 /* ── 工具栏 ── */
-.xedc-list-toolbar {
-  margin-bottom: var(--space-5);
-  padding-bottom: var(--space-4);
+.xedc-image-waterfall .xedc-list-toolbar {
+  position: sticky;
+  top: var(--image-navbar-height);
+  z-index: 20;
+  margin-bottom: var(--space-4);
+  padding: var(--space-3) 0;
   border-bottom: 1px solid var(--border);
   align-items: center;
+  background: color-mix(in oklch, oklch(0.96 0 0) 88%, transparent);
+  backdrop-filter: blur(10px);
 }
 
 /* ── 列数控制按钮 ── */
@@ -55,7 +65,7 @@ body:has(.xedc-image-waterfall) { background: oklch(0.96 0 0); }
 
 /* ── 瀑布流容器（CSS columns）── */
 .xedc-masonry {
-  column-count: 3;
+  column-count: 4;
   column-gap: var(--space-4);
   padding-top: var(--space-4);
 }
@@ -181,12 +191,14 @@ body:has(.xedc-image-waterfall) { background: oklch(0.96 0 0); }
 .xedc-image-card__author {
   display: flex;
   align-items: center;
-  gap: var(--space-1);
+  gap: var(--space-2);
   margin-top: var(--space-2);
 }
+.xedc-image-card__author .xedc-avatar { border-width: 1px; }
 .xedc-image-card__author-name {
-  font-size: 11px;
-  color: var(--muted-foreground);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--foreground);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
