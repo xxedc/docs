@@ -7,7 +7,6 @@
 {% set _first_image = node.field_image.0.entity %}
 {% set _owner = node.getOwner() %}
 {% set _owner_name = _owner.getDisplayName() %}
-{% set _hues = [220, 280, 155, 30, 340, 190, 320, 55] %}
 
 <article{{ attributes.addClass('xedc-image-card') }} data-nid="{{ nid }}" data-selectable>
 
@@ -63,18 +62,16 @@
 
     {# 发布者信息 #}
     <div class="xedc-image-card__author">
-      {% if owner_picture_url %}
-        <div class="xedc-avatar xedc-avatar--xs">
-          <img src="{{ owner_picture_url }}" alt="{{ _owner_name }}" class="xedc-avatar__img" />
-        </div>
-      {% else %}
-        <div class="xedc-avatar xedc-avatar--xs"
-             style="background:oklch(0.62 0.16 {{ _hues[_owner_name|length % 8] }});">
-          {{ _owner_name|slice(0,1)|upper }}
-        </div>
-      {% endif %}
+      {% include 'xedc:avatar' with {
+        size: 'xs',
+        src: owner_picture_url|default(null),
+        name: _owner_name,
+        url: '/user/' ~ node.getOwnerId()
+      } only %}
       <a href="/user/{{ node.getOwnerId() }}" class="xedc-image-card__author-name">{{ _owner_name }}</a>
-      <span class="xedc-image-card__date xedc-text-xs xedc-text-muted">{{ node.getCreatedTime()|date('m-d') }}</span>
+      <time class="xedc-image-card__date xedc-text-xs xedc-text-muted" datetime="{{ node.getCreatedTime()|date('Y-m-d') }}">
+        {{ node.getCreatedTime()|date('Y-m-d') }}
+      </time>
     </div>
   </div>
 

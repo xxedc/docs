@@ -13,6 +13,7 @@ global-styles:
       css/components/gallery.css: { weight: -85 }
       css/components/search-suggest.css: { weight: -80 }
       css/components/hot-rank.css: { weight: -75 }
+      components/avatar/avatar.css: { weight: -70 }
 
 global-scripts:
   version: VERSION
@@ -156,4 +157,3 @@ page-search:
   css:
     theme:
       css/pages/search.css: {}
-
