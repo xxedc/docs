@@ -208,6 +208,101 @@ function xedc_preprocess_views_view(array &$variables): void {
   if (isset($library_map[$view_id])) {
     $variables['#attached']['library'][] = $library_map[$view_id];
   }
+
+  if ($view_id !== 'article_list') {
+    return;
+  }
+
+  $variables['recommended_authors'] = [];
+  $variables['hot_tags'] = [];
+
+  try {
+    $nids = \Drupal::entityQuery('node')
+      ->accessCheck(TRUE)
+      ->condition('type', 'article')
+      ->condition('status', 1)
+      ->sort('created', 'DESC')
+      ->range(0, 30)
+      ->execute();
+
+    if (!$nids) {
+      return;
+    }
+
+    $nodes = \Drupal::entityTypeManager()->getStorage('node')->loadMultiple($nids);
+    $file_url_generator = \Drupal::service('file_url_generator');
+
+    $authors = [];
+    $seen_uids = [];
+
+    foreach ($nodes as $n) {
+      $owner = $n->getOwner();
+      if (!$owner) {
+        continue;
+      }
+      $uid = (int) $owner->id();
+      if (!$uid || isset($seen_uids[$uid])) {
+        continue;
+      }
+      $seen_uids[$uid] = TRUE;
+
+      $picture_url = NULL;
+      if ($owner->hasField('user_picture') && !$owner->get('user_picture')->isEmpty()) {
+        $picture = $owner->get('user_picture')->entity;
+        if ($picture) {
+          $picture_url = $file_url_generator->generateAbsoluteString($picture->getFileUri());
+        }
+      }
+
+      $authors[] = [
+        'uid' => $uid,
+        'name' => $owner->getDisplayName(),
+        'url' => $owner->toUrl()->toString(),
+        'picture' => $picture_url,
+      ];
+
+      if (count($authors) >= 5) {
+        break;
+      }
+    }
+
+    $tag_counts = [];
+    foreach ($nodes as $n) {
+      if (!$n->hasField('field_tags') || $n->get('field_tags')->isEmpty()) {
+        continue;
+      }
+      foreach ($n->get('field_tags')->referencedEntities() as $term) {
+        $tid = (int) $term->id();
+        if (!$tid) {
+          continue;
+        }
+        if (!isset($tag_counts[$tid])) {
+          $tag_counts[$tid] = ['term' => $term, 'count' => 0];
+        }
+        $tag_counts[$tid]['count']++;
+      }
+    }
+
+    uasort($tag_counts, function ($a, $b) {
+      return $b['count'] <=> $a['count'];
+    });
+
+    $tags = [];
+    foreach ($tag_counts as $item) {
+      $term = $item['term'];
+      $tags[] = [
+        'name' => $term->getName(),
+        'url' => $term->toUrl()->toString(),
+        'count' => $item['count'],
+      ];
+      if (count($tags) >= 10) {
+        break;
+      }
+    }
+
+    $variables['recommended_authors'] = $authors;
+    $variables['hot_tags'] = $tags;
+  } catch (\Exception $e) {}
 }
 
 /**

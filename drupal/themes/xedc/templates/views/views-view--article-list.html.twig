@@ -1,64 +1,88 @@
-{#
-  views-view--article-list.html.twig — 文章列表页（掘金风格）
-#}
 {{ attach_library('xedc/page-article-list') }}
-<div class="xedc-article-list">
 
-  {# 分类导航 Tab #}
-  <div class="xedc-article-list__tabs" role="tablist">
-    <a href="/articles" class="xedc-tab is-active" role="tab">全部</a>
-    <a href="/articles?category=tech" class="xedc-tab" role="tab">技术</a>
-    <a href="/articles?category=life" class="xedc-tab" role="tab">生活</a>
-    <a href="/articles?category=finance" class="xedc-tab" role="tab">财经</a>
-  </div>
+{% set _category = app.request.query.get('category')|default('all') %}
+{% set _sort = app.request.query.get('sort')|default('hot') %}
+{% set _categories = [
+  { 'key': 'all',   'label': 'All',   'url': '/articles' },
+  { 'key': 'tech',  'label': 'Tech',  'url': '/articles?category=tech' },
+  { 'key': 'ai',    'label': 'AI',    'url': '/articles?category=ai' },
+  { 'key': 'dev',   'label': 'Dev',   'url': '/articles?category=dev' },
+  { 'key': 'news',  'label': 'News',  'url': '/articles?category=news' },
+  { 'key': 'life',  'label': 'Life',  'url': '/articles?category=life' },
+  { 'key': 'video', 'label': 'Video', 'url': '/articles?category=video' }
+] %}
 
-  {# 排序栏 #}
-  <div class="xedc-article-list__sort xedc-flex xedc-items-center xedc-gap-3">
-    {% if exposed %}{{ exposed }}{% endif %}
-    <div class="xedc-sort-btns xedc-flex xedc-gap-2">
-      <button class="xedc-sort-btn is-active" data-sort="hot">最热</button>
-      <button class="xedc-sort-btn" data-sort="new">最新</button>
-    </div>
-  </div>
+<div class="xedc-articles-home">
+  <div class="xedc-container xedc-articles-home__container">
 
-  {# 文章列表 + 侧边栏双栏布局 #}
-  <div class="xedc-article-list__layout">
-
-    {# 文章列表 #}
-    <main class="xedc-article-list__main">
-      {% if rows %}
-        <div class="xedc-article-feed" data-view-container="article-list">
-          {{ rows }}
-        </div>
-      {% else %}
-        <div class="xedc-empty-state">
-          <div class="xedc-empty-state__icon">📝</div>
-          <h3 class="xedc-empty-state__title">暂无文章</h3>
-          <p class="xedc-text-sm xedc-text-muted">快来发布第一篇文章吧</p>
-        </div>
-      {% endif %}
-      {% if pager %}<div class="xedc-pager">{{ pager }}</div>{% endif %}
-    </main>
-
-    {# 右侧边栏 #}
-    <aside class="xedc-article-list__sidebar">
-      <div class="xedc-sidebar__widget">
-        <h3 class="xedc-sidebar__title">🔥 热门文章</h3>
-        {{ drupal_view('hot_rank', 'block_1') }}
+    <div class="xedc-articles-home__tabs-sticky">
+      {% include '@xedc/block/block--tabs.html.twig' with { categories: _categories, active_key: _category } %}
+      <div class="xedc-articles-home__sort">
+        <a class="xedc-sort-chip{% if _sort == 'hot' %} is-active{% endif %}" href="/articles{% if _category != 'all' %}?category={{ _category }}&sort=hot{% else %}?sort=hot{% endif %}">Hot</a>
+        <a class="xedc-sort-chip{% if _sort == 'new' %} is-active{% endif %}" href="/articles{% if _category != 'all' %}?category={{ _category }}&sort=new{% else %}?sort=new{% endif %}">New</a>
       </div>
-      {% if not is_logged_in %}
-        <div class="xedc-sidebar__widget">
-          <p class="xedc-text-sm xedc-text-muted" style="margin-bottom:var(--space-3);">登录后查看个性化推荐</p>
-          <a href="/user/login" class="xedc-btn xedc-btn--default xedc-btn--sm">立即登录</a>
+    </div>
+
+    <div class="xedc-articles-home__layout">
+
+      <aside class="xedc-articles-home__left" aria-label="分类与标签">
+        <div class="xedc-left-nav">
+          <h3 class="xedc-left-nav__title">分类</h3>
+          <div class="xedc-left-nav__list">
+            {% for c in _categories %}
+              <a class="xedc-left-nav__item{% if c.key == _category %} is-active{% endif %}" href="{{ c.url }}">{{ c.label }}</a>
+            {% endfor %}
+          </div>
         </div>
-      {% endif %}
-    </aside>
 
+        {% if hot_tags %}
+          <div class="xedc-left-tags">
+            <h3 class="xedc-left-nav__title">热门标签</h3>
+            <div class="xedc-tag-list">
+              {% for t in hot_tags %}
+                <a class="xedc-tag" href="{{ t.url }}">#{{ t.name }}</a>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+      </aside>
+
+      <main class="xedc-articles-home__main" aria-label="文章内容流">
+        {% if rows %}
+          <div class="xedc-feed" data-view-container="article-list">
+            {{ rows }}
+          </div>
+        {% else %}
+          <div class="xedc-empty-state">
+            <div class="xedc-empty-state__icon">📝</div>
+            <h3 class="xedc-empty-state__title">暂无文章</h3>
+            <p class="xedc-text-sm xedc-text-muted">快来发布第一篇文章吧</p>
+          </div>
+        {% endif %}
+        {% if pager %}<div class="xedc-pager">{{ pager }}</div>{% endif %}
+      </main>
+
+      <aside class="xedc-articles-home__right" aria-label="推荐栏">
+        {% include '@xedc/block/block--sidebar.html.twig' with {
+          hot_rank: drupal_view('hot_rank', 'block_1'),
+          recommended_authors: recommended_authors|default([]),
+          hot_tags: hot_tags|default([])
+        } %}
+
+        {% if not is_logged_in %}
+          <div class="xedc-login-card">
+            <p class="xedc-text-sm xedc-text-muted">登录后获得个性化推荐</p>
+            <a href="/user/login" class="xedc-btn xedc-btn--default xedc-btn--sm">立即登录</a>
+          </div>
+        {% endif %}
+      </aside>
+
+    </div>
+
+    <button class="xedc-back-to-top" id="xedc-back-to-top" aria-label="回到顶部">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="18 15 12 9 6 15"/>
+      </svg>
+    </button>
   </div>
-
-  <button class="xedc-back-to-top" id="xedc-back-to-top" aria-label="回到顶部">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <polyline points="18 15 12 9 6 15"/>
-    </svg>
-  </button>
 </div>
