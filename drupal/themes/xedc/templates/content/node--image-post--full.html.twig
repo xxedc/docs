@@ -2,14 +2,17 @@
   node--image-post--full.html.twig — 图集详情页
   使用 node.field_image 直接循环，确保全部图片显示
 #}
-{% set nid = node.id() %}
 {% set _image_count = node.field_image|length %}
 
-<div class="xedc-image-detail">
+<div class="xedc-image-detail" data-view-mode="slideshow">
   <div class="xedc-container">
 
     {# ── 大图展示区 ── #}
     <div class="xedc-lightbox-area" id="xedc-lightbox-area">
+
+      <div class="xedc-view-mode-bar">
+        <button class="xedc-view-mode-toggle" id="xedc-view-mode-toggle" type="button">平铺</button>
+      </div>
 
       <div class="xedc-image-viewer" id="xedc-image-viewer">
 
@@ -99,6 +102,22 @@
                 alt="{{ item.alt|default(label) }}"
                 loading="lazy"
                 class="{% if loop.first %}is-active{% endif %}"
+                data-index="{{ loop.index0 }}"
+              />
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% if _image_count > 0 %}
+        <div class="xedc-image-tiles" id="xedc-image-tiles">
+          {% for item in node.field_image %}
+            {% set _f = item.entity %}
+            {% if _f %}
+              <img
+                src="{{ file_url(_f.fileUri) }}"
+                alt="{{ item.alt|default(label) }}"
+                loading="lazy"
                 data-index="{{ loop.index0 }}"
               />
             {% endif %}

@@ -80,6 +80,18 @@ function xedc_preprocess_node(array &$variables): void {
   if ($node->hasField('field_like_count')) {
     $variables['like_count'] = $node->get('field_like_count')->value ?? 0;
   }
+
+  try {
+    $owner = $node->getOwner();
+    if ($owner && $owner->hasField('user_picture') && !$owner->get('user_picture')->isEmpty()) {
+      $picture = $owner->get('user_picture')->entity;
+      if ($picture) {
+        $variables['owner_picture_url'] = \Drupal::service('file_url_generator')
+          ->generateAbsoluteString($picture->getFileUri());
+      }
+    }
+  } catch (\Exception $e) {}
+
   if ($node->hasField('field_cover_image') && !$node->get('field_cover_image')->isEmpty()) {
     $image = $node->get('field_cover_image')->entity;
     if ($image) {
@@ -221,4 +233,3 @@ function xedc_page_attachments_alter(array &$attachments): void {
     'json-ld-webpage',
   ];
 }
-
