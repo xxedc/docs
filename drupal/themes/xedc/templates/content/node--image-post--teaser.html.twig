@@ -7,6 +7,15 @@
 {% set _first_image = node.field_image.0.entity %}
 {% set _owner = node.getOwner() %}
 {% set _owner_name = _owner.getDisplayName() %}
+{% set _view = view_count|default(0) %}
+{% set _like = like_count|default(0) %}
+{% set _now = "now"|date("U") %}
+{% set _is_new = (_now - node.getCreatedTime()) < 86400 %}
+{% set _is_hot = _view >= 20000 %}
+{% set _tags = [] %}
+{% if node.field_tags is defined and node.field_tags is not empty %}
+  {% set _tags = node.field_tags.referencedEntities() %}
+{% endif %}
 
 <article{{ attributes.addClass('xedc-image-card') }} data-nid="{{ nid }}" data-selectable>
 
@@ -27,6 +36,25 @@
         </div>
       {% endif %}
     </a>
+
+    <div class="xedc-image-card__top">
+      <div class="xedc-image-card__badges">
+        {% if _is_hot %}
+          <span class="xedc-image-badge xedc-image-badge--hot">HOT</span>
+        {% endif %}
+        {% if _is_new %}
+          <span class="xedc-image-badge xedc-image-badge--new">NEW</span>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if _tags %}
+      <div class="xedc-image-card__tags">
+        {% for t in _tags|slice(0, 2) %}
+          <span class="xedc-image-tag">#{{ t.getName() }}</span>
+        {% endfor %}
+      </div>
+    {% endif %}
 
     {# Hover 操作浮层 #}
     <div class="xedc-image-card__overlay" aria-hidden="true">
@@ -69,9 +97,20 @@
         url: '/user/' ~ node.getOwnerId()
       } only %}
       <a href="/user/{{ node.getOwnerId() }}" class="xedc-image-card__author-name">{{ _owner_name }}</a>
-      <time class="xedc-image-card__date xedc-text-xs xedc-text-muted" datetime="{{ node.getCreatedTime()|date('Y-m-d') }}">
-        {{ node.getCreatedTime()|date('Y-m-d') }}
+      <time class="xedc-image-card__date xedc-text-xs xedc-text-muted" datetime="{{ node.getCreatedTime()|date('c') }}">
+        {{ node.getCreatedTime()|relative_time }}
       </time>
+    </div>
+
+    <div class="xedc-image-card__meta">
+      <span class="xedc-meta-item" aria-label="浏览量">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+        <span>{{ _view|view_count_format }}</span>
+      </span>
+      <span class="xedc-meta-item" aria-label="点赞数">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <span>{{ _like|view_count_format }}</span>
+      </span>
     </div>
   </div>
 

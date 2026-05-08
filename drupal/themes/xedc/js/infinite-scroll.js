@@ -38,6 +38,33 @@
     indicator.style.display = 'none';
     container.after(indicator);
 
+    function createSkeletonItems(count) {
+      var frag = document.createDocumentFragment();
+      for (var i = 0; i < count; i++) {
+        var item = document.createElement('div');
+        item.className = 'xedc-masonry__item xedc-masonry__item--skeleton';
+        item.innerHTML =
+          '<div class="xedc-image-card">' +
+            '<div class="xedc-image-card__img-wrap">' +
+              '<div class="xedc-skeleton" style="width:100%;aspect-ratio:4/3;border-radius:0;"></div>' +
+            '</div>' +
+            '<div class="xedc-image-card__info">' +
+              '<div class="xedc-skeleton" style="height:14px;width:78%;"></div>' +
+              '<div style="height:10px"></div>' +
+              '<div class="xedc-skeleton" style="height:12px;width:56%;"></div>' +
+            '</div>' +
+          '</div>';
+        frag.appendChild(item);
+      }
+      return frag;
+    }
+
+    function removeSkeletonItems() {
+      container.querySelectorAll('.xedc-masonry__item--skeleton').forEach(function (n) {
+        n.remove();
+      });
+    }
+
     // IntersectionObserver 监听分页按钮
     var observer = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
@@ -54,6 +81,7 @@
       if (!nextUrl || loading) return;
       loading = true;
       indicator.style.display = 'flex';
+      container.appendChild(createSkeletonItems(8));
 
       fetch(nextUrl, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
         .then(function (r) { return r.text(); })
@@ -61,7 +89,9 @@
           var parser = new DOMParser();
           var doc = parser.parseFromString(html, 'text/html');
           var newItems = doc.querySelectorAll('[data-view-container] > *');
+          removeSkeletonItems();
           newItems.forEach(function (item) { container.appendChild(item); });
+          Drupal.attachBehaviors(container);
 
           // 更新下一页链接
           var newPager = doc.querySelector('.pager__item--next a');
@@ -75,6 +105,7 @@
           indicator.style.display = 'none';
         })
         .catch(function () {
+          removeSkeletonItems();
           loading = false;
           indicator.style.display = 'none';
         });

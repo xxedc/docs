@@ -656,21 +656,35 @@ function xedc_preprocess_views_view(array &$variables): void {
     $active_search = (string) ($request?->query->get('search') ?? $request?->query->get('q') ?? '');
     $active_search = trim($active_search);
 
+    $active_today = (string) ($request?->query->get('today') ?? '');
+    $active_today = ($active_today === '1' || $active_today === 'true');
+
+    $active_tag = (string) ($request?->query->get('tag') ?? '');
+    if ($active_tag !== '' && !ctype_digit($active_tag)) {
+      $active_tag = '';
+    }
+
     $route_name = 'view.image_waterfall.page_1';
     $variables['active_category'] = $active_category;
     $variables['active_sort'] = $active_sort;
     $variables['active_search'] = $active_search;
+    $variables['active_today'] = $active_today;
+    $variables['active_tag'] = $active_tag;
     $variables['categories'] = [];
 
     $base_query = array_filter([
       'sort' => $active_sort !== 'new' ? $active_sort : NULL,
       'search' => $active_search !== '' ? $active_search : NULL,
+      'today' => $active_today ? '1' : NULL,
+      'tag' => $active_tag !== '' ? $active_tag : NULL,
     ]);
 
     $variables['sort_new_url'] = Url::fromRoute($route_name, [], [
       'query' => array_filter([
         'category' => $active_category !== 'all' ? $active_category : NULL,
         'search' => $active_search !== '' ? $active_search : NULL,
+        'today' => $active_today ? '1' : NULL,
+        'tag' => $active_tag !== '' ? $active_tag : NULL,
       ]),
     ])->toString();
 
@@ -679,6 +693,8 @@ function xedc_preprocess_views_view(array &$variables): void {
         'category' => $active_category !== 'all' ? $active_category : NULL,
         'sort' => 'hot',
         'search' => $active_search !== '' ? $active_search : NULL,
+        'today' => $active_today ? '1' : NULL,
+        'tag' => $active_tag !== '' ? $active_tag : NULL,
       ]),
     ])->toString();
 
@@ -687,8 +703,29 @@ function xedc_preprocess_views_view(array &$variables): void {
         'category' => $active_category !== 'all' ? $active_category : NULL,
         'sort' => 'random',
         'search' => $active_search !== '' ? $active_search : NULL,
+        'today' => $active_today ? '1' : NULL,
+        'tag' => $active_tag !== '' ? $active_tag : NULL,
       ]),
     ])->toString();
+
+    $variables['today_url'] = Url::fromRoute($route_name, [], [
+      'query' => array_filter([
+        'category' => $active_category !== 'all' ? $active_category : NULL,
+        'search' => $active_search !== '' ? $active_search : NULL,
+        'sort' => $active_sort !== 'new' ? $active_sort : NULL,
+        'tag' => $active_tag !== '' ? $active_tag : NULL,
+        'today' => '1',
+      ]),
+    ])->toString();
+
+    $variables['nav_home_url'] = Url::fromRoute($route_name, [], [
+      'query' => array_filter([
+        'search' => $active_search !== '' ? $active_search : NULL,
+      ]),
+    ])->toString();
+    $variables['nav_new_url'] = $variables['sort_new_url'];
+    $variables['nav_hot_url'] = $variables['sort_hot_url'];
+    $variables['nav_today_url'] = $variables['today_url'];
 
     try {
       $tree = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree('categories', 0, NULL, FALSE);
@@ -720,6 +757,176 @@ function xedc_preprocess_views_view(array &$variables): void {
         ],
       ];
     }
+
+    $variables['tag_tabs'] = [];
+    $variables['tag_terms'] = [];
+    try {
+      $tag_tree = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree('tags', 0, NULL, FALSE);
+      $name_to_tid = [];
+      foreach ($tag_tree as $t) {
+        $tid = (int) ($t->tid ?? 0);
+        $name = (string) ($t->name ?? '');
+        if ($tid && $name !== '') {
+          $name_to_tid[$name] = $tid;
+        }
+      }
+
+      $variables['tag_tabs'] = [
+        [
+          'key' => 'recommend',
+          'label' => '推荐',
+          'url' => Url::fromRoute($route_name, [], [
+            'query' => array_filter([
+              'category' => $active_category !== 'all' ? $active_category : NULL,
+              'search' => $active_search !== '' ? $active_search : NULL,
+              'today' => $active_today ? '1' : NULL,
+            ]),
+          ])->toString(),
+        ],
+        [
+          'key' => 'new',
+          'label' => '最新',
+          'url' => Url::fromRoute($route_name, [], [
+            'query' => array_filter([
+              'category' => $active_category !== 'all' ? $active_category : NULL,
+              'sort' => 'new',
+              'search' => $active_search !== '' ? $active_search : NULL,
+              'today' => $active_today ? '1' : NULL,
+              'tag' => $active_tag !== '' ? $active_tag : NULL,
+            ]),
+          ])->toString(),
+        ],
+        [
+          'key' => 'hot',
+          'label' => '热门',
+          'url' => Url::fromRoute($route_name, [], [
+            'query' => array_filter([
+              'category' => $active_category !== 'all' ? $active_category : NULL,
+              'sort' => 'hot',
+              'search' => $active_search !== '' ? $active_search : NULL,
+              'today' => $active_today ? '1' : NULL,
+              'tag' => $active_tag !== '' ? $active_tag : NULL,
+            ]),
+          ])->toString(),
+        ],
+      ];
+
+      $preferred = ['二次元', '写真', '壁纸', 'Cosplay'];
+      foreach ($preferred as $name) {
+        $tid = (int) ($name_to_tid[$name] ?? 0);
+        if (!$tid) {
+          continue;
+        }
+        $variables['tag_tabs'][] = [
+          'key' => (string) $tid,
+          'label' => $name,
+          'url' => Url::fromRoute($route_name, [], [
+            'query' => array_merge(array_filter([
+              'category' => $active_category !== 'all' ? $active_category : NULL,
+              'sort' => $active_sort !== 'new' ? $active_sort : NULL,
+              'search' => $active_search !== '' ? $active_search : NULL,
+              'today' => $active_today ? '1' : NULL,
+            ]), ['tag' => $tid]),
+          ])->toString(),
+        ];
+      }
+
+      $variables['#cache']['tags'][] = 'taxonomy_term_list:tags';
+    } catch (\Exception $e) {
+      $variables['tag_tabs'] = [
+        [
+          'key' => 'recommend',
+          'label' => '推荐',
+          'url' => Url::fromRoute($route_name)->toString(),
+        ],
+      ];
+    }
+
+    $variables['stats'] = [
+      'total_images' => 0,
+      'today_images' => 0,
+      'category_count' => 0,
+      'total_views' => 0,
+      'total_likes' => 0,
+    ];
+
+    try {
+      $start_today = (new \DateTimeImmutable('today', new \DateTimeZone(date_default_timezone_get())))->getTimestamp();
+
+      $variables['stats']['total_images'] = (int) \Drupal::entityQuery('node')
+        ->accessCheck(TRUE)
+        ->condition('type', 'image_post')
+        ->condition('status', 1)
+        ->count()
+        ->execute();
+
+      $variables['stats']['today_images'] = (int) \Drupal::entityQuery('node')
+        ->accessCheck(TRUE)
+        ->condition('type', 'image_post')
+        ->condition('status', 1)
+        ->condition('created', $start_today, '>=')
+        ->count()
+        ->execute();
+
+      $cat_tree = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree('categories', 0, NULL, FALSE);
+      $variables['stats']['category_count'] = is_array($cat_tree) ? count($cat_tree) : 0;
+
+      $db = \Drupal::database();
+      $sum_views = $db->select('node__field_view_count', 'vc');
+      $sum_views->addExpression('COALESCE(SUM(vc.field_view_count_value), 0)', 'total');
+      $sum_views->join('node_field_data', 'n', 'n.nid = vc.entity_id');
+      $sum_views->condition('n.type', 'image_post');
+      $sum_views->condition('n.status', 1);
+      $variables['stats']['total_views'] = (int) $sum_views->execute()->fetchField();
+
+      $sum_likes = $db->select('node__field_like_count', 'lc');
+      $sum_likes->addExpression('COALESCE(SUM(lc.field_like_count_value), 0)', 'total');
+      $sum_likes->join('node_field_data', 'n2', 'n2.nid = lc.entity_id');
+      $sum_likes->condition('n2.type', 'image_post');
+      $sum_likes->condition('n2.status', 1);
+      $variables['stats']['total_likes'] = (int) $sum_likes->execute()->fetchField();
+    } catch (\Exception $e) {}
+
+    $variables['today_updates'] = [];
+    try {
+      $file_url_generator = \Drupal::service('file_url_generator');
+      $start_today = (new \DateTimeImmutable('today', new \DateTimeZone(date_default_timezone_get())))->getTimestamp();
+      $nids = \Drupal::entityQuery('node')
+        ->accessCheck(TRUE)
+        ->condition('type', 'image_post')
+        ->condition('status', 1)
+        ->condition('created', $start_today, '>=')
+        ->sort('created', 'DESC')
+        ->range(0, 14)
+        ->execute();
+
+      if ($nids) {
+        $nodes = \Drupal::entityTypeManager()->getStorage('node')->loadMultiple($nids);
+        foreach ($nodes as $n) {
+          $cover_url = NULL;
+          if ($n->hasField('field_cover_image') && !$n->get('field_cover_image')->isEmpty()) {
+            $f = $n->get('field_cover_image')->entity;
+            if ($f) {
+              $cover_url = $file_url_generator->generateAbsoluteString($f->getFileUri());
+            }
+          }
+          if (!$cover_url && $n->hasField('field_image') && !$n->get('field_image')->isEmpty()) {
+            $f0 = $n->get('field_image')->first()?->entity;
+            if ($f0) {
+              $cover_url = $file_url_generator->generateAbsoluteString($f0->getFileUri());
+            }
+          }
+
+          $variables['today_updates'][] = [
+            'nid' => (int) $n->id(),
+            'title' => (string) $n->label(),
+            'url' => $n->toUrl()->toString(),
+            'cover' => $cover_url,
+            'created' => (int) $n->getCreatedTime(),
+          ];
+        }
+      }
+    } catch (\Exception $e) {}
   }
 }
 
@@ -768,6 +975,23 @@ function xedc_views_query_alter(\Drupal\views\ViewExecutable $view, \Drupal\view
     if ($base_table) {
       $escaped = \Drupal::database()->escapeLike($search);
       $query->addWhere(0, $base_table . '.title', '%' . $escaped . '%', 'LIKE');
+    }
+  }
+
+  $tag = (string) ($request?->query->get('tag') ?? '');
+  if ($tag !== '' && ctype_digit($tag)) {
+    $tag_table = $query->ensureTable('node__field_tags', $view->relationship);
+    if ($tag_table) {
+      $query->addWhere(0, $tag_table . '.field_tags_target_id', (int) $tag, '=');
+    }
+  }
+
+  $today = (string) ($request?->query->get('today') ?? '');
+  if ($today === '1' || $today === 'true') {
+    $start_today = (new \DateTimeImmutable('today', new \DateTimeZone(date_default_timezone_get())))->getTimestamp();
+    $base_table_today = $query->ensureTable('node_field_data', $view->relationship);
+    if ($base_table_today) {
+      $query->addWhere(0, $base_table_today . '.created', $start_today, '>=');
     }
   }
 

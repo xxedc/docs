@@ -13,6 +13,7 @@ global-styles:
       css/components/gallery.css: { weight: -85 }
       css/components/search-suggest.css: { weight: -80 }
       css/components/hot-rank.css: { weight: -75 }
+      components/button/button.css: { weight: -72 }
       components/avatar/avatar.css: { weight: -70 }
       components/dropdown/dropdown.css: { weight: -69 }
 
