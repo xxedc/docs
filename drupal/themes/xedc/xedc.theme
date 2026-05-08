@@ -78,12 +78,64 @@ function xedc_preprocess_node(array &$variables): void {
   $variables['bundle'] = $node->bundle();
   $variables['is_logged_in'] = \Drupal::currentUser()->isAuthenticated();
 
+  $format_count = static function (mixed $count): string {
+    $count = (int) $count;
+    if ($count >= 10_000_000) {
+      return round($count / 1_000_000, 1) . 'm';
+    }
+    if ($count >= 10_000) {
+      return round($count / 10_000, 1) . 'w';
+    }
+    if ($count >= 1_000) {
+      return round($count / 1_000, 1) . 'k';
+    }
+    return (string) $count;
+  };
+
+  $format_relative = static function (mixed $timestamp): string {
+    $timestamp = (int) $timestamp;
+    $now = time();
+    $diff = $now - $timestamp;
+    if ($diff < 60) {
+      return '刚刚';
+    }
+    if ($diff < 3600) {
+      return (int) ($diff / 60) . ' 分钟前';
+    }
+    if ($diff < 86400) {
+      return (int) ($diff / 3600) . ' 小时前';
+    }
+    if ($diff < 2592000) {
+      return (int) ($diff / 86400) . ' 天前';
+    }
+    if ($diff < 31536000) {
+      return (int) ($diff / 2592000) . ' 个月前';
+    }
+    return (int) ($diff / 31536000) . ' 年前';
+  };
+
   if ($node->hasField('field_view_count')) {
     $variables['view_count'] = $node->get('field_view_count')->value ?? 0;
+    $variables['view_count_fmt'] = $format_count($variables['view_count']);
   }
   if ($node->hasField('field_like_count')) {
     $variables['like_count'] = $node->get('field_like_count')->value ?? 0;
+    $variables['like_count_fmt'] = $format_count($variables['like_count']);
   }
+
+  $variables['created_relative'] = $format_relative($node->getCreatedTime());
+
+  $variables['tag_names'] = [];
+  try {
+    if ($node->hasField('field_tags') && !$node->get('field_tags')->isEmpty()) {
+      foreach ($node->get('field_tags')->referencedEntities() as $term) {
+        $name = (string) $term->label();
+        if ($name !== '') {
+          $variables['tag_names'][] = $name;
+        }
+      }
+    }
+  } catch (\Exception $e) {}
 
   try {
     $owner = $node->getOwner();
@@ -903,6 +955,23 @@ function xedc_preprocess_views_view(array &$variables): void {
       if ($nids) {
         $nodes = \Drupal::entityTypeManager()->getStorage('node')->loadMultiple($nids);
         foreach ($nodes as $n) {
+          $ts = (int) $n->getCreatedTime();
+          $now = time();
+          $diff = $now - $ts;
+          if ($diff < 60) {
+            $created_relative = '刚刚';
+          } elseif ($diff < 3600) {
+            $created_relative = (int) ($diff / 60) . ' 分钟前';
+          } elseif ($diff < 86400) {
+            $created_relative = (int) ($diff / 3600) . ' 小时前';
+          } elseif ($diff < 2592000) {
+            $created_relative = (int) ($diff / 86400) . ' 天前';
+          } elseif ($diff < 31536000) {
+            $created_relative = (int) ($diff / 2592000) . ' 个月前';
+          } else {
+            $created_relative = (int) ($diff / 31536000) . ' 年前';
+          }
+
           $cover_url = NULL;
           if ($n->hasField('field_cover_image') && !$n->get('field_cover_image')->isEmpty()) {
             $f = $n->get('field_cover_image')->entity;
@@ -922,7 +991,8 @@ function xedc_preprocess_views_view(array &$variables): void {
             'title' => (string) $n->label(),
             'url' => $n->toUrl()->toString(),
             'cover' => $cover_url,
-            'created' => (int) $n->getCreatedTime(),
+            'created' => $ts,
+            'created_relative' => $created_relative,
           ];
         }
       }
