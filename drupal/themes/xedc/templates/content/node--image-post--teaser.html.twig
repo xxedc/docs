@@ -12,10 +12,7 @@
 {% set _now = "now"|date("U") %}
 {% set _is_new = (_now - node.getCreatedTime()) < 86400 %}
 {% set _is_hot = _view >= 20000 %}
-{% set _tags = [] %}
-{% if node.field_tags is defined and node.field_tags is not empty %}
-  {% set _tags = node.field_tags.referencedEntities() %}
-{% endif %}
+{% set _tags = tag_names|default([]) %}
 
 <article{{ attributes.addClass('xedc-image-card') }} data-nid="{{ nid }}" data-selectable>
 
@@ -51,7 +48,7 @@
     {% if _tags %}
       <div class="xedc-image-card__tags">
         {% for t in _tags|slice(0, 2) %}
-          <span class="xedc-image-tag">#{{ t.getName() }}</span>
+          <span class="xedc-image-tag">#{{ t }}</span>
         {% endfor %}
       </div>
     {% endif %}
