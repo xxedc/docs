@@ -1,12 +1,8 @@
 <div class="xedc-profile" data-xedc-profile>
   <section class="xedc-zen-hero" data-xedc-zen-hero>
-    <canvas class="xedc-zen-hero__canvas" data-xedc-zen-canvas></canvas>
     <div class="xedc-zen-hero__inner">
       <div class="xedc-zen-hero__row">
         <div class="xedc-zen-hero__time" data-xedc-zen-time></div>
-        <div class="xedc-zen-hero__animal" data-xedc-zen-animal aria-label="">
-          <div class="xedc-zen-hero__animal-icon" data-xedc-zen-animal-icon></div>
-        </div>
       </div>
       <div class="xedc-zen-hero__greeting" data-xedc-zen-greeting></div>
     </div>
@@ -198,9 +194,8 @@
                   <div class="xedc-content-card__meta">
                     {% include 'xedc:avatar' with { size: 'xs', src: item.owner_picture_url|default(null), name: item.owner_name|default(''), url: item.owner_url|default('') } only %}
                     <div class="xedc-content-card__meta-text">
+                      <span class="xedc-content-card__author">{{ item.owner_name }}</span>
                       <span class="xedc-content-card__meta-line">
-                        <span class="xedc-content-card__author">{{ item.owner_name }}</span>
-                        <span class="xedc-content-card__dot" aria-hidden="true">·</span>
                         {% if item.event_ts %}
                           <span class="xedc-content-card__time">{{ item.event_label }} {{ item.event_ts|date('Y-m-d H:i') }}</span>
                         {% else %}

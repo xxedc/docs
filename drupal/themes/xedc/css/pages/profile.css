@@ -24,13 +24,6 @@
 .xedc-zen-hero[data-xedc-zen-period="night"] { --zen-accent: oklch(0.78 0.08 260); --zen-accent-2: oklch(0.86 0.06 110); }
 .xedc-zen-hero[data-xedc-zen-period="midnight"] { --zen-accent: oklch(0.76 0.10 300); --zen-accent-2: oklch(0.78 0.08 200); }
 
-.xedc-zen-hero__canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
 .xedc-zen-hero__inner {
   position: relative;
   z-index: 1;
@@ -58,91 +51,6 @@
   letter-spacing: -0.02em;
   color: color-mix(in oklch, var(--foreground) 92%, transparent);
   text-shadow: 0 10px 26px oklch(0 0 0 / 0.12);
-}
-
-.xedc-zen-hero__animal {
-  display: inline-flex;
-  align-items: center;
-  gap: 0;
-  padding: 10px;
-  border-radius: 20px;
-  border: 1px solid color-mix(in oklch, var(--border) 68%, transparent);
-  background:
-    radial-gradient(60px 60px at 30% 25%, color-mix(in oklch, var(--zen-accent) 22%, transparent), transparent 60%),
-    radial-gradient(70px 70px at 75% 70%, color-mix(in oklch, var(--zen-accent-2) 18%, transparent), transparent 62%),
-    color-mix(in oklch, var(--background) 72%, transparent);
-  backdrop-filter: blur(18px) saturate(1.3);
-  box-shadow: 0 16px 36px oklch(0 0 0 / 0.12);
-  color: color-mix(in oklch, var(--zen-accent) 42%, var(--foreground));
-}
-
-.xedc-zen-hero__animal-icon {
-  width: 78px;
-  height: 78px;
-  display: grid;
-  place-items: center;
-}
-
-.xedc-zen-hero__animal-icon svg {
-  width: 78px;
-  height: 78px;
-  display: block;
-}
-
-@media (max-width: 520px) {
-  .xedc-zen-hero__animal-icon,
-  .xedc-zen-hero__animal-icon svg {
-    width: 64px;
-    height: 64px;
-  }
-}
-
-.xedc-zen-hero[data-xedc-zen-period="dawn"] .xedc-zen-hero__animal-icon .wing {
-  transform-origin: 26px 18px;
-  animation: xedc-wing 2.6s ease-in-out infinite;
-}
-
-.xedc-zen-hero[data-xedc-zen-period="noon"] .xedc-zen-hero__animal-icon .tail {
-  transform-origin: 26px 26px;
-  animation: xedc-tail 1.4s ease-in-out infinite;
-}
-
-.xedc-zen-hero[data-xedc-zen-period="afternoon"] .xedc-zen-hero__animal-icon .mouth {
-  transform-origin: 22px 26px;
-  animation: xedc-mouth 1.2s ease-in-out infinite;
-}
-
-.xedc-zen-hero[data-xedc-zen-period="night"] .xedc-zen-hero__animal-icon .star {
-  animation: xedc-star 1.8s ease-in-out infinite;
-}
-
-.xedc-zen-hero[data-xedc-zen-period="midnight"] .xedc-zen-hero__animal-icon .antler {
-  animation: xedc-antler 2.2s ease-in-out infinite;
-}
-
-@keyframes xedc-wing {
-  0%, 100% { transform: rotate(-4deg) translateY(0); opacity: 0.75; }
-  50% { transform: rotate(10deg) translateY(-1px); opacity: 1; }
-}
-
-@keyframes xedc-tail {
-  0%, 100% { transform: rotate(-10deg); }
-  50% { transform: rotate(12deg); }
-}
-
-@keyframes xedc-mouth {
-  0%, 100% { transform: translateY(0); opacity: 0.7; }
-  50% { transform: translateY(1px); opacity: 1; }
-}
-
-@keyframes xedc-star {
-  0%, 100% { opacity: 0.35; transform: scale(0.92); }
-  50% { opacity: 0.9; transform: scale(1.05); }
-}
-
-@keyframes xedc-antler {
-  0%, 100% { opacity: 0.4; filter: drop-shadow(0 0 0 rgba(255,255,255,0)); }
-  50% { opacity: 0.95; filter: drop-shadow(0 0 10px rgba(255,255,255,0.35)); }
 }
 
 [data-xedc-filter-container][data-xedc-filter="video"] [data-xedc-bundle]:not([data-xedc-bundle="video"]) { display: none !important; }
@@ -283,26 +191,27 @@
 .xedc-profile__content { margin-top: var(--space-4); }
 
 .xedc-profile-grid {
-  column-count: 4;
-  column-gap: var(--space-4);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-4);
 }
 
 @media (max-width: 1024px) {
-  .xedc-profile-grid { column-count: 3; }
+  .xedc-profile-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .xedc-profile__header { grid-template-columns: 72px minmax(0, 1fr); }
   .xedc-profile__actions { justify-content: flex-start; grid-column: 1 / -1; }
 }
 
 @media (max-width: 820px) {
-  .xedc-profile-grid { column-count: 2; }
+  .xedc-profile-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 420px) {
-  .xedc-profile-grid { column-count: 2; column-gap: var(--space-3); }
+  .xedc-profile-grid { gap: var(--space-3); }
 }
 
 .xedc-content-card {
-  display: inline-flex;
+  display: flex;
   flex-direction: column;
   border-radius: 14px;
   overflow: hidden;
@@ -313,11 +222,7 @@
   transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
   color: inherit;
   width: 100%;
-  break-inside: avoid;
-  break-inside: avoid-column;
-  page-break-inside: avoid;
-  -webkit-column-break-inside: avoid;
-  margin: 0 0 var(--space-4);
+  margin: 0;
 }
 
 .xedc-content-card:hover {
