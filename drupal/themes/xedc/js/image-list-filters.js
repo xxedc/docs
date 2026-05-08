@@ -56,10 +56,12 @@
 
     document.addEventListener('click', function (e) {
       if (!isImageListPage()) return;
-      var a = e.target.closest('.xedc-image-waterfall__filters a');
+      var a = e.target.closest('.xedc-image-waterfall a');
       if (!a) return;
       var href = a.getAttribute('href');
       if (!href) return;
+      if (a.getAttribute('target') === '_blank') return;
+      if (href.indexOf('/images') !== 0 && href.indexOf(window.location.origin + '/images') !== 0) return;
       e.preventDefault();
       fetchAndSwap(href, true, false);
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -124,4 +126,3 @@
     }
   };
 })(Drupal);
-

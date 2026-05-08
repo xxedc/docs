@@ -1,5 +1,5 @@
 {% if rows %}
-  <div class="xedc-masonry" id="xedc-masonry" data-view-container="image-waterfall" data-cols="3">
+  <div class="xedc-masonry" id="xedc-masonry" data-view-container="image-waterfall" data-masonry="1" data-autocols="1">
     {% for row in rows %}
       <div class="xedc-masonry__item" data-index="{{ loop.index }}">
         {{ row.content }}

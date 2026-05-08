@@ -5,66 +5,276 @@
 {{ attach_library('xedc/page-image-list') }}
 {% set _category = active_category|default('all') %}
 {% set _sort = active_sort|default('new') %}
+{% set _tag = active_tag|default('') %}
+{% set _today = active_today|default(false) %}
 {% set _categories = categories|default([]) %}
-<div class="xedc-image-waterfall">
+{% set _tabs = tag_tabs|default([]) %}
+{% set _stats = stats|default({}) %}
+{% set _today_items = today_updates|default([]) %}
 
-  {# 顶部工具栏：列数 + 多选 #}
-  <div class="xedc-list-toolbar xedc-flex xedc-flex-between">
-    <div class="xedc-waterfall-controls xedc-flex xedc-items-center xedc-gap-3">
-      <div class="xedc-col-control xedc-flex xedc-items-center xedc-gap-2">
-        <span class="xedc-text-sm xedc-text-muted">列数</span>
-        <button class="xedc-col-btn" data-cols="2" aria-label="2列">2</button>
-        <button class="xedc-col-btn is-active" data-cols="3" aria-label="3列">3</button>
-        <button class="xedc-col-btn" data-cols="4" aria-label="4列">4</button>
-        <button class="xedc-col-btn" data-cols="5" aria-label="5列">5</button>
+<div class="xedc-image-waterfall" data-page="image-list">
+  <div class="xedc-image-page">
+
+    <aside class="xedc-image-sidebar" id="image-sidebar" aria-label="侧边栏">
+      <div class="xedc-image-sidebar__inner">
+        <div class="xedc-image-sidebar__section">
+          <a class="xedc-side-item{% if _sort == 'new' and not _today and _tag == '' %} is-active{% endif %}" href="{{ nav_home_url|default('/images') }}">
+            <span class="xedc-side-item__icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </span>
+            <span class="xedc-side-item__text">首页</span>
+          </a>
+          <a class="xedc-side-item{% if _sort == 'new' and not _today %} is-active{% endif %}" href="{{ nav_new_url|default('/images') }}">
+            <span class="xedc-side-item__icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            </span>
+            <span class="xedc-side-item__text">最新发布</span>
+          </a>
+          <a class="xedc-side-item{% if _sort == 'hot' %} is-active{% endif %}" href="{{ nav_hot_url|default('/images?sort=hot') }}">
+            <span class="xedc-side-item__icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l1.5 6H20l-5 4 2 7-5-4-5 4 2-7-5-4h6.5z"/></svg>
+            </span>
+            <span class="xedc-side-item__text">最多浏览</span>
+          </a>
+          <a class="xedc-side-item{% if _today %} is-active{% endif %}" href="{{ nav_today_url|default('/images?today=1') }}">
+            <span class="xedc-side-item__icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v6l3 2"/></svg>
+            </span>
+            <span class="xedc-side-item__text">今日更新</span>
+          </a>
+        </div>
+
+        <div class="xedc-image-sidebar__divider"></div>
+
+        <div class="xedc-image-sidebar__section">
+          <div class="xedc-side-section-title">分类</div>
+          {% for c in _categories %}
+            {% if c.key|default('') != 'all' %}
+              <a class="xedc-side-item xedc-side-item--sub{% if (c.key|default('') == _category) %} is-active{% endif %}" href="{{ c.url }}">
+                <span class="xedc-side-item__icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v1"/><path d="M3 8v11a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></svg>
+                </span>
+                <span class="xedc-side-item__text">{{ c.label }}</span>
+              </a>
+            {% endif %}
+          {% endfor %}
+        </div>
+
+        <div class="xedc-image-sidebar__divider"></div>
+
+        <div class="xedc-image-sidebar__section">
+          <div class="xedc-side-section-title">我的</div>
+          {% if is_logged_in %}
+            <a class="xedc-side-item" href="/user/{{ current_user.id() }}?tab=collects">
+              <span class="xedc-side-item__icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+              </span>
+              <span class="xedc-side-item__text">我的收藏</span>
+            </a>
+            <a class="xedc-side-item" href="/user/{{ current_user.id() }}?tab=history">
+              <span class="xedc-side-item__icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v6l3 2"/></svg>
+              </span>
+              <span class="xedc-side-item__text">浏览历史</span>
+            </a>
+            <a class="xedc-side-item" href="/user/{{ current_user.id() }}?tab=posts">
+              <span class="xedc-side-item__icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+              </span>
+              <span class="xedc-side-item__text">我的发布</span>
+            </a>
+          {% else %}
+            <a class="xedc-side-item" href="/user/login?destination=/images">
+              <span class="xedc-side-item__icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/><path d="M21 19V5a2 2 0 0 0-2-2h-7"/></svg>
+              </span>
+              <span class="xedc-side-item__text">登录查看更多</span>
+            </a>
+          {% endif %}
+        </div>
+
+        <div class="xedc-image-sidebar__spacer"></div>
+
+        <a class="xedc-creator-card" href="/publish">
+          <div class="xedc-creator-card__title">成为创作者</div>
+          <div class="xedc-creator-card__sub">发布作品，获得曝光与关注</div>
+          <div class="xedc-creator-card__cta">
+            <span>立即上传</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+          </div>
+        </a>
       </div>
-    </div>
-    <div class="xedc-batch-toolbar xedc-flex xedc-items-center xedc-gap-2">
-      <button class="xedc-btn xedc-btn--outline xedc-btn--sm" id="xedc-select-toggle">多选</button>
-      <div class="xedc-batch-actions" style="display:none;">
-        <button class="xedc-btn xedc-btn--default xedc-btn--sm" id="xedc-batch-download">批量下载</button>
-        <button class="xedc-btn xedc-btn--outline xedc-btn--sm" id="xedc-batch-collect">批量收藏</button>
-        <span class="xedc-text-sm xedc-text-muted" id="xedc-select-count">已选 0 张</span>
+    </aside>
+
+    <div class="xedc-image-main">
+
+      <section class="xedc-stats" aria-label="统计概览">
+        <div class="xedc-stats__track">
+          <div class="xedc-stat-card">
+            <div class="xedc-stat-card__icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M3 15l4-4 4 4 4-4 6 6"/></svg>
+            </div>
+            <div class="xedc-stat-card__body">
+              <div class="xedc-stat-card__label">图片总数</div>
+              <div class="xedc-stat-card__value">{{ (_stats.total_images|default(0))|number_format }}+</div>
+            </div>
+          </div>
+          <div class="xedc-stat-card">
+            <div class="xedc-stat-card__icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v6l3 2"/></svg>
+            </div>
+            <div class="xedc-stat-card__body">
+              <div class="xedc-stat-card__label">今日更新</div>
+              <div class="xedc-stat-card__value">{{ (_stats.today_images|default(0))|number_format }}+</div>
+            </div>
+          </div>
+          <div class="xedc-stat-card">
+            <div class="xedc-stat-card__icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h6v6H4z"/><path d="M14 4h6v6h-6z"/><path d="M4 14h6v6H4z"/><path d="M14 14h6v6h-6z"/></svg>
+            </div>
+            <div class="xedc-stat-card__body">
+              <div class="xedc-stat-card__label">分类数量</div>
+              <div class="xedc-stat-card__value">{{ _stats.category_count|default(0) }}</div>
+            </div>
+          </div>
+          <div class="xedc-stat-card">
+            <div class="xedc-stat-card__icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+            </div>
+            <div class="xedc-stat-card__body">
+              <div class="xedc-stat-card__label">总浏览量</div>
+              <div class="xedc-stat-card__value">{{ (_stats.total_views|default(0))|number_format }}+</div>
+            </div>
+          </div>
+          <div class="xedc-stat-card">
+            <div class="xedc-stat-card__icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </div>
+            <div class="xedc-stat-card__body">
+              <div class="xedc-stat-card__label">总点赞</div>
+              <div class="xedc-stat-card__value">{{ (_stats.total_likes|default(0))|number_format }}</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="xedc-today" aria-label="今日更新">
+        <div class="xedc-section-head">
+          <h2 class="xedc-section-head__title">今日更新</h2>
+          <a class="xedc-section-head__more" href="{{ nav_today_url|default('/images?today=1') }}">查看更多</a>
+        </div>
+        <div class="xedc-today__scroller">
+          {% for item in _today_items %}
+            <a class="xedc-today-card" href="{{ item.url }}">
+              <div class="xedc-today-card__thumb">
+                {% if item.cover %}
+                  <img src="{{ item.cover }}" alt="{{ item.title }}" loading="lazy" />
+                {% else %}
+                  <div class="xedc-today-card__placeholder"></div>
+                {% endif %}
+                <span class="xedc-today-card__badge">NEW</span>
+              </div>
+              <div class="xedc-today-card__meta">
+                <div class="xedc-today-card__title">{{ item.title }}</div>
+                <time class="xedc-today-card__time" datetime="{{ item.created|date('c') }}">{{ item.created|relative_time }}</time>
+              </div>
+            </a>
+          {% endfor %}
+        </div>
+      </section>
+
+      <section class="xedc-filter" aria-label="筛选">
+        <div class="xedc-filter__row">
+          <nav class="xedc-pills" role="tablist" aria-label="图片筛选">
+            {% for t in _tabs %}
+              {% set _is_active = false %}
+              {% if t.key == 'recommend' %}
+                {% set _is_active = (_sort == 'new' and _tag == '') %}
+              {% elseif t.key == 'new' %}
+                {% set _is_active = (_sort == 'new') %}
+              {% elseif t.key == 'hot' %}
+                {% set _is_active = (_sort == 'hot') %}
+              {% else %}
+                {% set _is_active = (_tag != '' and (t.key|default('') == _tag)) %}
+              {% endif %}
+              <a href="{{ t.url }}" class="xedc-pill{% if _is_active %} is-active{% endif %}" role="tab">{{ t.label }}</a>
+            {% endfor %}
+          </nav>
+          <div class="xedc-filter__actions">
+            <a class="xedc-filter-btn{% if _today %} is-active{% endif %}" href="{{ nav_today_url|default('/images?today=1') }}">今日</a>
+            <a class="xedc-filter-btn{% if _category != 'all' %} is-active{% endif %}" href="#image-sidebar">分类</a>
+          </div>
+        </div>
+      </section>
+
+      {% if active_search is defined and active_search %}
+        <div class="xedc-image-waterfall__search-hint">
+          搜索：{{ active_search }}
+        </div>
+      {% endif %}
+
+      {% if rows %}
+        {{ rows }}
+      {% else %}
+        <div class="xedc-empty-state">
+          <div class="xedc-empty-state__icon">🖼️</div>
+          <h3 class="xedc-empty-state__title">暂无图片</h3>
+          <p class="xedc-text-sm xedc-text-muted">还没有图片内容</p>
+        </div>
+      {% endif %}
+
+      <div class="xedc-image-waterfall__bottom">
+        {% if pager %}
+          <div class="xedc-pager">{{ pager }}</div>
+        {% endif %}
       </div>
+
+      <button class="xedc-back-to-top" id="xedc-back-to-top" aria-label="回到顶部">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="18 15 12 9 6 15"/>
+        </svg>
+      </button>
     </div>
   </div>
 
-  <div class="xedc-image-waterfall__filters xedc-flex xedc-flex-between xedc-gap-3">
-    {% include '@xedc/block/block--tabs.html.twig' with { categories: _categories, active_key: _category } %}
-    <div class="xedc-image-waterfall__sort">
-      <a class="xedc-sort-chip{% if _sort == 'new' %} is-active{% endif %}" href="{{ sort_new_url|default('/images') }}">最新发布</a>
-      <a class="xedc-sort-chip{% if _sort == 'hot' %} is-active{% endif %}" href="{{ sort_hot_url|default('/images?sort=hot') }}">最多浏览</a>
-      <a class="xedc-sort-chip{% if _sort == 'random' %} is-active{% endif %}" href="{{ sort_random_url|default('/images?sort=random') }}">随机查看</a>
-    </div>
-  </div>
-
-  {% if active_search is defined and active_search %}
-    <div class="xedc-image-waterfall__search-hint">
-      搜索：{{ active_search }}
-    </div>
-  {% endif %}
-
-  {# 瀑布流内容区 #}
-  {% if rows %}
-    {{ rows }}
-  {% else %}
-    <div class="xedc-empty-state">
-      <div class="xedc-empty-state__icon">🖼️</div>
-      <h3 class="xedc-empty-state__title">暂无图片</h3>
-      <p class="xedc-text-sm xedc-text-muted">还没有图片内容</p>
-    </div>
-  {% endif %}
-
-  {# 底部：分页 #}
-  <div class="xedc-image-waterfall__bottom">
-    {% if pager %}
-      <div class="xedc-pager">{{ pager }}</div>
+  <nav class="xedc-bottom-nav" aria-label="底部导航">
+    <a class="xedc-bottom-nav__item" href="{{ url('<front>') }}">
+      <span class="xedc-bottom-nav__icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+      </span>
+      <span class="xedc-bottom-nav__text">首页</span>
+    </a>
+    <a class="xedc-bottom-nav__item" href="/images">
+      <span class="xedc-bottom-nav__icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M3 15l4-4 4 4 4-4 6 6"/></svg>
+      </span>
+      <span class="xedc-bottom-nav__text">分类</span>
+    </a>
+    <a class="xedc-bottom-nav__publish" href="/publish" aria-label="发布">
+      <span class="xedc-bottom-nav__publish-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+      </span>
+    </a>
+    <a class="xedc-bottom-nav__item" href="/messages">
+      <span class="xedc-bottom-nav__icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a4 4 0 0 1-4 4H7l-4 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></svg>
+      </span>
+      <span class="xedc-bottom-nav__text">消息</span>
+    </a>
+    {% if is_logged_in %}
+      <a class="xedc-bottom-nav__item" href="/user/{{ current_user.id() }}">
+        <span class="xedc-bottom-nav__icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </span>
+        <span class="xedc-bottom-nav__text">我的</span>
+      </a>
+    {% else %}
+      <a class="xedc-bottom-nav__item" href="/user/login?destination=/images">
+        <span class="xedc-bottom-nav__icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/><path d="M21 19V5a2 2 0 0 0-2-2h-7"/></svg>
+        </span>
+        <span class="xedc-bottom-nav__text">我的</span>
+      </a>
     {% endif %}
-  </div>
-
-  <button class="xedc-back-to-top" id="xedc-back-to-top" aria-label="回到顶部">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <polyline points="18 15 12 9 6 15"/>
-    </svg>
-  </button>
+  </nav>
 </div>

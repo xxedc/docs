@@ -10,49 +10,104 @@
     if (!container || container.dataset.masonryInit) return;
     container.dataset.masonryInit = '1';
 
-    // ── IntersectionObserver 懒加载 ──
-    var images = container.querySelectorAll('img[loading="lazy"], img:not([loading])');
-    if ('IntersectionObserver' in window) {
-      var io = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
+    var io;
+    function markLoaded(img) {
+      img.classList.add('is-loaded');
+    }
+
+    function observeImages(root) {
+      var images = (root || container).querySelectorAll('img');
+      if (!images.length) return;
+
+      images.forEach(function (img) {
+        if (!img.getAttribute('loading')) {
+          img.setAttribute('loading', 'lazy');
+        }
+        if (img.complete && img.naturalWidth > 0) {
+          markLoaded(img);
+        }
+      });
+
+      if (!('IntersectionObserver' in window)) {
+        images.forEach(function (img) { markLoaded(img); });
+        return;
+      }
+
+      if (!io) {
+        io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
             var img = entry.target;
-            var hasDataSrc = !!img.dataset.src;
-            if (!hasDataSrc && img.complete && img.naturalWidth > 0) {
-              img.style.opacity = '1';
+            if (img.complete && img.naturalWidth > 0) {
+              markLoaded(img);
               io.unobserve(img);
               return;
             }
-            img.style.opacity = '0';
             img.addEventListener('load', function () {
-              img.style.transition = 'opacity 0.3s ease';
-              img.style.opacity = '1';
+              markLoaded(img);
             }, { once: true });
-            if (hasDataSrc) {
-              img.src = img.dataset.src;
-              img.removeAttribute('data-src');
-            }
             io.unobserve(img);
-          }
-        });
-      }, { rootMargin: '200px' });
+          });
+        }, { rootMargin: '220px' });
+      }
 
-      images.forEach(function (img) { io.observe(img); });
+      images.forEach(function (img) {
+        if (img.classList.contains('is-loaded')) return;
+        io.observe(img);
+      });
     }
 
-    // ── 响应式列数（data-cols 属性驱动）──
+    observeImages(container);
+
     var resizeObserver = new ResizeObserver(function () {
       updateLayout();
     });
     resizeObserver.observe(container);
 
+    function clamp(v, min, max) {
+      return Math.max(min, Math.min(max, v));
+    }
+
     function updateLayout() {
-      // 由 CSS 的 column-count 驱动，data-cols 属性控制
-      var cols = parseInt(container.getAttribute('data-cols') || '3');
-      container.style.columnCount = cols;
+      var autocols = container.getAttribute('data-autocols') === '1';
+      var explicitCols = parseInt(container.getAttribute('data-cols') || '', 10);
+      var vw = window.innerWidth || 1200;
+
+      if (!autocols && explicitCols) {
+        container.style.columnCount = String(explicitCols);
+        return;
+      }
+
+      if (vw <= 640) {
+        container.style.columnCount = '2';
+        container.setAttribute('data-cols', '2');
+        return;
+      }
+      if (vw <= 960) {
+        container.style.columnCount = '3';
+        container.setAttribute('data-cols', '3');
+        return;
+      }
+
+      var width = container.clientWidth || 1200;
+      var cardMin = 260;
+      var cols = clamp(Math.floor(width / cardMin), 4, 6);
+      container.style.columnCount = String(cols);
+      container.setAttribute('data-cols', String(cols));
     }
 
     updateLayout();
+
+    var mo = new MutationObserver(function (mutations) {
+      mutations.forEach(function (m) {
+        m.addedNodes.forEach(function (n) {
+          if (n && n.querySelectorAll) {
+            observeImages(n);
+          }
+        });
+      });
+    });
+    mo.observe(container, { childList: true, subtree: true });
   }
 
   Drupal.behaviors.xedcMasonry = {
