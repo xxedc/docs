@@ -130,7 +130,7 @@
                     <div class="xedc-content-card__excerpt">{{ item.excerpt }}</div>
                   {% endif %}
                   <div class="xedc-content-card__meta">
-                    {% include 'xedc:avatar' with { size: 'xs', src: item.owner_picture_url|default(null), name: item.owner_name|default(''), url: item.owner_url|default('') } only %}
+                    {% include 'xedc:avatar' with { size: 'xs', src: item.owner_picture_url|default(null), name: item.owner_name|default(''), url: null } only %}
                     <div class="xedc-content-card__meta-text">
                       <span class="xedc-content-card__author">{{ item.owner_name }}</span>
                       <span class="xedc-content-card__meta-line">
@@ -192,7 +192,7 @@
                     <div class="xedc-content-card__excerpt">{{ item.excerpt }}</div>
                   {% endif %}
                   <div class="xedc-content-card__meta">
-                    {% include 'xedc:avatar' with { size: 'xs', src: item.owner_picture_url|default(null), name: item.owner_name|default(''), url: item.owner_url|default('') } only %}
+                    {% include 'xedc:avatar' with { size: 'xs', src: item.owner_picture_url|default(null), name: item.owner_name|default(''), url: null } only %}
                     <div class="xedc-content-card__meta-text">
                       <span class="xedc-content-card__author">{{ item.owner_name }}</span>
                       <span class="xedc-content-card__meta-line">
@@ -294,7 +294,7 @@
                         <div class="xedc-content-card__body">
                           <div class="xedc-content-card__title">{{ item.title }}</div>
                           <div class="xedc-content-card__meta">
-                            {% include 'xedc:avatar' with { size: 'xs', src: item.owner_picture_url|default(null), name: item.owner_name|default(''), url: item.owner_url|default('') } only %}
+                            {% include 'xedc:avatar' with { size: 'xs', src: item.owner_picture_url|default(null), name: item.owner_name|default(''), url: null } only %}
                             <div class="xedc-content-card__meta-text">
                               <span class="xedc-content-card__author">{{ item.owner_name }}</span>
                               <span class="xedc-content-card__meta-line">
