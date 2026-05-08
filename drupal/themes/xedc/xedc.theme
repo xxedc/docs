@@ -780,7 +780,7 @@ function xedc_preprocess_views_view(array &$variables): void {
     $variables['nav_today_url'] = $variables['today_url'];
 
     try {
-      $tree = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree('categories', 0, NULL, FALSE);
+      $tree = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree('xie_zhen', 0, NULL, FALSE);
       $variables['categories'][] = [
         'key' => 'all',
         'label' => '全部',
@@ -799,7 +799,7 @@ function xedc_preprocess_views_view(array &$variables): void {
           ])->toString(),
         ];
       }
-      $variables['#cache']['tags'][] = 'taxonomy_term_list:categories';
+      $variables['#cache']['tags'][] = 'taxonomy_term_list:xie_zhen';
     } catch (\Exception $e) {
       $variables['categories'] = [
         [
@@ -814,15 +814,6 @@ function xedc_preprocess_views_view(array &$variables): void {
     $variables['tag_terms'] = [];
     try {
       $tag_tree = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree('tags', 0, NULL, FALSE);
-      $name_to_tid = [];
-      foreach ($tag_tree as $t) {
-        $tid = (int) ($t->tid ?? 0);
-        $name = (string) ($t->name ?? '');
-        if ($tid && $name !== '') {
-          $name_to_tid[$name] = $tid;
-        }
-      }
-
       $variables['tag_tabs'] = [
         [
           'key' => 'recommend',
@@ -863,14 +854,20 @@ function xedc_preprocess_views_view(array &$variables): void {
         ],
       ];
 
-      $preferred = ['二次元', '写真', '壁纸', 'Cosplay'];
-      foreach ($preferred as $name) {
-        $tid = (int) ($name_to_tid[$name] ?? 0);
-        if (!$tid) {
+      $used_tag_keys = ['recommend' => TRUE, 'new' => TRUE, 'hot' => TRUE];
+      foreach ($tag_tree as $t) {
+        $tid = (int) ($t->tid ?? 0);
+        $name = (string) ($t->name ?? '');
+        if (!$tid || $name === '') {
           continue;
         }
+        $key = (string) $tid;
+        if (isset($used_tag_keys[$key])) {
+          continue;
+        }
+        $used_tag_keys[$key] = TRUE;
         $variables['tag_tabs'][] = [
-          'key' => (string) $tid,
+          'key' => $key,
           'label' => $name,
           'url' => Url::fromRoute($route_name, [], [
             'query' => array_merge(array_filter([
@@ -881,6 +878,9 @@ function xedc_preprocess_views_view(array &$variables): void {
             ]), ['tag' => $tid]),
           ])->toString(),
         ];
+        if (count($variables['tag_tabs']) >= 12) {
+          break;
+        }
       }
 
       $variables['#cache']['tags'][] = 'taxonomy_term_list:tags';
@@ -920,7 +920,7 @@ function xedc_preprocess_views_view(array &$variables): void {
         ->count()
         ->execute();
 
-      $cat_tree = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree('categories', 0, NULL, FALSE);
+      $cat_tree = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree('xie_zhen', 0, NULL, FALSE);
       $variables['stats']['category_count'] = is_array($cat_tree) ? count($cat_tree) : 0;
 
       $db = \Drupal::database();
