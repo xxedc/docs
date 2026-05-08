@@ -34,9 +34,9 @@ function xedc_preprocess_page(array &$variables): void {
   // 加载当前用户头像 URL（供导航栏使用）
   $current_user = \Drupal::currentUser();
   if ($current_user->isAuthenticated()) {
-    $variables['current_user_name'] = $current_user->getDisplayName();
     try {
       $user_entity = \Drupal::entityTypeManager()->getStorage('user')->load($current_user->id());
+      $variables['current_user_name'] = $user_entity ? $user_entity->getDisplayName() : $current_user->getAccountName();
       if ($user_entity && $user_entity->hasField('user_picture') && !$user_entity->get('user_picture')->isEmpty()) {
         $picture = $user_entity->get('user_picture')->entity;
         if ($picture) {
