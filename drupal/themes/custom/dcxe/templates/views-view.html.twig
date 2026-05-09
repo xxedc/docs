@@ -1,0 +1,35 @@
+{% set view_id = id|clean_class %}
+{% set display_id = display_id|clean_class %}
+{% set is_image_like = view_id matches '/(image|photo|gallery|pic)/' %}
+
+<div{{ attributes.addClass('view', 'view--' ~ view_id, 'view--display-' ~ display_id) }}>
+  {% if title %}
+    <header class="view__header">
+      <h2 class="view__title">{{ title }}</h2>
+    </header>
+  {% endif %}
+
+  {% if header %}
+    <div class="view__intro">{{ header }}</div>
+  {% endif %}
+
+  {% if exposed %}
+    <div class="view__filters">{{ exposed }}</div>
+  {% endif %}
+
+  {% if rows %}
+    <div class="content-grid {{ is_image_like ? 'content-grid--masonry' : 'content-grid--cards' }}">
+      {{ rows }}
+    </div>
+  {% elseif empty %}
+    <div class="empty-state">{{ empty }}</div>
+  {% endif %}
+
+  {% if pager %}
+    <div class="pager-wrap">{{ pager }}</div>
+  {% endif %}
+
+  {% if footer %}
+    <div class="view__footer">{{ footer }}</div>
+  {% endif %}
+</div>

@@ -1,0 +1,65 @@
+:root {
+  --bg: #ffffff;
+  --surface: #f6f7f9;
+  --surface-2: #ffffff;
+  --card: #ffffff;
+  --border: #eaeaea;
+  --text: #111111;
+  --muted: #666666;
+  --primary: #2563eb;
+
+  --radius: 14px;
+  --radius-sm: 10px;
+
+  --shadow-1: 0 8px 24px rgba(17, 17, 17, 0.08);
+  --shadow-2: 0 10px 30px rgba(17, 17, 17, 0.12);
+
+  --container: 1120px;
+  --container-wide: 1280px;
+
+  --gap-1: 8px;
+  --gap-2: 12px;
+  --gap-3: 16px;
+  --gap-4: 24px;
+  --gap-5: 32px;
+
+  --line: 1.65;
+  --line-reading: 1.8;
+
+  --focus: 0 0 0 3px rgba(37, 99, 235, 0.25);
+  --theme-transition: 240ms;
+
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --bg: #121212;
+  --surface: #1e1e1e;
+  --surface-2: #171717;
+  --card: #1f1f1f;
+  --border: #2a2a2a;
+  --text: #e6e6e6;
+  --muted: #a0a0a0;
+  --primary: #60a5fa;
+
+  --shadow-1: 0 10px 28px rgba(0, 0, 0, 0.35);
+  --shadow-2: 0 14px 38px rgba(0, 0, 0, 0.42);
+
+  --focus: 0 0 0 3px rgba(96, 165, 250, 0.28);
+
+  color-scheme: dark;
+}
+
+html, body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+html[data-theme-anim="1"] * {
+  transition:
+    background-color var(--theme-transition) ease,
+    color var(--theme-transition) ease,
+    border-color var(--theme-transition) ease,
+    box-shadow var(--theme-transition) ease,
+    fill var(--theme-transition) ease;
+}
