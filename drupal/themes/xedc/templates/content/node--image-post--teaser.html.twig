@@ -3,8 +3,10 @@
   封面图直接从 node entity 读取
 #}
 {% set nid = node.id() %}
-{% set _cover_entity = node.field_cover_image.0.entity %}
-{% set _first_image = node.field_image.0.entity %}
+{% set _cover_entity = node.field_cover_image.0.entity ?? null %}
+{% set _first_image = node.field_image.0.entity ?? null %}
+{% set _cover_file = _cover_entity and _cover_entity.fileUri is defined ? _cover_entity : (_cover_entity and _cover_entity.field_media_image is defined and _cover_entity.field_media_image.entity ? _cover_entity.field_media_image.entity : null) %}
+{% set _first_image_file = _first_image and _first_image.fileUri is defined ? _first_image : (_first_image and _first_image.field_media_image is defined and _first_image.field_media_image.entity ? _first_image.field_media_image.entity : null) %}
 {% set _owner = node.getOwner() %}
 {% set _owner_name = _owner.getDisplayName() %}
 {% set _view = view_count|default(0) %}
@@ -19,10 +21,10 @@
   {# 图片主体 #}
   <div class="xedc-image-card__img-wrap">
     <a href="{{ url }}" class="xedc-image-card__link">
-      {% if _cover_entity %}
-        <img src="{{ file_url(_cover_entity.fileUri) }}" alt="{{ label }}" loading="lazy" />
-      {% elseif _first_image %}
-        <img src="{{ file_url(_first_image.fileUri) }}" alt="{{ label }}" loading="lazy" />
+      {% if _cover_file %}
+        <img src="{{ file_url(_cover_file.fileUri) }}" alt="{{ label }}" loading="lazy" />
+      {% elseif _first_image_file %}
+        <img src="{{ file_url(_first_image_file.fileUri) }}" alt="{{ label }}" loading="lazy" />
       {% else %}
         <div class="xedc-image-card__placeholder">
           <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.5">
