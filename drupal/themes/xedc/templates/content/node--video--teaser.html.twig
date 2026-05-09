@@ -4,7 +4,9 @@
 #}
 {% set video_url = url %}
 {% set nid = node.id() %}
-{% set _cover_entity = node.field_cover_image.0.entity %}
+{% set _cover_entity = node.field_cover_image.0.entity ?? null %}
+{% set _cover_file = _cover_entity and _cover_entity.fileUri is defined ? _cover_entity : (_cover_entity and _cover_entity.field_media_image is defined and _cover_entity.field_media_image.entity ? _cover_entity.field_media_image.entity : null) %}
+{% set _cover_render = content.field_cover_image is defined ? content.field_cover_image|render|trim : '' %}
 {% set _owner = node.getOwner() %}
 {% set _owner_name = _owner.getDisplayName() %}
 {% set _hues = [220, 280, 155, 30, 340, 190, 320, 55] %}
@@ -15,8 +17,10 @@
   {# 封面图 + 时长标签 #}
   <div class="xedc-video-card__cover">
     <a href="{{ video_url }}" class="xedc-video-card__cover-link" tabindex="-1">
-      {% if _cover_entity %}
-        <img src="{{ file_url(_cover_entity.fileUri) }}" alt="{{ label }}" loading="lazy" />
+      {% if _cover_render is not empty %}
+        {{ _cover_render }}
+      {% elseif _cover_file %}
+        <img src="{{ file_url(_cover_file.fileUri) }}" alt="{{ label }}" loading="lazy" />
       {% else %}
         <div class="xedc-video-card__cover-placeholder">
           <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.6">
