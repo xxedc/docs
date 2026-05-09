@@ -10,9 +10,9 @@
   // 读取已保存的主题偏好
   var saved = '';
   try {
-    saved = localStorage.getItem(STORAGE_KEY) || '';
+    saved = localStorage.getItem(STORAGE_KEY) || 'system';
   } catch (e) {
-    saved = '';
+    saved = 'system';
   }
 
   // 判断系统深色模式
@@ -24,10 +24,10 @@
 
   // 决定实际应用的主题
   var applied;
-  if (saved === 'light' || saved === 'dark') {
-    applied = saved;
-  } else {
+  if (saved === 'system' || saved === '') {
     applied = getSystemTheme();
+  } else {
+    applied = saved; // light | dark | midnight
   }
 
   // 立即设置 html[data-theme]（同步，无闪烁）
