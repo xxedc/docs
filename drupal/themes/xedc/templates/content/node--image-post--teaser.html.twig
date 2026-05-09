@@ -5,8 +5,8 @@
 {% set nid = node.id() %}
 {% set _cover_entity = node.field_cover_image.0.entity ?? null %}
 {% set _first_image = node.field_image.0.entity ?? null %}
-{% set _cover_file = _cover_entity and _cover_entity.fileUri is defined ? _cover_entity : (_cover_entity and _cover_entity.field_media_image is defined and _cover_entity.field_media_image.entity ? _cover_entity.field_media_image.entity : null) %}
-{% set _first_image_file = _first_image and _first_image.fileUri is defined ? _first_image : (_first_image and _first_image.field_media_image is defined and _first_image.field_media_image.entity ? _first_image.field_media_image.entity : null) %}
+{% set _cover_file = _cover_entity and _cover_entity.fileUri is defined ? _cover_entity : (_cover_entity and _cover_entity.field_media_image is defined and _cover_entity.field_media_image.entity ? _cover_entity.field_media_image.entity : (_cover_entity.thumbnail.entity ?? null)) %}
+{% set _first_image_file = _first_image and _first_image.fileUri is defined ? _first_image : (_first_image and _first_image.field_media_image is defined and _first_image.field_media_image.entity ? _first_image.field_media_image.entity : (_first_image.thumbnail.entity ?? null)) %}
 {% set _cover_render = content.field_cover_image is defined ? content.field_cover_image|render|trim : '' %}
 {% set _image_render = content.field_image is defined ? content.field_image|render|trim : '' %}
 {% set _owner = node.getOwner() %}
