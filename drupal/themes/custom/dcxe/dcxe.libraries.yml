@@ -1,0 +1,17 @@
+theme-init:
+  version: 1.x
+  header: true
+  js:
+    assets/js/theme-init.js: {}
+
+global:
+  version: 1.x
+  css:
+    theme:
+      assets/css/theme.css: {}
+      assets/css/styles.css: {}
+  js:
+    assets/js/theme-toggle.js: {}
+  dependencies:
+    - core/drupal
+    - core/once

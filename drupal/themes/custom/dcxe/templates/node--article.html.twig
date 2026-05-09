@@ -1,0 +1,56 @@
+{% set is_full = view_mode == 'full' %}
+
+{% if is_full %}
+  <article class="content-detail content-detail--article">
+    <header class="content-detail__header">
+      <h1 class="content-title">{{ label }}</h1>
+
+      <div class="meta">
+        <div class="meta__left">
+          {% if author_name is defined %}
+            <span class="meta__item">{{ author_name }}</span>
+            <span class="meta__dot">·</span>
+          {% endif %}
+          <time class="meta__item" datetime="{{ node.getCreatedTime|date('c') }}">{{ node.getCreatedTime|date('Y-m-d') }}</time>
+        </div>
+      </div>
+    </header>
+
+    <div class="prose">
+      {{ content|without('links') }}
+    </div>
+
+    {% if content.links %}
+      <div class="content-detail__footer">
+        {{ content.links }}
+      </div>
+    {% endif %}
+  </article>
+{% else %}
+  <article class="card card--article">
+    <a class="card__click" href="{{ url }}"></a>
+
+    <div class="card__body">
+      <div class="meta meta--compact">
+        {% if author_name is defined %}
+          <span class="meta__item">{{ author_name }}</span>
+          <span class="meta__dot">·</span>
+        {% endif %}
+        <time class="meta__item" datetime="{{ node.getCreatedTime|date('c') }}">{{ node.getCreatedTime|date('Y-m-d') }}</time>
+      </div>
+
+      <h3 class="card__title">
+        <a class="link" href="{{ url }}">{{ label }}</a>
+      </h3>
+
+      <div class="card__excerpt">
+        {{ content.body }}
+      </div>
+    </div>
+
+    <div class="card__actions">
+      <button class="icon-btn" type="button" aria-label="Like"></button>
+      <button class="icon-btn" type="button" aria-label="Save"></button>
+    </div>
+  </article>
+{% endif %}

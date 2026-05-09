@@ -1,0 +1,63 @@
+{% set is_full = view_mode == 'full' %}
+{% set image_media = content.field_image|default(content.field_cover_image|default(null)) %}
+
+{% if is_full %}
+  <article class="content-detail content-detail--image">
+    <header class="content-detail__header">
+      <h1 class="content-title">{{ label }}</h1>
+
+      <div class="meta">
+        <div class="meta__left">
+          {% if author_name is defined %}
+            <span class="meta__item">{{ author_name }}</span>
+            <span class="meta__dot">·</span>
+          {% endif %}
+          <time class="meta__item" datetime="{{ node.getCreatedTime|date('c') }}">{{ node.getCreatedTime|date('Y-m-d') }}</time>
+        </div>
+      </div>
+    </header>
+
+    {% if image_media %}
+      <div class="media media--image">
+        {{ image_media }}
+      </div>
+    {% endif %}
+
+    <div class="prose">
+      {{ content|without('field_image','field_cover_image','links') }}
+    </div>
+
+    {% if content.links %}
+      <div class="content-detail__footer">
+        {{ content.links }}
+      </div>
+    {% endif %}
+  </article>
+{% else %}
+  <article class="card card--image">
+    <a class="card__click" href="{{ url }}"></a>
+
+    <div class="media-thumb media-thumb--auto">
+      {% if image_media %}
+        {{ image_media }}
+      {% endif %}
+      <div class="card__hover">
+        <button class="icon-btn icon-btn--hover" type="button" aria-label="Like"></button>
+        <button class="icon-btn icon-btn--hover" type="button" aria-label="Save"></button>
+      </div>
+    </div>
+
+    <div class="card__body">
+      <h3 class="card__title">
+        <a class="link" href="{{ url }}">{{ label }}</a>
+      </h3>
+      <div class="meta meta--compact">
+        {% if author_name is defined %}
+          <span class="meta__item">{{ author_name }}</span>
+          <span class="meta__dot">·</span>
+        {% endif %}
+        <time class="meta__item" datetime="{{ node.getCreatedTime|date('c') }}">{{ node.getCreatedTime|date('Y-m-d') }}</time>
+      </div>
+    </div>
+  </article>
+{% endif %}
