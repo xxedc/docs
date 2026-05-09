@@ -29,11 +29,9 @@
       <div class="xedc-theme-toggle" data-xedc-theme-toggle>
         <button class="xedc-navbar__icon-btn" data-xedc-theme-icon aria-label="切换主题" aria-haspopup="true" aria-expanded="false">🌙</button>
         <div class="xedc-theme-dropdown" data-xedc-theme-dropdown role="menu" aria-hidden="true">
-          <button class="xedc-theme-dropdown__item" data-xedc-theme-option="system" role="menuitemradio">🖥️ 跟随系统</button>
-          <button class="xedc-theme-dropdown__item" data-xedc-theme-option="light" role="menuitemradio">☀️ 日间</button>
-          <button class="xedc-theme-dropdown__item" data-xedc-theme-option="dark" role="menuitemradio">🌙 夜间</button>
-          <button class="xedc-theme-dropdown__item" data-xedc-theme-option="midnight" role="menuitemradio">⚫ 深夜</button>
-        </div>
+                    <button class="xedc-theme-dropdown__item" data-xedc-theme-option="light" role="menuitemradio">☀️ Light Mode</button>
+          <button class="xedc-theme-dropdown__item" data-xedc-theme-option="dark" role="menuitemradio">🌙 Soft Dark Mode</button>
+                  </div>
       </div>
       {% if is_logged_in %}
         {% set _hues = [220, 280, 155, 30, 340, 190, 320, 55] %}

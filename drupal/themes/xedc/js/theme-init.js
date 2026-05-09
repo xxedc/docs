@@ -7,12 +7,12 @@
   // localStorage key
   var STORAGE_KEY = 'xedc-theme';
 
-  // 读取已保存的主题偏好
+  // 读取已保存的主题偏好（仅 light / dark）
   var saved = '';
   try {
-    saved = localStorage.getItem(STORAGE_KEY) || 'system';
+    saved = localStorage.getItem(STORAGE_KEY) || '';
   } catch (e) {
-    saved = 'system';
+    saved = '';
   }
 
   // 判断系统深色模式
@@ -24,10 +24,10 @@
 
   // 决定实际应用的主题
   var applied;
-  if (saved === 'system' || saved === '') {
+  if (saved === '') {
     applied = getSystemTheme();
   } else {
-    applied = saved; // light | dark | midnight
+    applied = saved === 'dark' ? 'dark' : 'light';
   }
 
   // 立即设置 html[data-theme]（同步，无闪烁）

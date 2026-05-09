@@ -82,10 +82,6 @@
 .xedc-code__wrap:hover .xedc-code__copy { opacity: 1; }
 .xedc-code__copy:hover { background: var(--primary); color: var(--primary-foreground); }
 
-[data-theme="midnight"] .xedc-paragraph--code pre {
-  background: oklch(0.05 0 0);
-}
-
 /* ── video_embed ── */
 .xedc-embed-video {
   position: relative;
