@@ -1,31 +1,22 @@
 /**
- * theme-toggle.js — 三色模式切换完整逻辑
- * defer 加载，负责 UI 交互和 system 模式监听
+ * theme-toggle.js — 双色模式切换逻辑（light / soft dark）
  */
 (function (Drupal) {
   'use strict';
 
   var STORAGE_KEY = 'xedc-theme';
-  var THEMES = ['system', 'light', 'dark', 'midnight'];
-  var THEME_LABELS = {
-    system:   '跟随系统',
-    light:    '日间',
-    dark:     '夜间',
-    midnight: '深夜'
-  };
+  var THEME_LABELS = { light: 'Light Mode', dark: 'Soft Dark Mode' };
   var THEME_ICONS = {
-    system:   '🖥️',
     light:    '☀️',
-    dark:     '🌙',
-    midnight: '⚫'
+    dark:     '🌙'
   };
 
   // ── 读取保存的偏好 ──
   function getSaved() {
     try {
-      return localStorage.getItem(STORAGE_KEY) || 'system';
+      return localStorage.getItem(STORAGE_KEY) || '';
     } catch (e) {
-      return 'system';
+      return '';
     }
   }
 
@@ -43,10 +34,10 @@
            ? 'dark' : 'light';
   }
 
-  // ── 实际应用的主题（system → 解析为 light/dark）──
   function resolveTheme(pref) {
-    if (pref === 'system') return getSystemTheme();
-    return pref;
+    if (pref === 'dark') return 'dark';
+    if (pref === 'light') return 'light';
+    return getSystemTheme();
   }
 
   // ── 应用主题到 <html> ──
@@ -63,7 +54,6 @@
     var meta = document.querySelector('meta[name="color-scheme"]');
     if (meta) {
       meta.setAttribute('content',
-        resolved === 'midnight' ? 'dark' :
         resolved === 'dark' ? 'dark' : 'light dark'
       );
     }
@@ -84,7 +74,7 @@
     icons.forEach(function (el) {
       var resolved = resolveTheme(activePref);
       el.textContent = THEME_ICONS[resolved] || '🌙';
-      el.setAttribute('aria-label', '当前主题：' + THEME_LABELS[activePref] + '，点击切换');
+      el.setAttribute('aria-label', '当前主题：' + (THEME_LABELS[resolved] || 'Light Mode') + '，点击切换');
     });
 
     // 更新下拉菜单选中状态
@@ -124,7 +114,7 @@
     items.forEach(function (item) {
       item.addEventListener('click', function (e) {
         e.stopPropagation();
-        var pref = this.getAttribute('data-xedc-theme-option');
+        var pref = this.getAttribute('data-xedc-theme-option') === 'dark' ? 'dark' : 'light';
         setSaved(pref);
         applyTheme(pref);
         dropdown.classList.remove('is-open');
@@ -137,12 +127,12 @@
     updateAllToggles(saved);
   }
 
-  // ── 监听系统主题变化（system 模式下自动切换）──
+  // ── 监听系统主题变化（用户未设置时自动切换）──
   if (window.matchMedia) {
     window.matchMedia('(prefers-color-scheme: dark)')
       .addEventListener('change', function () {
-        if (getSaved() === 'system') {
-          applyTheme('system');
+        if (!getSaved()) {
+          applyTheme('');
         }
       });
   }

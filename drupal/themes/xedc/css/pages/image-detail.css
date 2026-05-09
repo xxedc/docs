@@ -326,8 +326,3 @@
   min-height: auto;
   border-radius: 0;
 }
-
-/* ── midnight 模式 ── */
-[data-theme="midnight"] .xedc-image-viewer {
-  background: oklch(0 0 0);
-}
