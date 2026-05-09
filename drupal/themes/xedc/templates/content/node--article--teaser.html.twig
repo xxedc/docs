@@ -2,14 +2,16 @@
 {% set owner = node.getOwner() %}
 {% set owner_name = owner.getDisplayName() %}
 {% set _hues = [220, 280, 155, 30, 340, 190, 320, 55] %}
-{% set _cover_entity = node.field_cover_image.0.entity %}
+{% set _cover_entity = node.field_cover_image.0.entity ?? null %}
+{% set _cover_file = _cover_entity and _cover_entity.fileUri is defined ? _cover_entity : (_cover_entity and _cover_entity.field_media_image is defined and _cover_entity.field_media_image.entity ? _cover_entity.field_media_image.entity : null) %}
 {% set _image_entity = (node.field_image is defined and node.field_image.0.entity) ? node.field_image.0.entity : _cover_entity %}
+{% set _image_file = _image_entity and _image_entity.fileUri is defined ? _image_entity : (_image_entity and _image_entity.field_media_image is defined and _image_entity.field_media_image.entity ? _image_entity.field_media_image.entity : null) %}
 
 <article{{ attributes.addClass('xedc-article-card') }} data-nid="{{ nid }}">
   <a class="xedc-article-card__cover-link" href="{{ url }}" tabindex="-1" aria-hidden="true">
-    {% if _image_entity %}
+    {% if _image_file %}
       <div class="xedc-article-card__cover">
-        <img src="{{ file_url(_image_entity.fileUri) }}" alt="{{ label }}" loading="lazy" />
+        <img src="{{ file_url(_image_file.fileUri) }}" alt="{{ label }}" loading="lazy" />
       </div>
     {% else %}
       <div class="xedc-article-card__cover xedc-article-card__cover--placeholder"></div>
