@@ -64,10 +64,46 @@ function xedc_preprocess_page(array &$variables): void {
 
   if (\Drupal::service('path.matcher')->isFrontPage()) {
     $variables['#attached']['library'][] = 'xedc/page-front';
-    $variables['#attached']['library'][] = 'xedc/page-video-list';
-    $variables['#attached']['library'][] = 'xedc/page-image-list';
-    $variables['#attached']['library'][] = 'xedc/page-article-list';
   }
+}
+
+/**
+ * 解析节点封面图 URL（兼容 File/Media）。
+ */
+function _xedc_resolve_node_cover_url(\Drupal\node\NodeInterface $node): ?string {
+  $fields = ['field_cover_image', 'field_image'];
+  $fug = \Drupal::service('file_url_generator');
+
+  foreach ($fields as $field) {
+    if (!$node->hasField($field) || $node->get($field)->isEmpty()) {
+      continue;
+    }
+    $entity = $node->get($field)->entity;
+    if (!$entity) {
+      continue;
+    }
+
+    // 直接文件实体。
+    if (method_exists($entity, 'getFileUri')) {
+      $uri = $entity->getFileUri();
+      if ($uri) {
+        return $fug->generateString($uri);
+      }
+    }
+
+    // Media 实体中的图片字段。
+    if ($entity->hasField('field_media_image') && !$entity->get('field_media_image')->isEmpty()) {
+      $file = $entity->get('field_media_image')->entity;
+      if ($file && method_exists($file, 'getFileUri')) {
+        $uri = $file->getFileUri();
+        if ($uri) {
+          return $fug->generateString($uri);
+        }
+      }
+    }
+  }
+
+  return NULL;
 }
 
 /**
@@ -148,12 +184,9 @@ function xedc_preprocess_node(array &$variables): void {
     }
   } catch (\Exception $e) {}
 
-  if ($node->hasField('field_cover_image') && !$node->get('field_cover_image')->isEmpty()) {
-    $image = $node->get('field_cover_image')->entity;
-    if ($image) {
-      $variables['cover_image_url'] = \Drupal::service('file_url_generator')
-        ->generateAbsoluteString($image->getFileUri());
-    }
+  $variables['teaser_cover_url'] = _xedc_resolve_node_cover_url($node);
+  if ($variables['teaser_cover_url']) {
+    $variables['cover_image_url'] = $variables['teaser_cover_url'];
   }
 }
 
