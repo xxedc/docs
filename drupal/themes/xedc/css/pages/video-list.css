@@ -1,108 +1,72 @@
 /* ================================================================
-   video-list.css — 视频列表页（B站风格）
+   video-list.css — 视频列表页（YouTube/B站简约风格）
    ================================================================ */
 
-/* 页面底色 */
-body:has(.xedc-video-list) { background: oklch(0.96 0 0); }
+body:has(.xedc-video-list) {
+  background: #fff;
+}
 
-.xedc-video-list { padding: var(--space-6) 0; }
+.xedc-video-list {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px 24px 0;
+}
 
-/* 隐藏字段标签 */
-.xedc-video-card .field__label { display: none; }
+.xedc-video-card .field__label {
+  display: none;
+}
 
 /* ── 工具栏 ── */
 .xedc-list-toolbar {
-  margin-bottom: var(--space-5);
-  padding-bottom: var(--space-3);
-  border-bottom: 1px solid var(--border);
-  align-items: center;
-}
-
-/* ── 视图模式切换按钮 ── */
-.xedc-view-mode-switch { display: flex; gap: var(--space-1); }
-
-.xedc-view-mode-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  color: var(--muted-foreground);
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.xedc-view-mode-btn.is-active,
-.xedc-view-mode-btn:hover {
-  background: var(--primary);
-  color: var(--primary-foreground);
-  border-color: var(--primary);
+  margin-bottom: 24px;
 }
 
 /* ── 视频网格 ── */
 .xedc-video-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px 16px;
 }
-@media (max-width: 480px)  { .xedc-video-grid { grid-template-columns: 1fr; } }
 
-/* 列表模式 */
-.xedc-video-grid[data-mode="list"] { grid-template-columns: 1fr; }
-.xedc-video-grid[data-mode="list"] .xedc-video-card { flex-direction: row; }
-.xedc-video-grid[data-mode="list"] .xedc-video-card__cover { width: 240px; flex-shrink: 0; aspect-ratio: 16/9; }
-@media (max-width: 640px) {
-  .xedc-video-grid[data-mode="list"] .xedc-video-card { flex-direction: column; }
-  .xedc-video-grid[data-mode="list"] .xedc-video-card__cover { width: 100%; }
+@media (max-width: 480px) {
+  .xedc-video-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
 }
 
 /* ── 视频卡片 ── */
 .xedc-video-card {
-  background: var(--card);
-  border-radius: 12px;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
-  box-shadow:
-    0 1px 3px oklch(0 0 0 / 0.07),
-    0 3px 8px oklch(0 0 0 / 0.06);
-  transition:
-    transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
-    box-shadow 0.25s ease;
   cursor: pointer;
-  text-decoration: none;
-}
-.xedc-video-card:hover {
-  transform: translateY(-5px);
-  box-shadow:
-    0 12px 28px oklch(0 0 0 / 0.14),
-    0 2px 6px oklch(0 0 0 / 0.06);
 }
 
 /* ── 封面 ── */
 .xedc-video-card__cover {
   position: relative;
+  display: block;
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  background: linear-gradient(135deg, oklch(0.25 0.06 250), oklch(0.18 0.04 280));
+  border-radius: 12px;
+  background: #f0f0f0;
   flex-shrink: 0;
 }
 
-/* 竖屏视频（9:16）*/
 .xedc-video-card--portrait .xedc-video-card__cover {
   aspect-ratio: 9 / 16;
 }
+
 .xedc-video-card__cover img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.35s ease;
+  transition: transform 0.3s ease;
 }
-.xedc-video-card:hover .xedc-video-card__cover img { transform: scale(1.06); }
 
-.xedc-video-card__cover-link { display: block; width: 100%; height: 100%; }
+.xedc-video-card:hover .xedc-video-card__cover img {
+  transform: scale(1.05);
+}
 
 .xedc-video-card__cover-placeholder {
   width: 100%;
@@ -110,138 +74,148 @@ body:has(.xedc-video-list) { background: oklch(0.96 0 0); }
   display: flex;
   align-items: center;
   justify-content: center;
-  color: oklch(0.7 0 0);
+  color: #999;
+}
+
+/* ── 遮罩层（hover 显示播放按钮）── */
+.xedc-video-card__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0);
+  transition: background 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.xedc-video-card:hover .xedc-video-card__overlay {
+  background: rgba(0,0,0,0.3);
+}
+
+.xedc-video-card__play-btn {
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.xedc-video-card:hover .xedc-video-card__play-btn {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.xedc-video-card__play-btn svg {
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
 }
 
 /* ── 时长标签 ── */
 .xedc-video-card__duration {
   position: absolute;
-  bottom: var(--space-2);
-  right: var(--space-2);
-  background: oklch(0 0 0 / 0.82);
+  bottom: 8px;
+  right: 8px;
+  background: rgba(0,0,0,0.85);
   color: #fff;
-  font-size: 11px;
-  font-weight: 600;
-  padding: 2px 7px;
-  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 2px 6px;
+  border-radius: 4px;
+  line-height: 1.4;
   letter-spacing: 0.02em;
 }
 
 /* ── 画质角标 ── */
 .xedc-video-card__quality {
   position: absolute;
-  top: var(--space-2);
-  left: var(--space-2);
-  font-size: 10px;
-  font-weight: 700;
+  top: 8px;
+  right: 8px;
+  font-size: 11px;
+  font-weight: 600;
   padding: 2px 6px;
   border-radius: 4px;
+  background: rgba(0,0,0,0.75);
+  color: #fff;
+  line-height: 1.4;
 }
-
-/* 画质角标颜色区分 */
-.xedc-video-card__quality.xedc-badge--default {
-  background: linear-gradient(135deg, oklch(0.55 0.22 27), oklch(0.5 0.2 45));
-}
-
-/* ── 播放按钮悬浮层 ── */
-.xedc-video-card__play-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-  background: oklch(0 0 0 / 0.2);
-}
-.xedc-video-card:hover .xedc-video-card__play-overlay { opacity: 1; }
-
-.xedc-video-card__play-overlay svg {
-  filter: drop-shadow(0 4px 12px oklch(0 0 0 / 0.5));
-  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-.xedc-video-card:hover .xedc-video-card__play-overlay svg { transform: scale(1.15); }
 
 /* ── 信息区 ── */
-.xedc-video-card__info {
-  padding: var(--space-3);
+.xedc-video-card__body {
+  padding: 12px 0 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
-  flex: 1;
+  gap: 4px;
 }
 
 .xedc-video-card__title {
-  font-size: var(--text-sm);
+  font-size: 15px;
   font-weight: 600;
-  line-height: var(--leading-snug);
+  line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  margin: 0;
 }
-.xedc-video-card__title a {
-  color: var(--card-foreground);
-  transition: color 0.15s;
-}
-.xedc-video-card__title a:hover { color: var(--primary); }
 
-/* ── 发布者信息 ── */
-.xedc-video-card__author {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
-  margin-top: var(--space-1);
-}
-.xedc-video-card__author-name {
-  font-size: var(--text-xs);
-  color: var(--muted-foreground);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 100px;
-  transition: color 0.15s;
+.xedc-video-card__title a {
+  color: #0f0f0f;
   text-decoration: none;
 }
-.xedc-video-card__author-name:hover { color: var(--primary); }
 
+.xedc-video-card__title a:hover {
+  color: #0f0f0f;
+}
+
+/* ── 元数据行 ── */
 .xedc-video-card__meta {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
   flex-wrap: wrap;
-  padding-top: var(--space-1);
+  gap: 4px;
+  font-size: 13px;
+  color: #606060;
+  line-height: 1.4;
 }
 
-.xedc-video-card__actions {
+.xedc-video-card__author {
   display: flex;
-  gap: var(--space-2);
-  margin-top: var(--space-2);
-  opacity: 0;
-  transition: opacity 0.15s;
+  align-items: center;
+  gap: 6px;
 }
-.xedc-video-card:hover .xedc-video-card__actions { opacity: 1; }
 
-/* ── 图标按钮 ── */
-.xedc-icon-btn {
-  display: inline-flex;
+.xedc-avatar--xs {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: var(--muted);
-  border: 1px solid var(--border);
-  color: var(--muted-foreground);
-  cursor: pointer;
-  transition: all 0.15s;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
 }
-.xedc-icon-btn:hover,
-.xedc-icon-btn.is-active {
-  background: var(--primary);
-  color: var(--primary-foreground);
-  border-color: var(--primary);
-  transform: scale(1.1);
+
+.xedc-avatar--xs img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.xedc-video-card__author-name {
+  color: #606060;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 120px;
+}
+
+.xedc-video-card__dot {
+  color: #909090;
+}
+
+.xedc-video-card__views,
+.xedc-video-card__date {
+  color: #606060;
 }
 
 /* ── 空状态 ── */
@@ -249,31 +223,47 @@ body:has(.xedc-video-list) { background: oklch(0.96 0 0); }
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: var(--space-16) var(--space-4);
+  padding: 80px 24px;
   text-align: center;
 }
-.xedc-empty-state__icon { font-size: 56px; margin-bottom: var(--space-4); opacity: 0.5; }
-.xedc-empty-state__title { font-size: var(--text-xl); font-weight: 600; margin-bottom: var(--space-2); }
 
-/* ── 回到顶部 ── */
-.xedc-back-to-top {
-  position: fixed;
-  bottom: var(--space-8);
-  right: var(--space-6);
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary), oklch(from var(--primary) l c calc(h + 30)));
-  color: var(--primary-foreground);
-  border: none;
-  cursor: pointer;
-  box-shadow: 0 4px 14px oklch(from var(--primary) l c h / 0.45);
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity 0.2s, transform 0.2s;
-  z-index: var(--z-fixed);
-  display: flex;
+.xedc-empty-state__icon {
+  margin-bottom: 16px;
+}
+
+.xedc-empty-state__title {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 8px;
+  color: #0f0f0f;
+}
+
+.xedc-empty-state__desc {
+  font-size: 14px;
+  color: #606060;
+  margin: 0;
+}
+
+.xedc-btn--primary {
+  display: inline-flex;
   align-items: center;
+  padding: 10px 20px;
+  background: #0f0f0f;
+  color: #fff;
+  border-radius: 24px;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  margin-top: 20px;
+}
+
+.xedc-btn--primary:hover {
+  background: #333;
+}
+
+/* ── 分页 ── */
+.xedc-pager {
+  padding: 32px 0 48px;
+  display: flex;
   justify-content: center;
 }
-.xedc-back-to-top.is-visible { opacity: 1; transform: translateY(0); }

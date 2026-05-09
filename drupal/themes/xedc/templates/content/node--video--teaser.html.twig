@@ -1,5 +1,5 @@
 {#
-  node--video--teaser.html.twig — 视频卡片（列表用）
+  node--video--teaser.html.twig — 视频卡片（YouTube/B站风格）
   封面图直接从 node entity 读取
 #}
 {% set video_url = url %}
@@ -13,90 +13,68 @@
 
 <article{{ attributes.addClass('xedc-video-card', _orientation == 'portrait' ? 'xedc-video-card--portrait' : '') }} data-nid="{{ nid }}">
 
-  {# 封面图 + 时长标签 #}
-  <div class="xedc-video-card__cover">
-    <a href="{{ video_url }}" class="xedc-video-card__cover-link" tabindex="-1">
-      {% if _cover_file %}
-        <img src="{{ file_url(_cover_file.fileUri) }}" alt="{{ label }}" loading="lazy" />
-      {% else %}
-        <div class="xedc-video-card__cover-placeholder">
-          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.6">
-            <polygon points="5 3 19 12 5 21 5 3"/>
-          </svg>
-        </div>
-      {% endif %}
-    </a>
+  <a href="{{ video_url }}" class="xedc-video-card__cover" tabindex="-1">
+    {% if _cover_file %}
+      <img src="{{ file_url(_cover_file.fileUri) }}" alt="{{ label }}" loading="lazy" />
+    {% else %}
+      <div class="xedc-video-card__cover-placeholder">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.6">
+          <polygon points="5 3 19 12 5 21 5 3"/>
+        </svg>
+      </div>
+    {% endif %}
 
-    {# 时长标签 #}
+    <div class="xedc-video-card__overlay">
+      <div class="xedc-video-card__play-btn">
+        <svg width="48" height="48" viewBox="0 0 48 48">
+          <circle cx="24" cy="24" r="24" fill="rgba(0,0,0,0.6)"/>
+          <polygon points="18 14 34 24 18 34 18 14" fill="white"/>
+        </svg>
+      </div>
+    </div>
+
     {% if node.field_duration.value %}
       {% set duration = node.field_duration.value %}
       {% set minutes = (duration / 60)|round(0, 'floor') %}
       {% set seconds = duration % 60 %}
-      <span class="xedc-video-card__duration">
-        {{ minutes }}:{{ seconds < 10 ? '0' ~ seconds : seconds }}
+      <span class="xedc-video-card__duration">{{ minutes }}:{{ seconds < 10 ? '0' ~ seconds : seconds }}</span>
+    {% endif %}
+
+    {% set _quality = node.field_quality.value %}
+    {% if _quality %}
+      <span class="xedc-video-card__quality xedc-video-card__quality--{{ _quality }}">
+        {%- if _quality == '4k' -%}4K
+        {%- elseif _quality == '1080p' -%}1080P
+        {%- elseif _quality == '720p' -%}720P
+        {%- elseif _quality == '480p' -%}480P
+        {%- else -%}{{ _quality }}
+        {%- endif -%}
       </span>
     {% endif %}
+  </a>
 
-    {# 画质角标 #}
-    {% set _quality = node.field_quality.value %}
-    {% if _quality == '4k' %}
-      <span class="xedc-badge xedc-badge--default xedc-video-card__quality" style="background:linear-gradient(135deg,oklch(0.55 0.22 27),oklch(0.5 0.2 45));">4K</span>
-    {% elseif _quality == '1080p' %}
-      <span class="xedc-badge xedc-badge--default xedc-video-card__quality">1080P</span>
-    {% elseif _quality == '720p' %}
-      <span class="xedc-badge xedc-badge--success xedc-video-card__quality">720P</span>
-    {% endif %}
-
-    {# Hover 播放按钮 #}
-    <div class="xedc-video-card__play-overlay" aria-hidden="true">
-      <svg width="52" height="52" viewBox="0 0 52 52">
-        <circle cx="26" cy="26" r="26" fill="rgba(0,0,0,0.55)"/>
-        <polygon points="21 17 38 26 21 35 21 17" fill="white"/>
-      </svg>
-    </div>
-  </div>
-
-  {# 信息区 #}
-  <div class="xedc-video-card__info">
+  <div class="xedc-video-card__body">
     <h3 class="xedc-video-card__title">
       <a href="{{ video_url }}">{{ label }}</a>
     </h3>
 
-    {# 发布者信息 #}
-    <div class="xedc-video-card__author">
-      {% if _owner.user_picture.0.entity %}
-        <div class="xedc-avatar xedc-avatar--xs">
-          <img src="{{ file_url(_owner.user_picture.0.entity.fileUri) }}" alt="{{ _owner_name }}" class="xedc-avatar__img" />
-        </div>
-      {% else %}
-        <div class="xedc-avatar xedc-avatar--xs"
-             style="background:oklch(0.62 0.16 {{ _hues[_owner_name|length % 8] }});">
-          {{ _owner_name|slice(0,1)|upper }}
-        </div>
-      {% endif %}
-      <a href="/user/{{ node.getOwnerId() }}" class="xedc-video-card__author-name">{{ _owner_name }}</a>
-    </div>
-
-    {# 元数据：播放量 + 时间 #}
     <div class="xedc-video-card__meta">
-      <span class="xedc-text-xs xedc-text-muted">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="display:inline;vertical-align:middle;">
-          <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
-        </svg>
-        {{ view_count|default(0) }}
-      </span>
-      <span class="xedc-text-xs xedc-text-muted">{{ node.getCreatedTime()|date('Y-m-d') }}</span>
-    </div>
-
-    {# 快捷操作 #}
-    <div class="xedc-video-card__actions">
-      {% if is_logged_in %}
-        <button class="xedc-icon-btn xedc-like-btn" data-nid="{{ nid }}" aria-label="点赞">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-          </svg>
-        </button>
-      {% endif %}
+      <div class="xedc-video-card__author">
+        {% if _owner.user_picture.0.entity %}
+          <div class="xedc-avatar xedc-avatar--xs">
+            <img src="{{ file_url(_owner.user_picture.0.entity.fileUri) }}" alt="{{ _owner_name }}" />
+          </div>
+        {% else %}
+          <div class="xedc-avatar xedc-avatar--xs"
+               style="background:oklch(0.62 0.16 {{ _hues[_owner_name|length % 8] }});">
+            {{ _owner_name|slice(0,1)|upper }}
+          </div>
+        {% endif %}
+        <span class="xedc-video-card__author-name">{{ _owner_name }}</span>
+      </div>
+      <span class="xedc-video-card__views">{{ view_count|default(0) }} 次观看</span>
+      <span class="xedc-video-card__dot">·</span>
+      <span class="xedc-video-card__date">{{ node.getCreatedTime()|date('Y-m-d') }}</span>
     </div>
   </div>
 
