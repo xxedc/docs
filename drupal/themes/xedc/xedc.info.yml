@@ -1,6 +1,6 @@
 name: XEDC
 type: theme
-description: 'XEDC 综合内容网站主题，支持 light/dark/midnight 三色模式，基于 shadcn/ui 设计语言'
+description: 'XEDC 综合内容网站主题，支持 Light / Soft Dark 两种主题模式，基于 shadcn/ui 设计语言'
 package: XEDC
 core_version_requirement: ^10 || ^11
 base theme: false

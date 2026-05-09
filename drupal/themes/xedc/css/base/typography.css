@@ -63,11 +63,6 @@ pre code {
   font-size: inherit;
 }
 
-/* ── midnight 模式代码块更深背景 ── */
-[data-theme="midnight"] pre {
-  background-color: oklch(0.05 0 0);
-}
-
 /* ── 引用块 ── */
 blockquote {
   border-left: 3px solid var(--primary);

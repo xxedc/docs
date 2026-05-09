@@ -14,14 +14,14 @@
 /* ── 图片查看器 ── */
 .xedc-image-viewer {
   position: relative;
-  background: oklch(0.06 0 0);
+  background: var(--viewer-bg);
   border-radius: 12px;
   overflow: hidden;
   min-height: 400px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8px 32px oklch(0 0 0 / 0.2);
+  box-shadow: var(--shadow-soft);
 }
 
 .xedc-view-mode-bar {
@@ -35,19 +35,19 @@
   height: 32px;
   padding: 0 var(--space-3);
   border-radius: 999px;
-  background: oklch(1 0 0 / 0.12);
+  background: var(--wash-12);
   backdrop-filter: blur(8px);
-  color: #fff;
-  border: 1px solid oklch(1 0 0 / 0.2);
+  color: var(--text-inverse);
+  border: 1px solid var(--wash-20);
   cursor: pointer;
   font-size: var(--text-xs);
   font-weight: 600;
   letter-spacing: 0.02em;
-  transition: background var(--transition-fast), transform var(--transition-fast);
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
 }
 
 .xedc-view-mode-toggle:hover {
-  background: oklch(1 0 0 / 0.25);
+  background: var(--wash-25);
   transform: scale(1.03);
 }
 
@@ -64,13 +64,13 @@
   object-fit: cover;
   border-radius: 12px;
   cursor: pointer;
-  box-shadow: 0 8px 24px oklch(0 0 0 / 0.14);
+  box-shadow: var(--shadow-soft);
   transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .xedc-image-tiles img:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 32px oklch(0 0 0 / 0.2);
+  box-shadow: var(--shadow-soft-hover);
 }
 
 .xedc-image-detail[data-view-mode="tile"] .xedc-image-viewer,
@@ -128,8 +128,8 @@
   top: var(--space-3);
   left: 50%;
   transform: translateX(-50%);
-  background: oklch(0 0 0 / 0.5);
-  color: #fff;
+  background: var(--overlay-45);
+  color: var(--text-inverse);
   font-size: var(--text-xs);
   font-weight: 600;
   padding: 4px 10px;
@@ -148,18 +148,18 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: oklch(0 0 0 / 0.45);
+  background: var(--overlay-45);
   backdrop-filter: blur(8px);
-  color: #fff;
-  border: 1px solid oklch(1 0 0 / 0.2);
+  color: var(--text-inverse);
+  border: 1px solid var(--wash-20);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background var(--transition-fast), transform var(--transition-fast);
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
 }
 .xedc-viewer-nav:hover {
-  background: oklch(0 0 0 / 0.7);
+  background: var(--overlay-65);
   transform: translateY(-50%) scale(1.1);
 }
 .xedc-viewer-nav--prev { left: var(--space-3); }
@@ -178,19 +178,19 @@
   width: 36px;
   height: 36px;
   border-radius: var(--radius);
-  background: oklch(1 0 0 / 0.12);
+  background: var(--wash-12);
   backdrop-filter: blur(8px);
-  color: #fff;
-  border: 1px solid oklch(1 0 0 / 0.2);
+  color: var(--text-inverse);
+  border: 1px solid var(--wash-20);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background var(--transition-fast), transform var(--transition-fast);
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
 }
 
 .xedc-viewer-btn:hover {
-  background: oklch(1 0 0 / 0.25);
+  background: var(--wash-25);
   transform: scale(1.05);
 }
 
@@ -312,7 +312,7 @@
 
 /* ── 全屏模式 ── */
 .xedc-lightbox-area:fullscreen {
-  background: oklch(0 0 0);
+  background: var(--viewer-bg);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -325,9 +325,4 @@
   max-height: 90vh;
   min-height: auto;
   border-radius: 0;
-}
-
-/* ── midnight 模式 ── */
-[data-theme="midnight"] .xedc-image-viewer {
-  background: oklch(0 0 0);
 }
