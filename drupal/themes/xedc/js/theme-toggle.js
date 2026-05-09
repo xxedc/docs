@@ -1,170 +1,82 @@
 /**
- * theme-toggle.js — 三色模式切换完整逻辑
- * defer 加载，负责 UI 交互和 system 模式监听
+ * theme-toggle.js — 单按钮切换 light / dark
  */
 (function (Drupal) {
   'use strict';
 
   var STORAGE_KEY = 'xedc-theme';
-  var THEMES = ['system', 'light', 'dark', 'midnight'];
-  var THEME_LABELS = {
-    system:   '跟随系统',
-    light:    '日间',
-    dark:     '夜间',
-    midnight: '深夜'
-  };
-  var THEME_ICONS = {
-    system:   '🖥️',
-    light:    '☀️',
-    dark:     '🌙',
-    midnight: '⚫'
-  };
 
-  // ── 读取保存的偏好 ──
   function getSaved() {
-    try {
-      return localStorage.getItem(STORAGE_KEY) || 'system';
-    } catch (e) {
-      return 'system';
-    }
+    try { return localStorage.getItem(STORAGE_KEY) || ''; } catch (e) { return ''; }
   }
 
-  // ── 保存偏好 ──
   function setSaved(theme) {
-    try {
-      localStorage.setItem(STORAGE_KEY, theme);
-    } catch (e) {}
+    try { localStorage.setItem(STORAGE_KEY, theme); } catch (e) {}
   }
 
-  // ── 获取系统主题 ──
   function getSystemTheme() {
-    return window.matchMedia &&
-           window.matchMedia('(prefers-color-scheme: dark)').matches
-           ? 'dark' : 'light';
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   }
 
-  // ── 实际应用的主题（system → 解析为 light/dark）──
   function resolveTheme(pref) {
-    if (pref === 'system') return getSystemTheme();
-    return pref;
+    if (pref === 'dark') return 'dark';
+    if (pref === 'light') return 'light';
+    return getSystemTheme();
   }
 
-  // ── 应用主题到 <html> ──
   function applyTheme(pref) {
     var html = document.documentElement;
     var resolved = resolveTheme(pref);
-
-    // 加过渡类
     html.classList.add('theme-transitioning');
-
     html.setAttribute('data-theme', resolved);
 
-    // 更新 color-scheme meta
     var meta = document.querySelector('meta[name="color-scheme"]');
-    if (meta) {
-      meta.setAttribute('content',
-        resolved === 'midnight' ? 'dark' :
-        resolved === 'dark' ? 'dark' : 'light dark'
-      );
-    }
+    if (meta) meta.setAttribute('content', resolved === 'dark' ? 'dark' : 'light dark');
 
-    // 200ms 后移除过渡类
-    setTimeout(function () {
-      html.classList.remove('theme-transitioning');
-    }, 200);
-
-    // 更新所有切换器 UI
-    updateAllToggles(pref);
+    setTimeout(function () { html.classList.remove('theme-transitioning'); }, 200);
+    updateAllToggles(resolved);
   }
 
-  // ── 更新所有主题切换器的 UI 状态 ──
-  function updateAllToggles(activePref) {
-    // 更新图标按钮
-    var icons = document.querySelectorAll('[data-xedc-theme-icon]');
-    icons.forEach(function (el) {
-      var resolved = resolveTheme(activePref);
-      el.textContent = THEME_ICONS[resolved] || '🌙';
-      el.setAttribute('aria-label', '当前主题：' + THEME_LABELS[activePref] + '，点击切换');
-    });
-
-    // 更新下拉菜单选中状态
-    var items = document.querySelectorAll('[data-xedc-theme-option]');
-    items.forEach(function (el) {
-      var val = el.getAttribute('data-xedc-theme-option');
-      el.setAttribute('aria-checked', val === activePref ? 'true' : 'false');
-      el.classList.toggle('is-active', val === activePref);
-    });
+  function renderIcon(btn, resolved) {
+    var icon = resolved === 'dark'
+      ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>'
+      : '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.2M12 19.8V22M2 12h2.2M19.8 12H22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M19.1 4.9l-1.6 1.6M6.5 17.5l-1.6 1.6"/></svg>';
+    btn.innerHTML = '<span class="xedc-theme-toggle__icon">' + icon + '</span>';
+    btn.setAttribute('aria-label', resolved === 'dark' ? '当前为夜间模式，点击切换到日间模式' : '当前为日间模式，点击切换到夜间模式');
   }
 
-  // ── 初始化单个切换器 DOM ──
+  function updateAllToggles(resolved) {
+    var buttons = document.querySelectorAll('[data-xedc-theme-toggle-btn]');
+    buttons.forEach(function (btn) { renderIcon(btn, resolved); });
+  }
+
   function initToggle(wrapper) {
     if (wrapper.dataset.xedcThemeInit) return;
     wrapper.dataset.xedcThemeInit = '1';
 
-    var saved = getSaved();
-
-    // 图标按钮
-    var btn = wrapper.querySelector('[data-xedc-theme-icon]');
+    var btn = wrapper.querySelector('[data-xedc-theme-toggle-btn]');
     if (!btn) return;
 
-    // 下拉菜单
-    var dropdown = wrapper.querySelector('[data-xedc-theme-dropdown]');
-    if (!dropdown) return;
-
-    // 点击图标按钮 → 展开/收起下拉
-    btn.addEventListener('click', function (e) {
-      e.stopPropagation();
-      var isOpen = dropdown.classList.toggle('is-open');
-      dropdown.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
-      btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    btn.addEventListener('click', function () {
+      var current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+      var next = current === 'dark' ? 'light' : 'dark';
+      setSaved(next);
+      applyTheme(next);
     });
 
-    // 点击选项
-    var items = dropdown.querySelectorAll('[data-xedc-theme-option]');
-    items.forEach(function (item) {
-      item.addEventListener('click', function (e) {
-        e.stopPropagation();
-        var pref = this.getAttribute('data-xedc-theme-option');
-        setSaved(pref);
-        applyTheme(pref);
-        dropdown.classList.remove('is-open');
-        dropdown.setAttribute('aria-hidden', 'true');
-        btn.setAttribute('aria-expanded', 'false');
-      });
-    });
-
-    // 更新初始状态
-    updateAllToggles(saved);
+    updateAllToggles(resolveTheme(getSaved()));
   }
 
-  // ── 监听系统主题变化（system 模式下自动切换）──
   if (window.matchMedia) {
-    window.matchMedia('(prefers-color-scheme: dark)')
-      .addEventListener('change', function () {
-        if (getSaved() === 'system') {
-          applyTheme('system');
-        }
-      });
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () {
+      if (!getSaved()) applyTheme('');
+    });
   }
 
-  // ── 点击外部关闭下拉 ──
-  document.addEventListener('click', function () {
-    var dropdowns = document.querySelectorAll('[data-xedc-theme-dropdown].is-open');
-    dropdowns.forEach(function (d) {
-      d.classList.remove('is-open');
-      d.setAttribute('aria-hidden', 'true');
-    });
-  });
-
-  // ── Drupal behaviors 钩子 ──
   Drupal.behaviors.xedcThemeToggle = {
     attach: function (context) {
-      var wrappers = context.querySelectorAll
-        ? context.querySelectorAll('[data-xedc-theme-toggle]')
-        : [];
+      var wrappers = context.querySelectorAll ? context.querySelectorAll('[data-xedc-theme-toggle]') : [];
       Array.prototype.forEach.call(wrappers, initToggle);
-
-      // 初始应用一次
       applyTheme(getSaved());
     }
   };

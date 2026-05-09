@@ -75,35 +75,7 @@
 
         {# 主题切换器 #}
         <div class="xedc-theme-toggle" data-xedc-theme-toggle>
-          {# 图标按钮 #}
-          <button
-            class="xedc-navbar__icon-btn"
-            data-xedc-theme-icon
-            aria-label="切换主题"
-            aria-haspopup="true"
-            aria-expanded="false"
-          >🌙</button>
-
-          {# 下拉菜单 #}
-          <div
-            class="xedc-theme-dropdown"
-            data-xedc-theme-dropdown
-            role="menu"
-            aria-hidden="true"
-          >
-            <button class="xedc-theme-dropdown__item" data-xedc-theme-option="system" role="menuitemradio">
-              🖥️ 跟随系统
-            </button>
-            <button class="xedc-theme-dropdown__item" data-xedc-theme-option="light" role="menuitemradio">
-              ☀️ 日间
-            </button>
-            <button class="xedc-theme-dropdown__item" data-xedc-theme-option="dark" role="menuitemradio">
-              🌙 夜间
-            </button>
-            <button class="xedc-theme-dropdown__item" data-xedc-theme-option="midnight" role="menuitemradio">
-              ⚫ 深夜
-            </button>
-          </div>
+          <button class="xedc-navbar__icon-btn xedc-theme-toggle__btn" data-xedc-theme-toggle-btn data-xedc-theme-icon aria-label="切换主题" title="切换明暗模式" type="button"></button>
         </div>
 
         {# 用户头像入口 #}

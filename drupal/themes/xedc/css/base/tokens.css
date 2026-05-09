@@ -1,46 +1,45 @@
 /* ================================================================
-   tokens.css — 设计系统 Token（三色模式：light / dark / midnight）
-   所有颜色使用 OKLCH，命名约定参考 shadcn/ui
+   tokens.css — 设计系统 Token（双色模式：light / dark）
    ================================================================ */
 
 /* ── 日间模式（默认）── */
 :root,
 [data-theme="light"] {
   /* 基础色板 */
-  --background:         oklch(1 0 0);
-  --foreground:         oklch(0.145 0 0);
+  --background: #ffffff;
+  --foreground: #111111;
 
   /* 卡片 */
-  --card:               oklch(1 0 0);
-  --card-foreground:    oklch(0.145 0 0);
+  --card: #ffffff;
+  --card-foreground: #111111;
 
   /* 弹出层 */
-  --popover:            oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
+  --popover: #ffffff;
+  --popover-foreground: #111111;
 
   /* 主色（深蓝紫）*/
   --primary:            oklch(0.55 0.18 250);
   --primary-foreground: oklch(0.985 0 0);
 
   /* 次要色 */
-  --secondary:          oklch(0.961 0 0);
-  --secondary-foreground: oklch(0.21 0 0);
+  --secondary: #f6f7f9;
+  --secondary-foreground: #111111;
 
   /* 柔和区域 */
-  --muted:              oklch(0.961 0 0);
-  --muted-foreground:   oklch(0.556 0 0);
+  --muted: #f6f7f9;
+  --muted-foreground: #666666;
 
   /* 强调色 */
-  --accent:             oklch(0.961 0 0);
-  --accent-foreground:  oklch(0.21 0 0);
+  --accent: #f6f7f9;
+  --accent-foreground: #111111;
 
   /* 危险/错误色 */
   --destructive:        oklch(0.6 0.22 27);
   --destructive-foreground: oklch(0.985 0 0);
 
   /* 边框 / 输入框 / 焦点环 */
-  --border:             oklch(0.898 0 0);
-  --input:              oklch(0.898 0 0);
+  --border: #eaeaea;
+  --input: #eaeaea;
   --ring:               oklch(0.55 0.18 250);
 
   /* 成功 / 警告 */
@@ -53,10 +52,10 @@
   --radius: 0.5rem;
 
   /* 阴影（极轻）*/
-  --shadow-sm:  0 1px 2px oklch(0 0 0 / 0.04);
-  --shadow-md:  0 4px 6px oklch(0 0 0 / 0.06), 0 1px 3px oklch(0 0 0 / 0.04);
-  --shadow-lg:  0 10px 15px oklch(0 0 0 / 0.08), 0 4px 6px oklch(0 0 0 / 0.04);
-  --shadow-xl:  0 20px 25px oklch(0 0 0 / 0.1), 0 8px 10px oklch(0 0 0 / 0.04);
+  --shadow-sm: 0 1px 2px rgba(17, 17, 17, 0.06);
+  --shadow-md: 0 4px 10px rgba(17, 17, 17, 0.08);
+  --shadow-lg: 0 10px 18px rgba(17, 17, 17, 0.1);
+  --shadow-xl: 0 20px 32px rgba(17, 17, 17, 0.12);
 
   /* color-scheme */
   color-scheme: light;
@@ -64,32 +63,32 @@
 
 /* ── 夜间模式（常规深灰，B站夜间风格）── */
 [data-theme="dark"] {
-  --background:         oklch(0.145 0 0);
-  --foreground:         oklch(0.985 0 0);
+  --background: #121212;
+  --foreground: #e6e6e6;
 
-  --card:               oklch(0.18 0 0);
-  --card-foreground:    oklch(0.985 0 0);
+  --card: #1f1f1f;
+  --card-foreground: #e6e6e6;
 
-  --popover:            oklch(0.18 0 0);
-  --popover-foreground: oklch(0.985 0 0);
+  --popover: #1f1f1f;
+  --popover-foreground: #e6e6e6;
 
   --primary:            oklch(0.55 0.18 250);
   --primary-foreground: oklch(0.985 0 0);
 
-  --secondary:          oklch(0.22 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
+  --secondary: #1e1e1e;
+  --secondary-foreground: #e6e6e6;
 
-  --muted:              oklch(0.22 0 0);
-  --muted-foreground:   oklch(0.65 0 0);
+  --muted: #171717;
+  --muted-foreground: #a0a0a0;
 
-  --accent:             oklch(0.22 0 0);
-  --accent-foreground:  oklch(0.985 0 0);
+  --accent: #1e1e1e;
+  --accent-foreground: #e6e6e6;
 
   --destructive:        oklch(0.6 0.22 27);
   --destructive-foreground: oklch(0.985 0 0);
 
-  --border:             oklch(0.27 0 0);
-  --input:              oklch(0.27 0 0);
+  --border: #2a2a2a;
+  --input: #2a2a2a;
   --ring:               oklch(0.55 0.18 250);
 
   --success:            oklch(0.55 0.18 145);
@@ -97,63 +96,12 @@
   --warning:            oklch(0.7 0.18 70);
   --warning-foreground: oklch(0.145 0 0);
 
-  --shadow-sm:  0 1px 2px oklch(0 0 0 / 0.3);
-  --shadow-md:  0 4px 6px oklch(0 0 0 / 0.4);
-  --shadow-lg:  0 10px 15px oklch(0 0 0 / 0.5);
-  --shadow-xl:  0 20px 25px oklch(0 0 0 / 0.6);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.24);
+  --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 18px rgba(0, 0, 0, 0.34);
+  --shadow-xl: 0 20px 32px rgba(0, 0, 0, 0.4);
 
   color-scheme: dark;
-}
-
-/* ── 深夜模式（OLED 纯黑，省电护眼）── */
-[data-theme="midnight"] {
-  --background:         oklch(0 0 0);
-  --foreground:         oklch(0.92 0 0);
-
-  --card:               oklch(0.08 0 0);
-  --card-foreground:    oklch(0.92 0 0);
-
-  --popover:            oklch(0.08 0 0);
-  --popover-foreground: oklch(0.92 0 0);
-
-  /* 主色在纯黑底上稍微亮一点 */
-  --primary:            oklch(0.65 0.16 250);
-  --primary-foreground: oklch(0.985 0 0);
-
-  --secondary:          oklch(0.12 0 0);
-  --secondary-foreground: oklch(0.92 0 0);
-
-  --muted:              oklch(0.12 0 0);
-  --muted-foreground:   oklch(0.6 0 0);
-
-  --accent:             oklch(0.12 0 0);
-  --accent-foreground:  oklch(0.92 0 0);
-
-  --destructive:        oklch(0.55 0.2 27);
-  --destructive-foreground: oklch(0.985 0 0);
-
-  --border:             oklch(0.18 0 0);
-  --input:              oklch(0.18 0 0);
-  --ring:               oklch(0.65 0.16 250);
-
-  --success:            oklch(0.5 0.16 145);
-  --success-foreground: oklch(0.985 0 0);
-  --warning:            oklch(0.65 0.16 70);
-  --warning-foreground: oklch(0.985 0 0);
-
-  /* midnight 用 inset 描边代替 box-shadow */
-  --shadow-sm:  inset 0 0 0 1px oklch(0.2 0 0);
-  --shadow-md:  inset 0 0 0 1px oklch(0.2 0 0);
-  --shadow-lg:  inset 0 0 0 1px oklch(0.22 0 0);
-  --shadow-xl:  inset 0 0 0 1px oklch(0.25 0 0);
-
-  color-scheme: dark;
-}
-
-/* ── midnight 模式：图片降亮（减少强光刺眼）── */
-[data-theme="midnight"] img,
-[data-theme="midnight"] video {
-  filter: brightness(0.85);
 }
 
 /* ── 间距系统（4px 基础）── */
