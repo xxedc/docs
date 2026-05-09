@@ -1,0 +1,9 @@
+uuid: c9f63c29-c229-451e-b723-2c4d1669cb53
+langcode: zh-hans
+status: true
+dependencies: {  }
+name: 写真
+vid: xie_zhen
+description: 写真图片
+weight: -10
+new_revision: false

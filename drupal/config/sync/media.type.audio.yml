@@ -1,0 +1,16 @@
+uuid: 3cbd6029-7a54-40c4-9a6a-eb499b14d2f9
+langcode: zh-hans
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: eJw8n6Tk2tO3ZysuEeGR1gZa1yRffaZzR4t0Q7iNurs
+id: audio
+label: 录音
+description: 本地托管的音频文件。
+source: audio_file
+queue_thumbnail_downloads: false
+new_revision: true
+source_configuration:
+  source_field: field_media_audio_file
+field_map:
+  name: name

@@ -9,6 +9,8 @@ dependencies:
     - file
     - filter
     - flag
+    - matomo
+    - media
     - search
     - shortcut
     - system
@@ -26,6 +28,7 @@ permissions:
   - 'flag collect'
   - 'flag follow'
   - 'flag like'
+  - 'opt-in or out of matomo tracking'
   - 'post comments'
   - 'search content'
   - 'skip comment approval'
@@ -33,3 +36,4 @@ permissions:
   - 'unflag follow'
   - 'unflag like'
   - 'use text format basic_html'
+  - 'view media'

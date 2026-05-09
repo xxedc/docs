@@ -1,0 +1,22 @@
+uuid: 71ee8451-dfe4-46bf-902b-570f411c43ca
+langcode: zh-hans
+status: true
+dependencies:
+  config:
+    - taxonomy.vocabulary.xie_zhen
+  module:
+    - text
+id: taxonomy_term.xie_zhen.default
+targetEntityType: taxonomy_term
+bundle: xie_zhen
+mode: default
+content:
+  description:
+    type: text_default
+    label: inline
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  langcode: true

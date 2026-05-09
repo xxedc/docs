@@ -7,9 +7,9 @@ dependencies:
   module:
     - node
 id: node_image_post
-label: 'image_post URL pattern'
+label: 图片类型url
 type: 'canonical_entities:node'
-pattern: '/images/[node:title]'
+pattern: '/[node:field_category]/[node:nid]'
 selection_criteria:
   a72a9725-6a1e-4d8c-8f2a-e0d8d54ce206:
     id: 'entity_bundle:node'

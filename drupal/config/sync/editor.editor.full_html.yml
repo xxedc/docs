@@ -20,6 +20,7 @@ settings:
       - subscript
       - removeFormat
       - '|'
+      - imce_image
       - link
       - '|'
       - bulletedList

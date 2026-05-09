@@ -7,5 +7,5 @@ _core:
 name: 标签
 vid: tags
 description: 用标签将相似的文章分门别类。
-weight: 0
+weight: -9
 new_revision: false

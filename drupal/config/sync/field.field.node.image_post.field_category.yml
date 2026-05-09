@@ -5,13 +5,13 @@ dependencies:
   config:
     - field.storage.node.field_category
     - node.type.image_post
-    - taxonomy.vocabulary.categories
+    - taxonomy.vocabulary.xie_zhen
 id: node.image_post.field_category
 field_name: field_category
 entity_type: node
 bundle: image_post
 label: 分类
-description: ''
+description: 分类栏目介绍
 required: false
 translatable: false
 default_value: {  }
@@ -20,10 +20,10 @@ settings:
   handler: 'default:taxonomy_term'
   handler_settings:
     target_bundles:
-      categories: categories
+      xie_zhen: xie_zhen
     sort:
       field: name
       direction: asc
-    auto_create: true
-    auto_create_bundle: categories
+    auto_create: false
+    auto_create_bundle: ''
 field_type: entity_reference

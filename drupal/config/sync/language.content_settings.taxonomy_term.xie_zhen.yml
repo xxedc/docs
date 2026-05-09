@@ -1,0 +1,11 @@
+uuid: 3ea6b286-50d7-4558-ba3d-1be157aa0a0b
+langcode: zh-hans
+status: true
+dependencies:
+  config:
+    - taxonomy.vocabulary.xie_zhen
+id: taxonomy_term.xie_zhen
+target_entity_type_id: taxonomy_term
+target_bundle: xie_zhen
+default_langcode: site_default
+language_alterable: false

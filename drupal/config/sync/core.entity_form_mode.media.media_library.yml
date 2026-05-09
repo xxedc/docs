@@ -1,0 +1,16 @@
+uuid: e4283863-2810-4b8e-bbab-2fb55d44731a
+langcode: zh-hans
+status: true
+dependencies:
+  module:
+    - media
+  enforced:
+    module:
+      - media_library
+_core:
+  default_config_hash: h9eGjVAfAa4nod-BMI9TzN2uZwl7_WhRYREJZlOC6fs
+id: media.media_library
+label: 媒体库
+description: null
+targetEntityType: media
+cache: true

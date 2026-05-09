@@ -5,5 +5,5 @@ dependencies: {  }
 name: 话题
 vid: topics
 description: 话题分类
-weight: 0
+weight: -7
 new_revision: false

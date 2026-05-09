@@ -3,6 +3,7 @@ _core:
 module:
   announcements_feed: 0
   automated_cron: 0
+  basic_auth: 0
   big_pipe: 0
   block: 0
   block_content: 0
@@ -13,6 +14,7 @@ module:
   contextual: 0
   datetime: 0
   dblog: 0
+  dropzonejs: 0
   dynamic_page_cache: 0
   editor: 0
   entity_reference_revisions: 0
@@ -20,6 +22,7 @@ module:
   field_group: 0
   field_ui: 0
   file: 0
+  filefield_paths: 0
   filter: 0
   flag: 0
   help: 0
@@ -27,11 +30,17 @@ module:
   image: 0
   imageapi_optimize: 0
   imageapi_optimize_webp: 0
+  imce: 0
+  jsonapi: 0
   language: 0
   layout_builder: 0
   layout_discovery: 0
   link: 0
   locale: 0
+  matomo: 0
+  matomo_tagmanager: 0
+  media: 0
+  media_library: 0
   menu_link_content: 0
   menu_ui: 0
   metatag: 0
@@ -44,7 +53,9 @@ module:
   page_cache: 0
   path: 0
   path_alias: 0
+  rest: 0
   search: 0
+  serialization: 0
   shortcut: 0
   simple_sitemap: 0
   system: 0

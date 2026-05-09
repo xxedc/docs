@@ -5,5 +5,5 @@ dependencies: {  }
 name: categories
 vid: categories
 description: 视频的
-weight: 0
+weight: -8
 new_revision: false
