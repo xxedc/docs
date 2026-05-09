@@ -8,7 +8,7 @@
   justify-content: center;
   border-radius: 50%;
   overflow: hidden;
-  background-color: var(--muted);
+  background-color: var(--xedc-avatar-bg, var(--muted));
   color: var(--muted-foreground);
   font-weight: 600;
   font-family: var(--font-sans);
@@ -17,6 +17,11 @@
   border: 2px solid var(--border);
   transition: border-color var(--transition-fast),
               opacity var(--transition-fast);
+}
+
+.xedc-avatar--random {
+  color: var(--text-inverse);
+  border-color: transparent;
 }
 
 a.xedc-avatar:hover {

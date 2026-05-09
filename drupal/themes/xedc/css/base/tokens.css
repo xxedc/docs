@@ -1,159 +1,181 @@
 /* ================================================================
-   tokens.css — 设计系统 Token（三色模式：light / dark / midnight）
-   所有颜色使用 OKLCH，命名约定参考 shadcn/ui
+   tokens.css — 设计系统 Token（两种主题：light / dark）
+   所有颜色必须通过变量引用，页面/组件不得硬编码颜色
    ================================================================ */
 
 /* ── 日间模式（默认）── */
 :root,
 [data-theme="light"] {
-  /* 基础色板 */
-  --background:         oklch(1 0 0);
-  --foreground:         oklch(0.145 0 0);
+  --background: #ffffff;
+  --surface: #f6f7f9;
+  --surface-2: #ffffff;
+  --foreground: #111111;
+  --muted-foreground: #666666;
 
-  /* 卡片 */
-  --card:               oklch(1 0 0);
-  --card-foreground:    oklch(0.145 0 0);
+  --card: #ffffff;
+  --card-foreground: #111111;
 
-  /* 弹出层 */
-  --popover:            oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
+  --popover: #ffffff;
+  --popover-foreground: #111111;
 
   /* 主色（深蓝紫）*/
-  --primary:            oklch(0.55 0.18 250);
-  --primary-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.55 0.18 250);
+  --primary-foreground: #ffffff;
 
   /* 次要色 */
-  --secondary:          oklch(0.961 0 0);
-  --secondary-foreground: oklch(0.21 0 0);
+  --secondary: var(--surface);
+  --secondary-foreground: var(--foreground);
 
   /* 柔和区域 */
-  --muted:              oklch(0.961 0 0);
-  --muted-foreground:   oklch(0.556 0 0);
+  --muted: var(--surface);
 
   /* 强调色 */
-  --accent:             oklch(0.961 0 0);
-  --accent-foreground:  oklch(0.21 0 0);
+  --accent: var(--surface);
+  --accent-foreground: var(--foreground);
 
   /* 危险/错误色 */
-  --destructive:        oklch(0.6 0.22 27);
-  --destructive-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.6 0.22 27);
+  --destructive-foreground: #ffffff;
 
   /* 边框 / 输入框 / 焦点环 */
-  --border:             oklch(0.898 0 0);
-  --input:              oklch(0.898 0 0);
-  --ring:               oklch(0.55 0.18 250);
+  --border: #eaeaea;
+  --input: #eaeaea;
+  --ring: var(--primary);
+  --card-border: var(--border);
 
   /* 成功 / 警告 */
-  --success:            oklch(0.6 0.18 145);
-  --success-foreground: oklch(0.985 0 0);
-  --warning:            oklch(0.75 0.18 70);
-  --warning-foreground: oklch(0.145 0 0);
+  --success: oklch(0.6 0.18 145);
+  --success-foreground: #ffffff;
+  --warning: oklch(0.75 0.18 70);
+  --warning-foreground: #111111;
 
   /* 圆角 */
   --radius: 0.5rem;
 
+  --text: var(--foreground);
+  --text-muted: var(--muted-foreground);
+  --text-inverse: #ffffff;
+
+  --tint-1: rgb(17 17 17 / 0.03);
+  --tint-2: rgb(17 17 17 / 0.04);
+  --tint-3: rgb(17 17 17 / 0.06);
+
+  --overlay-0: rgb(0 0 0 / 0);
+  --overlay-20: rgb(0 0 0 / 0.20);
+  --overlay-45: rgb(0 0 0 / 0.45);
+  --overlay-65: rgb(0 0 0 / 0.65);
+  --overlay-82: rgb(0 0 0 / 0.82);
+
+  --wash-12: rgb(255 255 255 / 0.12);
+  --wash-20: rgb(255 255 255 / 0.20);
+  --wash-25: rgb(255 255 255 / 0.25);
+
+  --glass: rgb(255 255 255 / 0.70);
+  --glass-border: rgb(234 234 234 / 0.90);
+
+  --shadow-soft: 0 8px 30px rgb(17 17 17 / 0.08);
+  --shadow-soft-hover: 0 14px 46px rgb(17 17 17 / 0.12);
+  --shadow-hairline: 0 1px 0 rgb(17 17 17 / 0.02);
+
+  --badge-hot-bg: oklch(0.72 0.16 48 / 0.85);
+  --badge-hot-border: oklch(0.72 0.16 48 / 0.25);
+  --badge-hot-text: var(--foreground);
+  --badge-new-bg: rgb(17 17 17 / 0.85);
+  --badge-new-border: rgb(17 17 17 / 0.15);
+  --badge-new-text: var(--text-inverse);
+
+  --video-cover-gradient: linear-gradient(135deg, oklch(0.25 0.06 250), oklch(0.18 0.04 280));
+  --viewer-bg: #121212;
+
   /* 阴影（极轻）*/
-  --shadow-sm:  0 1px 2px oklch(0 0 0 / 0.04);
-  --shadow-md:  0 4px 6px oklch(0 0 0 / 0.06), 0 1px 3px oklch(0 0 0 / 0.04);
-  --shadow-lg:  0 10px 15px oklch(0 0 0 / 0.08), 0 4px 6px oklch(0 0 0 / 0.04);
-  --shadow-xl:  0 20px 25px oklch(0 0 0 / 0.1), 0 8px 10px oklch(0 0 0 / 0.04);
+  --shadow-sm: 0 1px 2px rgb(17 17 17 / 0.04);
+  --shadow-md: 0 4px 6px rgb(17 17 17 / 0.06), 0 1px 3px rgb(17 17 17 / 0.04);
+  --shadow-lg: 0 10px 15px rgb(17 17 17 / 0.08), 0 4px 6px rgb(17 17 17 / 0.04);
+  --shadow-xl: 0 20px 25px rgb(17 17 17 / 0.10), 0 8px 10px rgb(17 17 17 / 0.04);
 
   /* color-scheme */
   color-scheme: light;
 }
 
-/* ── 夜间模式（常规深灰，B站夜间风格）── */
+/* ── 夜间模式（Soft Dark，禁止纯黑）── */
 [data-theme="dark"] {
-  --background:         oklch(0.145 0 0);
-  --foreground:         oklch(0.985 0 0);
+  --background: #121212;
+  --surface: #1e1e1e;
+  --surface-2: #171717;
+  --foreground: #e6e6e6;
+  --muted-foreground: #a0a0a0;
 
-  --card:               oklch(0.18 0 0);
-  --card-foreground:    oklch(0.985 0 0);
+  --card: #1f1f1f;
+  --card-foreground: #e6e6e6;
 
-  --popover:            oklch(0.18 0 0);
-  --popover-foreground: oklch(0.985 0 0);
+  --popover: #1f1f1f;
+  --popover-foreground: #e6e6e6;
 
-  --primary:            oklch(0.55 0.18 250);
-  --primary-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.55 0.18 250);
+  --primary-foreground: #ffffff;
 
-  --secondary:          oklch(0.22 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
+  --secondary: var(--surface);
+  --secondary-foreground: var(--foreground);
 
-  --muted:              oklch(0.22 0 0);
-  --muted-foreground:   oklch(0.65 0 0);
+  --muted: var(--surface-2);
 
-  --accent:             oklch(0.22 0 0);
-  --accent-foreground:  oklch(0.985 0 0);
+  --accent: var(--surface);
+  --accent-foreground: var(--foreground);
 
-  --destructive:        oklch(0.6 0.22 27);
-  --destructive-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.6 0.22 27);
+  --destructive-foreground: #ffffff;
 
-  --border:             oklch(0.27 0 0);
-  --input:              oklch(0.27 0 0);
-  --ring:               oklch(0.55 0.18 250);
+  --border: #2a2a2a;
+  --input: #2a2a2a;
+  --ring: var(--primary);
+  --card-border: var(--border);
 
-  --success:            oklch(0.55 0.18 145);
-  --success-foreground: oklch(0.985 0 0);
-  --warning:            oklch(0.7 0.18 70);
-  --warning-foreground: oklch(0.145 0 0);
+  --success: oklch(0.55 0.18 145);
+  --success-foreground: #ffffff;
+  --warning: oklch(0.7 0.18 70);
+  --warning-foreground: #111111;
 
-  --shadow-sm:  0 1px 2px oklch(0 0 0 / 0.3);
-  --shadow-md:  0 4px 6px oklch(0 0 0 / 0.4);
-  --shadow-lg:  0 10px 15px oklch(0 0 0 / 0.5);
-  --shadow-xl:  0 20px 25px oklch(0 0 0 / 0.6);
+  --text: var(--foreground);
+  --text-muted: var(--muted-foreground);
+  --text-inverse: #ffffff;
 
-  color-scheme: dark;
-}
+  --tint-1: rgb(230 230 230 / 0.04);
+  --tint-2: rgb(230 230 230 / 0.06);
+  --tint-3: rgb(230 230 230 / 0.09);
 
-/* ── 深夜模式（OLED 纯黑，省电护眼）── */
-[data-theme="midnight"] {
-  --background:         oklch(0 0 0);
-  --foreground:         oklch(0.92 0 0);
+  --overlay-0: rgb(0 0 0 / 0);
+  --overlay-20: rgb(0 0 0 / 0.20);
+  --overlay-45: rgb(0 0 0 / 0.45);
+  --overlay-65: rgb(0 0 0 / 0.65);
+  --overlay-82: rgb(0 0 0 / 0.82);
 
-  --card:               oklch(0.08 0 0);
-  --card-foreground:    oklch(0.92 0 0);
+  --wash-12: rgb(255 255 255 / 0.12);
+  --wash-20: rgb(255 255 255 / 0.20);
+  --wash-25: rgb(255 255 255 / 0.25);
 
-  --popover:            oklch(0.08 0 0);
-  --popover-foreground: oklch(0.92 0 0);
+  --glass: rgb(30 30 30 / 0.70);
+  --glass-border: rgb(42 42 42 / 0.90);
 
-  /* 主色在纯黑底上稍微亮一点 */
-  --primary:            oklch(0.65 0.16 250);
-  --primary-foreground: oklch(0.985 0 0);
+  --shadow-soft: 0 8px 30px rgb(0 0 0 / 0.32);
+  --shadow-soft-hover: 0 14px 46px rgb(0 0 0 / 0.42);
+  --shadow-hairline: 0 1px 0 rgb(0 0 0 / 0.55);
 
-  --secondary:          oklch(0.12 0 0);
-  --secondary-foreground: oklch(0.92 0 0);
+  --badge-hot-bg: oklch(0.72 0.16 48 / 0.85);
+  --badge-hot-border: oklch(0.72 0.16 48 / 0.25);
+  --badge-hot-text: #111111;
+  --badge-new-bg: rgb(18 18 18 / 0.85);
+  --badge-new-border: rgb(18 18 18 / 0.25);
+  --badge-new-text: var(--text-inverse);
 
-  --muted:              oklch(0.12 0 0);
-  --muted-foreground:   oklch(0.6 0 0);
+  --video-cover-gradient: linear-gradient(135deg, oklch(0.25 0.06 250), oklch(0.18 0.04 280));
+  --viewer-bg: #121212;
 
-  --accent:             oklch(0.12 0 0);
-  --accent-foreground:  oklch(0.92 0 0);
-
-  --destructive:        oklch(0.55 0.2 27);
-  --destructive-foreground: oklch(0.985 0 0);
-
-  --border:             oklch(0.18 0 0);
-  --input:              oklch(0.18 0 0);
-  --ring:               oklch(0.65 0.16 250);
-
-  --success:            oklch(0.5 0.16 145);
-  --success-foreground: oklch(0.985 0 0);
-  --warning:            oklch(0.65 0.16 70);
-  --warning-foreground: oklch(0.985 0 0);
-
-  /* midnight 用 inset 描边代替 box-shadow */
-  --shadow-sm:  inset 0 0 0 1px oklch(0.2 0 0);
-  --shadow-md:  inset 0 0 0 1px oklch(0.2 0 0);
-  --shadow-lg:  inset 0 0 0 1px oklch(0.22 0 0);
-  --shadow-xl:  inset 0 0 0 1px oklch(0.25 0 0);
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.25);
+  --shadow-md: 0 4px 6px rgb(0 0 0 / 0.32), 0 1px 3px rgb(0 0 0 / 0.20);
+  --shadow-lg: 0 10px 15px rgb(0 0 0 / 0.40), 0 4px 6px rgb(0 0 0 / 0.24);
+  --shadow-xl: 0 20px 25px rgb(0 0 0 / 0.48), 0 8px 10px rgb(0 0 0 / 0.28);
 
   color-scheme: dark;
-}
-
-/* ── midnight 模式：图片降亮（减少强光刺眼）── */
-[data-theme="midnight"] img,
-[data-theme="midnight"] video {
-  filter: brightness(0.85);
 }
 
 /* ── 间距系统（4px 基础）── */

@@ -21,12 +21,12 @@
 
 /* ── 播放器 ── */
 .xedc-video-player {
-  background: oklch(0 0 0);
+  background: var(--viewer-bg);
   border-radius: 12px;
   overflow: hidden;
   aspect-ratio: 16 / 9;
   position: relative;
-  box-shadow: 0 8px 32px oklch(0 0 0 / 0.25);
+  box-shadow: var(--shadow-soft);
 }
 
 .xedc-video-player__video {
@@ -96,7 +96,7 @@
   white-space: nowrap;
   line-height: 1;
   transition:
-    background var(--transition-fast),
+    background-color var(--transition-fast),
     color var(--transition-fast),
     border-color var(--transition-fast),
     transform var(--transition-fast);
@@ -140,7 +140,7 @@
   align-items: center;
   gap: var(--space-2);
   list-style: none;
-  transition: background var(--transition-fast);
+  transition: background-color var(--transition-fast);
 }
 
 .xedc-video-detail__desc summary::-webkit-details-marker { display: none; }

@@ -84,19 +84,19 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.5);
-  color: #fff;
+  background: var(--overlay-45);
+  color: var(--text-inverse);
   border: none;
   font-size: 20px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background var(--transition-fast);
+  transition: background-color var(--transition-fast);
   z-index: 2;
 }
 
-.xedc-gallery-carousel__btn:hover { background: rgba(0, 0, 0, 0.8); }
+.xedc-gallery-carousel__btn:hover { background: var(--overlay-65); }
 .xedc-gallery-carousel__btn--prev { left: var(--space-2); }
 .xedc-gallery-carousel__btn--next { right: var(--space-2); }
 
