@@ -195,12 +195,16 @@
 }
 
 /* ── 响应式 ── */
-@media (max-width: 768px) {
-  .xedc-navbar__nav {
-    display: none;
-  }
+@media (max-width: 1023px) {
+  .xedc-navbar__nav { display: none; }
   .xedc-navbar__search {
-    max-width: 200px;
+    max-width: none;
     margin-inline: var(--space-2);
   }
+}
+
+@media (max-width: 640px) {
+  .xedc-navbar__search { display: none; }
+  .xedc-navbar__publish { display: none; }
+  .xedc-navbar__tools > a[href="/messages"] { display: none; }
 }

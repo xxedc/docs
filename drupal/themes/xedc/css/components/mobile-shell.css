@@ -1,72 +1,103 @@
 /* ================================================================
    mobile-shell.css — 全站移动端壳：汉堡菜单 / 抽屉 / 底部 tabbar
    shadcn/ui 设计语言
+   PC（>=1024px）：彻底隐藏所有移动元素
+   移动（<1024px）：显示汉堡 + 抽屉 + 底部 tabbar
    ================================================================ */
 
-/* ── 汉堡菜单按钮（移动端可见）────────────────────────────────── */
-.xedc-navbar__menu-btn {
-  display: none;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius);
-  background: transparent;
-  border: 1px solid transparent;
-  color: var(--foreground);
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+/* ── 默认全部隐藏（PC 看不到）──────────────────────────────── */
+.xedc-navbar__menu-btn,
+.xedc-shell-overlay,
+.xedc-shell-drawer,
+.xedc-shell-bottom-nav {
+  display: none !important;
 }
 
-.xedc-navbar__menu-btn:hover {
-  background: var(--muted);
-  border-color: var(--border);
+/* ── 仅在移动端显示 ──────────────────────────────────────── */
+@media (max-width: 1023px) {
+
+  /* 汉堡按钮 */
+  .xedc-navbar__menu-btn {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius);
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--foreground);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background-color var(--transition-fast), border-color var(--transition-fast);
+  }
+  .xedc-navbar__menu-btn:hover {
+    background: var(--muted);
+    border-color: var(--border);
+  }
+
+  /* 抽屉遮罩（仅 .is-open 时实际可见）*/
+  .xedc-shell-overlay {
+    display: block !important;
+    position: fixed;
+    inset: 0;
+    background: oklch(0 0 0 / 0.4);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    opacity: 0;
+    pointer-events: none;
+    z-index: var(--z-modal);
+    transition: opacity 200ms ease;
+  }
+  .xedc-shell-overlay.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* 抽屉侧栏 */
+  .xedc-shell-drawer {
+    display: flex !important;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 280px;
+    max-width: 86vw;
+    background: var(--background);
+    border-right: 1px solid var(--border);
+    z-index: calc(var(--z-modal) + 1);
+    transform: translateX(-100%);
+    transition: transform 240ms cubic-bezier(.2,.8,.2,1);
+    overflow-y: auto;
+    padding: var(--space-3) var(--space-3) calc(var(--space-6) + env(safe-area-inset-bottom));
+  }
+  .xedc-shell-drawer.is-open { transform: translateX(0); }
+
+  /* 底部 tabbar */
+  .xedc-shell-bottom-nav {
+    display: flex !important;
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    height: 68px;
+    padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+    background: oklch(from var(--background) l c h / 0.92);
+    border-top: 1px solid var(--border);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    z-index: var(--z-fixed);
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+  }
+
+  /* 移动端：给 body 加底部安全区，避免最后一行被 tabbar 遮挡（首页除外，首页有自己的处理）*/
+  body:not(.xedc-body--front) {
+    padding-bottom: calc(68px + env(safe-area-inset-bottom));
+  }
 }
 
-@media (max-width: 960px) {
-  .xedc-navbar__menu-btn { display: inline-flex; }
-}
-
-/* ── 抽屉遮罩 ─────────────────────────────────────────────── */
-.xedc-shell-overlay {
-  position: fixed;
-  inset: 0;
-  background: oklch(0 0 0 / 0.4);
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
-  opacity: 0;
-  pointer-events: none;
-  z-index: var(--z-modal);
-  transition: opacity 200ms ease;
-}
-
-.xedc-shell-overlay.is-open {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-/* ── 抽屉侧栏 ─────────────────────────────────────────────── */
-.xedc-shell-drawer {
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  width: 280px;
-  max-width: 86vw;
-  background: var(--background);
-  border-right: 1px solid var(--border);
-  z-index: calc(var(--z-modal) + 1);
-  transform: translateX(-100%);
-  transition: transform 240ms cubic-bezier(.2,.8,.2,1);
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-  padding: var(--space-3) var(--space-3) calc(var(--space-6) + env(safe-area-inset-bottom));
-}
-
-.xedc-shell-drawer.is-open { transform: translateX(0); }
-
+/* ── 抽屉内部样式（无媒体查询限制）──────────────────────────── */
 .xedc-shell-drawer__brand {
   font-size: var(--text-xl);
   font-weight: 700;
@@ -96,9 +127,7 @@
   transition: background-color var(--transition-fast), color var(--transition-fast);
 }
 
-.xedc-shell-drawer__item:hover {
-  background: var(--muted);
-}
+.xedc-shell-drawer__item:hover { background: var(--muted); }
 
 .xedc-shell-drawer__item.is-active {
   background: var(--foreground);
@@ -149,23 +178,7 @@
   color: var(--foreground);
 }
 
-/* ── 底部 tabbar ───────────────────────────────────────────── */
-.xedc-shell-bottom-nav {
-  position: fixed;
-  left: 0; right: 0; bottom: 0;
-  height: 68px;
-  padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
-  background: oklch(from var(--background) l c h / 0.92);
-  border-top: 1px solid var(--border);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  z-index: var(--z-fixed);
-  display: none;
-  align-items: center;
-  justify-content: space-between;
-  gap: 4px;
-}
-
+/* ── tabbar 项目样式（无媒体查询）─────────────────────────── */
 .xedc-shell-bottom-nav__item {
   flex: 1;
   min-width: 0;
@@ -197,7 +210,12 @@
   flex-shrink: 0;
 }
 
-@media (max-width: 960px) {
-  .xedc-shell-bottom-nav { display: flex; }
-  body[data-xedc-has-bottom-nav] { padding-bottom: calc(68px + env(safe-area-inset-bottom)); }
+/* ── PC（>=1024px）：明确隐藏所有移动元素 ──────────────────── */
+@media (min-width: 1024px) {
+  .xedc-navbar__menu-btn,
+  .xedc-shell-overlay,
+  .xedc-shell-drawer,
+  .xedc-shell-bottom-nav {
+    display: none !important;
+  }
 }
