@@ -74,31 +74,7 @@
         {% endif %}
 
         {# 主题切换器 #}
-        <div class="xedc-theme-toggle" data-xedc-theme-toggle>
-          {# 图标按钮 #}
-          <button
-            class="xedc-navbar__icon-btn"
-            data-xedc-theme-icon
-            aria-label="切换主题"
-            aria-haspopup="true"
-            aria-expanded="false"
-          >🌙</button>
-
-          {# 下拉菜单 #}
-          <div
-            class="xedc-theme-dropdown"
-            data-xedc-theme-dropdown
-            role="menu"
-            aria-hidden="true"
-          >
-                        <button class="xedc-theme-dropdown__item" data-xedc-theme-option="light" role="menuitemradio">
-              ☀️ Light Mode
-            </button>
-            <button class="xedc-theme-dropdown__item" data-xedc-theme-option="dark" role="menuitemradio">
-              🌙 Soft Dark Mode
-            </button>
-                      </div>
-        </div>
+        {% include 'xedc:theme-toggle' %}
 
         {# 用户头像入口 #}
         {% if is_logged_in %}
