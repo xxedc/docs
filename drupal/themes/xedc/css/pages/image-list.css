@@ -40,37 +40,14 @@ body:has(.xedc-image-waterfall) .xedc-navbar__nav a.is-active {
   color: var(--foreground);
 }
 
-/* ── 两栏布局 ── */
+/* ── 单列布局（左侧导航由全站 .xedc-gsidebar 提供）── */
 .xedc-image-page {
-  display: grid;
-  grid-template-columns: 260px minmax(0, 1fr);
-  gap: 24px;
-  align-items: start;
+  display: block;
+  width: 100%;
 }
 
-@media (max-width: 1200px) {
-  .xedc-image-page { grid-template-columns: 220px minmax(0, 1fr); }
-}
-
-@media (max-width: 960px) {
-  .xedc-image-page { grid-template-columns: minmax(0, 1fr); }
-}
-
-/* ── 左侧边栏 ── */
-.xedc-image-sidebar {
-  position: sticky;
-  top: calc(56px + var(--space-4));
-  height: calc(100dvh - 56px - var(--space-6));
-  overflow-y: auto;
-  overflow-x: hidden;
-  scrollbar-width: none;
-}
-
-.xedc-image-sidebar::-webkit-scrollbar { display: none; }
-
-@media (max-width: 960px) {
-  .xedc-image-sidebar { display: none; }
-}
+/* 旧的内嵌侧边栏：彻底隐藏（保留类名兼容缓存）*/
+.xedc-image-sidebar { display: none !important; }
 
 .xedc-image-sidebar__inner {
   display: flex;

@@ -1,3 +1,8 @@
+{#
+  views-view--article-list.html.twig — 文章列表
+  全站统一布局：左侧导航由 page.html.twig 的 .xedc-gsidebar 提供，
+  本模板只负责主内容区（顶部 tabs/筛选 + 内容流）。
+#}
 {{ attach_library('xedc/page-article-list') }}
 
 {% set _category = active_category|default('all') %}
@@ -10,66 +15,33 @@
     <div class="xedc-articles-home__tabs-sticky">
       {% include '@xedc/block/block--tabs.html.twig' with { categories: _categories, active_key: _category } %}
       <div class="xedc-articles-home__sort">
-        <a class="xedc-sort-chip{% if _sort == 'hot' %} is-active{% endif %}" href="{{ sort_hot_url|default('/articles') }}">Hot</a>
-        <a class="xedc-sort-chip{% if _sort == 'new' %} is-active{% endif %}" href="{{ sort_new_url|default('/articles?sort=new') }}">New</a>
+        <a class="xedc-sort-chip{% if _sort == 'hot' %} is-active{% endif %}" href="{{ sort_hot_url|default('/articles') }}">最热</a>
+        <a class="xedc-sort-chip{% if _sort == 'new' %} is-active{% endif %}" href="{{ sort_new_url|default('/articles?sort=new') }}">最新</a>
       </div>
     </div>
 
-    <div class="xedc-articles-home__layout">
+    {% if hot_tags %}
+      <div class="xedc-articles-home__tags">
+        {% for t in hot_tags %}
+          <a class="xedc-tag" href="{{ t.url }}">#{{ t.name }}</a>
+        {% endfor %}
+      </div>
+    {% endif %}
 
-      <aside class="xedc-articles-home__left" aria-label="分类与标签">
-        <div class="xedc-left-nav">
-          <h3 class="xedc-left-nav__title">分类</h3>
-          <div class="xedc-left-nav__list">
-            {% for c in _categories %}
-              <a class="xedc-left-nav__item{% if c.key == _category %} is-active{% endif %}" href="{{ c.url }}">{{ c.label }}</a>
-            {% endfor %}
-          </div>
+    <main class="xedc-articles-home__main" aria-label="文章内容流">
+      {% if rows %}
+        <div class="xedc-feed" data-view-container="article-list">
+          {{ rows }}
         </div>
-
-        {% if hot_tags %}
-          <div class="xedc-left-tags">
-            <h3 class="xedc-left-nav__title">热门标签</h3>
-            <div class="xedc-tag-list">
-              {% for t in hot_tags %}
-                <a class="xedc-tag" href="{{ t.url }}">#{{ t.name }}</a>
-              {% endfor %}
-            </div>
-          </div>
-        {% endif %}
-      </aside>
-
-      <main class="xedc-articles-home__main" aria-label="文章内容流">
-        {% if rows %}
-          <div class="xedc-feed" data-view-container="article-list">
-            {{ rows }}
-          </div>
-        {% else %}
-          <div class="xedc-empty-state">
-            <div class="xedc-empty-state__icon">📝</div>
-            <h3 class="xedc-empty-state__title">暂无文章</h3>
-            <p class="xedc-text-sm xedc-text-muted">快来发布第一篇文章吧</p>
-          </div>
-        {% endif %}
-        {% if pager %}<div class="xedc-pager">{{ pager }}</div>{% endif %}
-      </main>
-
-      <aside class="xedc-articles-home__right" aria-label="推荐栏">
-        {% include '@xedc/block/block--sidebar.html.twig' with {
-          hot_rank: drupal_view('hot_rank', 'block_1'),
-          recommended_authors: recommended_authors|default([]),
-          hot_tags: hot_tags|default([])
-        } %}
-
-        {% if not is_logged_in %}
-          <div class="xedc-login-card">
-            <p class="xedc-text-sm xedc-text-muted">登录后获得个性化推荐</p>
-            <a href="/user/login" class="xedc-btn xedc-btn--default xedc-btn--sm">立即登录</a>
-          </div>
-        {% endif %}
-      </aside>
-
-    </div>
+      {% else %}
+        <div class="xedc-empty-state">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.4" style="margin:0 auto var(--space-3)"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></svg>
+          <h3 class="xedc-empty-state__title">暂无文章</h3>
+          <p class="xedc-text-sm xedc-text-muted">快来发布第一篇文章吧</p>
+        </div>
+      {% endif %}
+      {% if pager %}<div class="xedc-pager">{{ pager }}</div>{% endif %}
+    </main>
 
     <button class="xedc-back-to-top" id="xedc-back-to-top" aria-label="回到顶部">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -78,4 +50,3 @@
     </button>
   </div>
 </div>
-
