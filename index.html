@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DCXE - 发现精彩内容</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: { primary: '#6366f1' }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+        'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+    }
+
+    /* ── gradient placeholders for images ── */
+    .g1  { background: linear-gradient(135deg,#e879f9,#7e22ce); }
+    .g2  { background: linear-gradient(135deg,#3b82f6,#7c3aed); }
+    .g3  { background: linear-gradient(135deg,#fb923c,#fbbf24); }
+    .g4  { background: linear-gradient(135deg,#a855f7,#ec4899); }
+    .g5  { background: linear-gradient(135deg,#06b6d4,#3b82f6); }
+    .g6  { background: linear-gradient(135deg,#10b981,#059669); }
+    .g7  { background: linear-gradient(135deg,#f43f5e,#ec4899); }
+    .g8  { background: linear-gradient(135deg,#0f172a,#1e3a5f); }
+    .g9  { background: linear-gradient(135deg,#fbbf24,#f97316); }
+    .g10 { background: linear-gradient(135deg,#8b5cf6,#6366f1); }
+    .g11 { background: linear-gradient(135deg,#475569,#1e293b); }
+    .g12 { background: linear-gradient(135deg,#d946ef,#9333ea); }
+
+    /* ── card lift on hover ── */
+    .lift {
+      transition: transform .2s ease, box-shadow .2s ease;
+      cursor: pointer;
+    }
+    .lift:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px rgba(0,0,0,.13);
+    }
+
+    /* ── carousel track ── */
+    .ctrack { display:flex; transition: transform .4s cubic-bezier(.4,0,.2,1); }
+
+    /* ── mobile carousel: 1 card at a time ── */
+    .mslide { min-width:100%; }
+
+    /* ── scrollbar ── */
+    ::-webkit-scrollbar           { width:5px; height:5px; }
+    ::-webkit-scrollbar-track     { background:transparent; }
+    ::-webkit-scrollbar-thumb     { background:#d1d5db; border-radius:3px; }
+    ::-webkit-scrollbar-thumb:hover{ background:#9ca3af; }
+
+    /* ── active states ── */
+    .tab-active  { background:#111827!important; color:#fff!important;
+                   border-color:#111827!important; }
+    .filt-active { color:#111827!important; font-weight:700!important;
+                   border-bottom:2px solid #111827; }
+
+    /* ── dark mode overrides ── */
+    html.dark body               { background:#0f172a; color:#e2e8f0; }
+    html.dark .ds-bg             { background:#1e293b!important; }
+    html.dark .ds-border         { border-color:#334155!important; }
+    html.dark .ds-text           { color:#f1f5f9!important; }
+    html.dark .ds-subtext        { color:#94a3b8!important; }
+    html.dark .ds-input          { background:#0f172a!important; border-color:#334155!important; }
+    html.dark .ds-card           { background:#1e293b!important; }
+    html.dark .ds-page           { background:#0f172a!important; }
+    html.dark .ds-tag            { background:#1e293b!important; border-color:#334155!important;
+                                   color:#cbd5e1!important; }
+    html.dark .tab-active        { background:#6366f1!important; }
+    html.dark .filt-active       { color:#a5b4fc!important; border-color:#a5b4fc!important; }
+
+    /* ── safe area for mobile bottom nav ── */
+    .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0); }
+  </style>
+</head>
+
+<body class="bg-gray-50 text-gray-900 ds-page">
+
+<!-- ═══════════════════════════════════════════════
+     LEFT SIDEBAR  (desktop ≥ lg)
+═══════════════════════════════════════════════ -->
+<aside id="left-sidebar"
+  class="hidden lg:flex flex-col w-40 bg-white ds-bg ds-border border-r border-gray-100
+         fixed top-0 left-0 h-full z-30 overflow-y-auto">
+
+  <!-- logo -->
+  <div class="px-4 pt-4 pb-2">
+    <span class="text-2xl font-black tracking-tight ds-text">DCXE</span>
+  </div>
+
+  <!-- main nav -->
+  <nav class="px-2 mt-1 space-y-0.5">
+    <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-lg bg-indigo-50 text-indigo-600 text-sm font-semibold">
+      <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>
+      首页
+    </a>
+    <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-gray-600 ds-subtext hover:bg-gray-50 ds-card">
+      <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+      图片
+    </a>
+    <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-gray-600 ds-subtext hover:bg-gray-50 ds-card">
+      <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      视频
+    </a>
+    <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-gray-600 ds-subtext hover:bg-gray-50 ds-card">
+      <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      文章
+    </a>
+    <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-gray-600 ds-subtext hover:bg-gray-50 ds-card">
+      <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      热门话题
+    </a>
+  </nav>
+
+  <!-- categories -->
+  <div class="px-3 mt-4">
+    <p class="text-xs text-gray-400 ds-subtext font-medium mb-1.5 px-1">分类</p>
+    <nav class="space-y-0.5 text-xs">
+      <a href="#" class="flex items-center gap-2 px-2 py-1.5 rounded text-gray-600 ds-subtext hover:bg-gray-50">✦ 二次元</a>
+      <a href="#" class="flex items-center gap-2 px-2 py-1.5 rounded text-gray-600 ds-subtext hover:bg-gray-50">♡ 动漫壁纸</a>
+      <a href="#" class="flex items-center gap-2 px-2 py-1.5 rounded text-gray-600 ds-subtext hover:bg-gray-50">◈ Cosplay</a>
+      <a href="#" class="flex items-center gap-2 px-2 py-1.5 rounded text-gray-600 ds-subtext hover:bg-gray-50">◎ 写真美图</a>
+      <a href="#" class="flex items-center gap-2 px-2 py-1.5 rounded text-gray-600 ds-subtext hover:bg-gray-50">◆ 游戏CG</a>
+      <a href="#" class="flex items-center gap-2 px-2 py-1.5 rounded text-gray-600 ds-subtext hover:bg-gray-50">◇ 风景建筑</a>
+      <a href="#" class="flex items-center gap-2 px-2 py-1.5 rounded text-gray-600 ds-subtext hover:bg-gray-50 font-medium">··· 更多分类</a>
+    </nav>
+  </div>
+
+  <!-- user -->
+  <div class="px-3 mt-4">
+    <p class="text-xs text-gray-400 ds-subtext font-medium mb-1.5 px-1">我的</p>
+    <nav class="space-y-0.5 text-xs">
+      <a href="#" class="flex items-center gap-2 px-2 py-1.5 rounded text-gray-600 ds-subtext hover:bg-gray-50">
+        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+        收藏
+      </a>
+      <a href="#" class="flex items-center gap-2 px-2 py-1.5 rounded text-gray-600 ds-subtext hover:bg-gray-50">
+        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        历史浏览
+      </a>
+      <a href="#" class="flex items-center gap-2 px-2 py-1.5 rounded text-gray-600 ds-subtext hover:bg-gray-50">
+        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+        我的发布
+      </a>
+    </nav>
+  </div>
+
+  <!-- upload CTA -->
+  <div class="p-3 mt-auto">
+    <button class="w-full bg-gray-900 text-white rounded-xl py-2.5 text-sm font-medium
+                   hover:bg-gray-700 transition-colors text-center">
+      <div class="flex items-center justify-center gap-1.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+        上传创作
+      </div>
+      <div class="text-xs text-gray-400 mt-0.5">分享你的作品</div>
+    </button>
+  </div>
+</aside>
+
+<!-- ═══════════════════════════════════════════════
+     MAIN WRAPPER  (offset by left sidebar on desktop)
+═══════════════════════════════════════════════ -->
+<div class="lg:ml-40 flex flex-col min-h-screen">
+
+  <!-- ── DESKTOP TOP HEADER ── -->
+  <header class="hidden lg:flex items-center gap-4 px-5 py-3 bg-white ds-bg ds-border
+                 border-b border-gray-100 sticky top-0 z-20">
+    <nav class="flex items-center gap-6 shrink-0">
+      <a href="#" class="text-sm font-bold text-gray-900 ds-text border-b-2 border-gray-900 pb-0.5">首页</a>
+      <a href="#" class="text-sm text-gray-500 ds-subtext hover:text-gray-900">图片</a>
+      <a href="#" class="text-sm text-gray-500 ds-subtext hover:text-gray-900">视频</a>
+      <a href="#" class="text-sm text-gray-500 ds-subtext hover:text-gray-900">文章</a>
+    </nav>
+    <!-- search -->
+    <div class="flex-1 max-w-md ml-4">
+      <div class="relative">
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
+             fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        <input type="text" placeholder="搜索图片、视频、文章、用户..."
+               class="ds-input w-full pl-9 pr-4 py-2 text-sm bg-gray-100 border border-gray-200
+                      rounded-full focus:outline-none focus:border-indigo-400 focus:bg-white
+                      transition-colors">
+      </div>
+    </div>
+    <!-- actions -->
+    <div class="flex items-center gap-2 ml-auto shrink-0">
+      <button class="bg-gray-900 text-white px-4 py-2 rounded-full text-sm font-medium
+                     hover:bg-gray-700 transition-colors">
+        登录 / 注册
+      </button>
+      <button id="theme-btn" onclick="toggleDark()"
+              class="w-9 h-9 flex items-center justify-center rounded-full
+                     hover:bg-gray-100 transition-colors text-gray-600 ds-subtext">
+        <!-- sun icon -->
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707
+                   m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ── MOBILE TOP HEADER ── -->
+  <header class="lg:hidden flex items-center px-4 py-3 bg-white ds-bg ds-border
+                 border-b border-gray-100 sticky top-0 z-20">
+    <button onclick="toggleDrawer()" class="mr-3 text-gray-600 ds-subtext">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+    </button>
+    <span class="text-xl font-black flex-1 ds-text">DCXE</span>
+    <button class="mr-3 text-gray-500 ds-subtext">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+      </svg>
+    </button>
+    <button class="bg-gray-900 text-white px-3 py-1.5 rounded-full text-xs font-medium">登录</button>
+  </header>
+
+  <!-- ── CONTENT + RIGHT SIDEBAR row ── -->
+  <div class="flex flex-1 min-h-0">
+
+    <!-- ════════════════ MAIN CONTENT ════════════════ -->
+    <main class="flex-1 min-w-0 p-4 lg:p-5">
+
+      <!-- ── Featured Carousel (desktop: 3-up, mobile: single) ── -->
+      <!-- DESKTOP version -->
+      <div class="hidden sm:flex gap-3 mb-5 relative">
+        <!-- card 1 -->
+        <div class="flex-1 relative rounded-xl overflow-hidden h-52 lift">
+          <div class="g1 w-full h-full"></div>
+          <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
+          <span class="absolute top-3 left-3 bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded-full">精选</span>
+          <div class="absolute bottom-0 left-0 right-0 p-3">
+            <div class="flex items-center gap-1.5 mb-1">
+              <div class="w-5 h-5 rounded-full g4 shrink-0"></div>
+              <span class="text-xs text-white/80">admin</span>
+            </div>
+            <h3 class="text-white font-semibold text-sm leading-tight">春日樱花下的少女</h3>
+            <div class="flex items-center gap-1 mt-1">
+              <svg class="w-3 h-3 text-red-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/></svg>
+              <span class="text-white/80 text-xs">3.2k</span>
+            </div>
+          </div>
+        </div>
+        <!-- card 2 -->
+        <div class="flex-1 relative rounded-xl overflow-hidden h-52 lift">
+          <div class="g2 w-full h-full"></div>
+          <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
+          <span class="absolute top-3 left-3 bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded-full">精选</span>
+          <div class="absolute bottom-0 left-0 right-0 p-3">
+            <div class="flex items-center gap-1.5 mb-1">
+              <div class="w-5 h-5 rounded-full g5 shrink-0"></div>
+              <span class="text-xs text-white/80">admin</span>
+            </div>
+            <h3 class="text-white font-semibold text-sm leading-tight">赛博朋克风景</h3>
+            <div class="flex items-center gap-1 mt-1">
+              <svg class="w-3 h-3 text-red-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/></svg>
+              <span class="text-white/80 text-xs">2.7k</span>
+            </div>
+          </div>
+        </div>
+        <!-- card 3 -->
+        <div class="flex-1 relative rounded-xl overflow-hidden h-52 lift">
+          <div class="g3 w-full h-full"></div>
+          <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
+          <span class="absolute top-3 left-3 bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded-full">精选</span>
+          <div class="absolute bottom-0 left-0 right-0 p-3">
+            <div class="flex items-center gap-1.5 mb-1">
+              <div class="w-5 h-5 rounded-full g9 shrink-0"></div>
+              <span class="text-xs text-white/80">admin</span>
+            </div>
+            <h3 class="text-white font-semibold text-sm leading-tight">可爱猫咪日常</h3>
+            <div class="flex items-center gap-1 mt-1">
+              <svg class="w-3 h-3 text-red-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/></svg>
+              <span class="text-white/80 text-xs">1.8k</span>
+            </div>
+          </div>
+        </div>
+        <!-- desktop arrows -->
+        <button onclick="/* decorative */" class="absolute left-1 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/85 hover:bg-white rounded-full flex items-center justify-center shadow-md transition-colors z-10">
+          <svg class="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        </button>
+        <button onclick="/* decorative */" class="absolute right-1 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/85 hover:bg-white rounded-full flex items-center justify-center shadow-md transition-colors z-10">
+          <svg class="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </button>
+        <!-- dots -->
+        <div class="absolute bottom-2.5 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+          <span class="w-5 h-1.5 bg-white rounded-full opacity-90"></span>
+          <span class="w-1.5 h-1.5 bg-white rounded-full opacity-50"></span>
+          <span class="w-1.5 h-1.5 bg-white rounded-full opacity-50"></span>
+        </div>
+      </div>
+
+      <!-- MOBILE carousel (single card, sliding) -->
+      <div class="sm:hidden relative overflow-hidden rounded-xl mb-5" id="mcarousel">
+        <div class="ctrack" id="mtrack">
+          <!-- slide 1 -->
+          <div class="mslide relative h-52">
+            <div class="g1 w-full h-full rounded-xl"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent rounded-xl"></div>
+            <span class="absolute top-3 left-3 bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded-full">精选</span>
+            <div class="absolute bottom-0 left-0 right-0 p-3">
+              <div class="flex items-center gap-1.5 mb-1"><div class="w-5 h-5 rounded-full g4"></div><span class="text-xs text-white/80">admin</span></div>
+              <h3 class="text-white font-semibold text-sm">春日樱花下的少女</h3>
+              <div class="flex items-center gap-1 mt-1"><svg class="w-3 h-3 text-red-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/></svg><span class="text-white/80 text-xs">3.2k</span></div>
+            </div>
+          </div>
+          <!-- slide 2 -->
+          <div class="mslide relative h-52">
+            <div class="g2 w-full h-full rounded-xl"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent rounded-xl"></div>
+            <span class="absolute top-3 left-3 bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded-full">精选</span>
+            <div class="absolute bottom-0 left-0 right-0 p-3">
+              <div class="flex items-center gap-1.5 mb-1"><div class="w-5 h-5 rounded-full g5"></div><span class="text-xs text-white/80">admin</span></div>
+              <h3 class="text-white font-semibold text-sm">赛博朋克风景</h3>
+              <div class="flex items-center gap-1 mt-1"><svg class="w-3 h-3 text-red-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/></svg><span class="text-white/80 text-xs">2.7k</span></div>
+            </div>
+          </div>
+          <!-- slide 3 -->
+          <div class="mslide relative h-52">
+            <div class="g3 w-full h-full rounded-xl"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent rounded-xl"></div>
+            <span class="absolute top-3 left-3 bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded-full">精选</span>
+            <div class="absolute bottom-0 left-0 right-0 p-3">
+              <div class="flex items-center gap-1.5 mb-1"><div class="w-5 h-5 rounded-full g9"></div><span class="text-xs text-white/80">admin</span></div>
+              <h3 class="text-white font-semibold text-sm">可爱猫咪日常</h3>
+              <div class="flex items-center gap-1 mt-1"><svg class="w-3 h-3 text-red-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/></svg><span class="text-white/80 text-xs">1.8k</span></div>
+            </div>
+          </div>
+        </div>
+        <!-- mobile arrows -->
+        <button onclick="mPrev()" class="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow-md z-10">
+          <svg class="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        </button>
+        <button onclick="mNext()" class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow-md z-10">
+          <svg class="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </button>
+        <!-- mobile dots -->
+        <div class="absolute bottom-2.5 left-1/2 -translate-x-1/2 flex gap-1.5 z-10" id="mdots">
+          <button class="mdot w-5 h-1.5 bg-white rounded-full opacity-90 transition-all" data-i="0"></button>
+          <button class="mdot w-1.5 h-1.5 bg-white rounded-full opacity-50 transition-all" data-i="1"></button>
+          <button class="mdot w-1.5 h-1.5 bg-white rounded-full opacity-50 transition-all" data-i="2"></button>
+        </div>
+      </div>
+
+      <!-- ── Content type tabs ── -->
+      <div class="flex gap-2 mb-5 overflow-x-auto pb-1 no-scrollbar">
+        <button class="tab-btn tab-active flex items-center gap-1.5 px-4 py-2 rounded-full text-sm
+                       font-medium transition-colors bg-gray-900 text-white whitespace-nowrap"
+                onclick="switchTab(this)">
+          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14"/></svg>
+          图片
+        </button>
+        <button class="tab-btn flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium
+                       transition-colors bg-white ds-card text-gray-600 ds-subtext border border-gray-200
+                       ds-border hover:border-gray-400 whitespace-nowrap"
+                onclick="switchTab(this)">
+          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/></svg>
+          视频
+        </button>
+        <button class="tab-btn flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium
+                       transition-colors bg-white ds-card text-gray-600 ds-subtext border border-gray-200
+                       ds-border hover:border-gray-400 whitespace-nowrap"
+                onclick="switchTab(this)">
+          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          文章
+        </button>
+        <button class="tab-btn flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium
+                       transition-colors bg-white ds-card text-gray-600 ds-subtext border border-gray-200
+                       ds-border hover:border-gray-400 whitespace-nowrap"
+                onclick="switchTab(this)">
+          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
+          热门话题
+        </button>
+      </div>
+
+      <!-- ── Recommended Content ── -->
+      <section class="mb-6">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-base font-bold ds-text flex items-center gap-2">
+            <span class="w-1 h-4 bg-indigo-500 rounded-full"></span>推荐内容
+          </h2>
+          <a href="#" class="text-sm text-gray-500 ds-subtext hover:text-indigo-500 flex items-center gap-0.5">
+            查看更多 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+        <!-- filter tabs -->
+        <div class="flex items-center gap-5 mb-3">
+          <button class="filt-btn filt-active text-sm font-bold text-gray-900 ds-text border-b-2 border-gray-900 ds-border pb-0.5" onclick="switchFilt(this)">推荐</button>
+          <button class="filt-btn text-sm text-gray-400 ds-subtext hover:text-gray-700 pb-0.5" onclick="switchFilt(this)">最新</button>
+          <button class="filt-btn text-sm text-gray-400 ds-subtext hover:text-gray-700 pb-0.5" onclick="switchFilt(this)">最热</button>
+        </div>
+
+        <!-- card grid row 1 -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-3">
+          <!-- card -->
+          <div class="ds-card bg-white rounded-xl overflow-hidden lift shadow-sm">
+            <div class="relative h-36"><div class="g10 w-full h-full"></div>
+              <span class="absolute top-2 left-2 bg-green-500 text-white text-xs font-bold px-1.5 py-0.5 rounded">NEW</span></div>
+            <div class="p-2.5">
+              <h4 class="text-sm font-medium ds-text mb-2 truncate">紫发少女壁纸</h4>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-1"><div class="w-4 h-4 rounded-full g1 shrink-0"></div><span class="text-xs text-gray-500 ds-subtext">admin</span></div>
+                <div class="flex items-center gap-2 text-gray-400 ds-subtext">
+                  <span class="flex items-center gap-0.5 text-xs"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>3.1k</span>
+                  <span class="flex items-center gap-0.5 text-xs"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>28</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- card -->
+          <div class="ds-card bg-white rounded-xl overflow-hidden lift shadow-sm">
+            <div class="relative h-36"><div class="g11 w-full h-full"></div>
+              <span class="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded">HOT</span></div>
+            <div class="p-2.5">
+              <h4 class="text-sm font-medium ds-text mb-2 truncate">城市街拍写真</h4>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-1"><div class="w-4 h-4 rounded-full g2 shrink-0"></div><span class="text-xs text-gray-500 ds-subtext">admin</span></div>
+                <div class="flex items-center gap-2 text-gray-400 ds-subtext">
+                  <span class="flex items-center gap-0.5 text-xs"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>2.6k</span>
+                  <span class="flex items-center gap-0.5 text-xs"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>18</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- card -->
+          <div class="ds-card bg-white rounded-xl overflow-hidden lift shadow-sm">
+            <div class="relative h-36"><div class="g6 w-full h-full"></div>
+              <span class="absolute top-2 left-2 bg-green-500 text-white text-xs font-bold px-1.5 py-0.5 rounded">NEW</span></div>
+            <div class="p-2.5">
+              <h4 class="text-sm font-medium ds-text mb-2 truncate">异世界风景插画</h4>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-1"><div class="w-4 h-4 rounded-full g6 shrink-0"></div><span class="text-xs text-gray-500 ds-subtext">admin</span></div>
+                <div class="flex items-center gap-2 text-gray-400 ds-subtext">
+                  <span class="flex items-center gap-0.5 text-xs"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>1.9k</span>
+                  <span class="flex items-center gap-0.5 text-xs"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>12</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- card -->
+          <div class="ds-card bg-white rounded-xl overflow-hidden lift shadow-sm">
+            <div class="relative h-36"><div class="g7 w-full h-full"></div>
+              <span class="absolute top-2 left-2 bg-green-500 text-white text-xs font-bold px-1.5 py-0.5 rounded">NEW</span></div>
+            <div class="p-2.5">
+              <h4 class="text-sm font-medium ds-text mb-2 truncate">JK制服日常</h4>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-1"><div class="w-4 h-4 rounded-full g7 shrink-0"></div><span class="text-xs text-gray-500 ds-subtext">admin</span></div>
+                <div class="flex items-center gap-2 text-gray-400 ds-subtext">
+                  <span class="flex items-center gap-0.5 text-xs"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>1.5k</span>
+                  <span class="flex items-center gap-0.5 text-xs"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>10</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- card grid row 2 (mixed: images, videos, article) -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+          <!-- image -->
+          <div class="ds-card bg-white rounded-xl overflow-hidden lift shadow-sm">
+            <div class="relative h-36"><div class="g12 w-full h-full"></div>
+              <span class="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded">HOT</span></div>
+            <div class="p-2.5">
+              <h4 class="text-sm font-medium ds-text mb-2 truncate">可爱角色cosplay</h4>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-1"><div class="w-4 h-4 rounded-full g12 shrink-0"></div><span class="text-xs text-gray-500 ds-subtext">admin</span></div>
+                <div class="flex items-center gap-2 text-gray-400 ds-subtext">
+                  <span class="flex items-center gap-0.5 text-xs"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>3.7k</span>
+                  <span class="flex items-center gap-0.5 text-xs"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>32</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- video -->
+          <div class="ds-card bg-white rounded-xl overflow-hidden lift shadow-sm">
+            <div class="relative h-36"><div class="g8 w-full h-full"></div>
+              <span class="absolute top-2 left-2 bg-green-500 text-white text-xs font-bold px-1.5 py-0.5 rounded">NEW</span>
+              <span class="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-1.5 py-0.5 rounded">04:32</span>
+            </div>
+            <div class="p-2.5">
+              <h4 class="text-sm font-medium ds-text mb-2 truncate">赛博朋克城市夜景</h4>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-1"><div class="w-4 h-4 rounded-full g8 shrink-0"></div><span class="text-xs text-gray-500 ds-subtext">admin</span></div>
+                <div class="flex items-center gap-2 text-gray-400 ds-subtext">
+                  <span class="flex items-center gap-0.5 text-xs"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>2.2k</span>
+                  <span class="flex items-center gap-0.5 text-xs"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>16</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- video 2 -->
+          <div class="ds-card bg-white rounded-xl overflow-hidden lift shadow-sm">
+            <div class="relative h-36"><div class="g3 w-full h-full"></div>
+              <span class="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded">HOT</span>
+              <span class="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-1.5 py-0.5 rounded">01:12</span>
+            </div>
+            <div class="p-2.5">
+              <h4 class="text-sm font-medium ds-text mb-2 truncate">猫咪的治愈时光</h4>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-1"><div class="w-4 h-4 rounded-full g3 shrink-0"></div><span class="text-xs text-gray-500 ds-subtext">admin</span></div>
+                <div class="flex items-center gap-2 text-gray-400 ds-subtext">
+                  <span class="flex items-center gap-0.5 text-xs"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>1.8k</span>
+                  <span class="flex items-center gap-0.5 text-xs"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>9</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- article -->
+          <div class="ds-card bg-white rounded-xl overflow-hidden lift shadow-sm">
+            <div class="p-3 flex flex-col h-full min-h-[168px]">
+              <span class="self-start bg-green-500 text-white text-xs font-bold px-1.5 py-0.5 rounded mb-2">NEW</span>
+              <h4 class="text-sm font-semibold ds-text mb-2 leading-snug">如何拍出好看的日系写真？</h4>
+              <p class="text-xs text-gray-500 ds-subtext leading-relaxed flex-1 line-clamp-3">分享一些拍摄技巧和场景选择，帮助拍出更自然的日系写真效果...</p>
+              <div class="flex items-center justify-between mt-3">
+                <div class="flex items-center gap-1"><div class="w-4 h-4 rounded-full g1 shrink-0"></div><span class="text-xs text-gray-500 ds-subtext">admin</span></div>
+                <div class="flex items-center gap-2 text-gray-400 ds-subtext">
+                  <span class="text-xs flex items-center gap-0.5"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>1.2k</span>
+                  <span class="text-xs">2024-05-06</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Hot Topics ── -->
+      <section class="mb-6">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-base font-bold ds-text flex items-center gap-2">
+            <span class="w-1 h-4 bg-indigo-500 rounded-full"></span>热门话题
+          </h2>
+          <a href="#" class="text-sm text-gray-500 ds-subtext hover:text-indigo-500 flex items-center gap-0.5">
+            查看更多 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <a href="#" class="ds-tag px-3 py-1.5 bg-white rounded-full text-sm text-gray-700 border border-gray-200 hover:border-indigo-400 hover:text-indigo-600 transition-colors"># 二次元</a>
+          <a href="#" class="ds-tag px-3 py-1.5 bg-white rounded-full text-sm text-gray-700 border border-gray-200 hover:border-indigo-400 hover:text-indigo-600 transition-colors"># Cosplay</a>
+          <a href="#" class="ds-tag px-3 py-1.5 bg-white rounded-full text-sm text-gray-700 border border-gray-200 hover:border-indigo-400 hover:text-indigo-600 transition-colors"># 壁纸</a>
+          <a href="#" class="ds-tag px-3 py-1.5 bg-white rounded-full text-sm text-gray-700 border border-gray-200 hover:border-indigo-400 hover:text-indigo-600 transition-colors"># 写真</a>
+          <a href="#" class="ds-tag px-3 py-1.5 bg-white rounded-full text-sm text-gray-700 border border-gray-200 hover:border-indigo-400 hover:text-indigo-600 transition-colors"># 插画</a>
+          <a href="#" class="ds-tag px-3 py-1.5 bg-white rounded-full text-sm text-gray-700 border border-gray-200 hover:border-indigo-400 hover:text-indigo-600 transition-colors"># 游戏CG</a>
+          <a href="#" class="ds-tag px-3 py-1.5 bg-white rounded-full text-sm text-gray-700 border border-gray-200 hover:border-indigo-400 hover:text-indigo-600 transition-colors"># 旅行</a>
+          <a href="#" class="ds-tag px-3 py-1.5 bg-white rounded-full text-sm text-gray-700 border border-gray-200 hover:border-indigo-400 hover:text-indigo-600 transition-colors"># 摄影</a>
+        </div>
+      </section>
+
+      <!-- ── Footer ── -->
+      <footer class="border-t border-gray-100 ds-border pt-4 pb-24 lg:pb-5">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-gray-400 ds-subtext">
+          <span>© 2024 DCXE. All rights reserved.</span>
+          <div class="flex flex-wrap justify-center gap-4">
+            <a href="#" class="hover:text-gray-600">关于我们</a>
+            <a href="#" class="hover:text-gray-600">用户协议</a>
+            <a href="#" class="hover:text-gray-600">隐私政策</a>
+            <a href="#" class="hover:text-gray-600">帮助中心</a>
+          </div>
+        </div>
+      </footer>
+
+    </main>
+
+    <!-- ════════════════ RIGHT SIDEBAR (≥ xl) ════════════════ -->
+    <aside class="hidden xl:block w-72 shrink-0 p-4 border-l border-gray-100 ds-border
+                  bg-white ds-bg overflow-y-auto">
+
+      <!-- mini featured carousel -->
+      <div class="mb-4">
+        <div class="flex gap-1.5">
+          <div class="flex-1 relative rounded-lg overflow-hidden h-24 cursor-pointer lift">
+            <div class="g1 w-full h-full"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent"></div>
+            <span class="absolute top-1.5 left-1.5 bg-yellow-400 text-black font-bold rounded-full px-1.5 py-0.5" style="font-size:10px">精选</span>
+            <div class="absolute bottom-0 left-0 right-0 p-1.5">
+              <p class="text-white font-medium truncate" style="font-size:11px">春日樱花下...</p>
+              <div class="flex items-center gap-1 mt-0.5">
+                <div class="w-3 h-3 rounded-full g4 shrink-0"></div>
+                <span class="text-white/70" style="font-size:10px">admin</span>
+                <svg class="w-2.5 h-2.5 text-red-300 ml-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/></svg>
+                <span class="text-white/70" style="font-size:10px">3.2k</span>
+              </div>
+            </div>
+          </div>
+          <div class="flex-1 relative rounded-lg overflow-hidden h-24 cursor-pointer lift">
+            <div class="g2 w-full h-full"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent"></div>
+            <span class="absolute top-1.5 left-1.5 bg-yellow-400 text-black font-bold rounded-full px-1.5 py-0.5" style="font-size:10px">精选</span>
+            <div class="absolute bottom-0 left-0 right-0 p-1.5">
+              <p class="text-white font-medium truncate" style="font-size:11px">赛博朋克风景</p>
+              <div class="flex items-center gap-1 mt-0.5">
+                <div class="w-3 h-3 rounded-full g5 shrink-0"></div>
+                <span class="text-white/70" style="font-size:10px">admin</span>
+                <svg class="w-2.5 h-2.5 text-red-300 ml-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/></svg>
+                <span class="text-white/70" style="font-size:10px">2.7k</span>
+              </div>
+            </div>
+          </div>
+          <div class="flex-1 relative rounded-lg overflow-hidden h-24 cursor-pointer lift">
+            <div class="g3 w-full h-full"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent"></div>
+            <span class="absolute top-1.5 left-1.5 bg-yellow-400 text-black font-bold rounded-full px-1.5 py-0.5" style="font-size:10px">精选</span>
+            <div class="absolute bottom-0 left-0 right-0 p-1.5">
+              <p class="text-white font-medium truncate" style="font-size:11px">可爱猫咪日常</p>
+              <div class="flex items-center gap-1 mt-0.5">
+                <div class="w-3 h-3 rounded-full g9 shrink-0"></div>
+                <span class="text-white/70" style="font-size:10px">admin</span>
+                <svg class="w-2.5 h-2.5 text-red-300 ml-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/></svg>
+                <span class="text-white/70" style="font-size:10px">1.8k</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="flex justify-center gap-1 mt-2">
+          <span class="w-4 h-1 bg-gray-400 rounded-full"></span>
+          <span class="w-1 h-1 bg-gray-200 rounded-full"></span>
+          <span class="w-1 h-1 bg-gray-200 rounded-full"></span>
+          <span class="w-1 h-1 bg-gray-200 rounded-full"></span>
+        </div>
+      </div>
+
+      <!-- right content tabs -->
+      <div class="flex border-b border-gray-100 ds-border mb-4">
+        <button class="flex-1 py-2 text-xs font-semibold text-indigo-600 border-b-2 border-indigo-600">图片</button>
+        <button class="flex-1 py-2 text-xs text-gray-500 ds-subtext hover:text-gray-700">视频</button>
+        <button class="flex-1 py-2 text-xs text-gray-500 ds-subtext hover:text-gray-700">文章</button>
+        <button class="flex-1 py-2 text-xs text-gray-500 ds-subtext hover:text-gray-700">话题</button>
+      </div>
+
+      <!-- right recommended -->
+      <div>
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="text-sm font-bold ds-text">推荐内容</h3>
+          <a href="#" class="text-xs text-gray-400 hover:text-indigo-500 flex items-center gap-0.5">查看更多 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></a>
+        </div>
+        <div class="flex gap-3 mb-3">
+          <button class="text-xs font-bold text-gray-900 ds-text border-b border-gray-900 ds-border">推荐</button>
+          <button class="text-xs text-gray-400 ds-subtext hover:text-gray-700">最新</button>
+          <button class="text-xs text-gray-400 ds-subtext hover:text-gray-700">最热</button>
+        </div>
+
+        <!-- right card grid -->
+        <div class="grid grid-cols-2 gap-2">
+          <!-- right card macro (repeated 6 times) -->
+          <div class="ds-card bg-gray-50 rounded-lg overflow-hidden lift">
+            <div class="relative h-20"><div class="g10 w-full h-full"></div>
+              <span class="absolute top-1.5 left-1.5 bg-green-500 text-white font-bold rounded px-1 py-0.5" style="font-size:10px">NEW</span></div>
+            <div class="p-2">
+              <p class="font-medium ds-text truncate mb-1" style="font-size:11px">紫发少女壁纸</p>
+              <div class="flex items-center gap-1"><div class="w-3 h-3 rounded-full g1 shrink-0"></div><span class="text-gray-400 ds-subtext" style="font-size:10px">admin</span></div>
+              <div class="flex items-center gap-1.5 mt-1 text-gray-400 ds-subtext">
+                <span class="flex items-center gap-0.5" style="font-size:10px"><svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>3.1k</span>
+                <span class="flex items-center gap-0.5" style="font-size:10px"><svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>28</span>
+              </div>
+            </div>
+          </div>
+          <div class="ds-card bg-gray-50 rounded-lg overflow-hidden lift">
+            <div class="relative h-20"><div class="g11 w-full h-full"></div>
+              <span class="absolute top-1.5 left-1.5 bg-red-500 text-white font-bold rounded px-1 py-0.5" style="font-size:10px">HOT</span></div>
+            <div class="p-2">
+              <p class="font-medium ds-text truncate mb-1" style="font-size:11px">城市街拍写真</p>
+              <div class="flex items-center gap-1"><div class="w-3 h-3 rounded-full g2 shrink-0"></div><span class="text-gray-400 ds-subtext" style="font-size:10px">admin</span></div>
+              <div class="flex items-center gap-1.5 mt-1 text-gray-400 ds-subtext">
+                <span class="flex items-center gap-0.5" style="font-size:10px"><svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>2.6k</span>
+                <span class="flex items-center gap-0.5" style="font-size:10px"><svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>18</span>
+              </div>
+            </div>
+          </div>
+          <div class="ds-card bg-gray-50 rounded-lg overflow-hidden lift">
+            <div class="relative h-20"><div class="g6 w-full h-full"></div>
+              <span class="absolute top-1.5 left-1.5 bg-green-500 text-white font-bold rounded px-1 py-0.5" style="font-size:10px">NEW</span></div>
+            <div class="p-2">
+              <p class="font-medium ds-text truncate mb-1" style="font-size:11px">异世界风景插画</p>
+              <div class="flex items-center gap-1"><div class="w-3 h-3 rounded-full g6 shrink-0"></div><span class="text-gray-400 ds-subtext" style="font-size:10px">admin</span></div>
+              <div class="flex items-center gap-1.5 mt-1 text-gray-400 ds-subtext">
+                <span style="font-size:10px">👁 1.9k</span>
+                <span style="font-size:10px">💬 12</span>
+              </div>
+            </div>
+          </div>
+          <div class="ds-card bg-gray-50 rounded-lg overflow-hidden lift">
+            <div class="relative h-20"><div class="g7 w-full h-full"></div>
+              <span class="absolute top-1.5 left-1.5 bg-green-500 text-white font-bold rounded px-1 py-0.5" style="font-size:10px">NEW</span></div>
+            <div class="p-2">
+              <p class="font-medium ds-text truncate mb-1" style="font-size:11px">JK制服日常</p>
+              <div class="flex items-center gap-1"><div class="w-3 h-3 rounded-full g7 shrink-0"></div><span class="text-gray-400 ds-subtext" style="font-size:10px">admin</span></div>
+              <div class="flex items-center gap-1.5 mt-1 text-gray-400 ds-subtext">
+                <span style="font-size:10px">👁 1.5k</span>
+                <span style="font-size:10px">💬 10</span>
+              </div>
+            </div>
+          </div>
+          <div class="ds-card bg-gray-50 rounded-lg overflow-hidden lift">
+            <div class="relative h-20"><div class="g12 w-full h-full"></div>
+              <span class="absolute top-1.5 left-1.5 bg-red-500 text-white font-bold rounded px-1 py-0.5" style="font-size:10px">HOT</span></div>
+            <div class="p-2">
+              <p class="font-medium ds-text truncate mb-1" style="font-size:11px">可爱角色cosplay</p>
+              <div class="flex items-center gap-1"><div class="w-3 h-3 rounded-full g12 shrink-0"></div><span class="text-gray-400 ds-subtext" style="font-size:10px">admin</span></div>
+            </div>
+          </div>
+          <div class="ds-card bg-gray-50 rounded-lg overflow-hidden lift">
+            <div class="relative h-20"><div class="g8 w-full h-full"></div>
+              <span class="absolute top-1.5 left-1.5 bg-green-500 text-white font-bold rounded px-1 py-0.5" style="font-size:10px">NEW</span>
+              <span class="absolute bottom-1.5 right-1.5 bg-black/60 text-white rounded px-1" style="font-size:10px">04:32</span>
+            </div>
+            <div class="p-2">
+              <p class="font-medium ds-text truncate mb-1" style="font-size:11px">赛博朋克城市夜景</p>
+              <div class="flex items-center gap-1"><div class="w-3 h-3 rounded-full g8 shrink-0"></div><span class="text-gray-400 ds-subtext" style="font-size:10px">admin</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+  </div><!-- end content+right row -->
+</div><!-- end main wrapper -->
+
+
+<!-- ═══════════════════════════════════════════════
+     MOBILE BOTTOM NAVIGATION
+═══════════════════════════════════════════════ -->
+<nav class="lg:hidden fixed bottom-0 left-0 right-0 bg-white ds-bg ds-border border-t border-gray-200 z-30 pb-safe">
+  <div class="flex h-14">
+    <a href="#" class="flex-1 flex flex-col items-center justify-center text-indigo-600">
+      <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>
+      <span class="text-xs mt-0.5 font-semibold">首页</span>
+    </a>
+    <a href="#" class="flex-1 flex flex-col items-center justify-center text-gray-400 ds-subtext">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+      <span class="text-xs mt-0.5">分类</span>
+    </a>
+    <!-- center placeholder for FAB -->
+    <div class="flex-1"></div>
+    <a href="#" class="flex-1 flex flex-col items-center justify-center text-gray-400 ds-subtext">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+      <span class="text-xs mt-0.5">消息</span>
+    </a>
+    <a href="#" class="flex-1 flex flex-col items-center justify-center text-gray-400 ds-subtext">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+      <span class="text-xs mt-0.5">我的</span>
+    </a>
+  </div>
+</nav>
+
+<!-- floating publish button (mobile) -->
+<button class="lg:hidden fixed z-40 bg-gray-900 text-white rounded-full w-12 h-12
+               flex items-center justify-center shadow-lg hover:bg-gray-700 transition-colors"
+        style="bottom:calc(env(safe-area-inset-bottom,0px) + 3.75rem); left:50%; transform:translateX(-50%)">
+  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+  </svg>
+</button>
+
+<!-- ═══════════════════════════════════════════════
+     MOBILE DRAWER SIDEBAR
+═══════════════════════════════════════════════ -->
+<div id="drawer-overlay"
+     class="lg:hidden fixed inset-0 bg-black/50 z-40 hidden opacity-0 transition-opacity"
+     onclick="closeDrawer()"></div>
+
+<aside id="drawer"
+       class="lg:hidden fixed left-0 top-0 bottom-0 w-64 bg-white ds-bg z-50
+              -translate-x-full transition-transform duration-300 shadow-2xl flex flex-col">
+  <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100 ds-border">
+    <span class="text-xl font-black ds-text">DCXE</span>
+    <button onclick="closeDrawer()" class="text-gray-500 ds-subtext">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <nav class="p-4 space-y-1 flex-1 overflow-y-auto">
+    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-indigo-50 text-indigo-600 text-sm font-semibold">
+      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>
+      首页
+    </a>
+    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-600 ds-subtext hover:bg-gray-50"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14"/></svg>图片</a>
+    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-600 ds-subtext hover:bg-gray-50"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/></svg>视频</a>
+    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-600 ds-subtext hover:bg-gray-50"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>文章</a>
+
+    <div class="pt-3">
+      <p class="text-xs text-gray-400 ds-subtext font-medium px-3 mb-1">分类</p>
+      <a href="#" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-gray-600 ds-subtext hover:bg-gray-50">✦ 二次元</a>
+      <a href="#" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-gray-600 ds-subtext hover:bg-gray-50">♡ 动漫壁纸</a>
+      <a href="#" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-gray-600 ds-subtext hover:bg-gray-50">◈ Cosplay</a>
+      <a href="#" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-gray-600 ds-subtext hover:bg-gray-50">◎ 写真美图</a>
+      <a href="#" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-gray-600 ds-subtext hover:bg-gray-50">◆ 游戏CG</a>
+    </div>
+  </nav>
+  <div class="p-4 border-t border-gray-100 ds-border">
+    <button class="w-full bg-gray-900 text-white rounded-xl py-3 text-sm font-medium hover:bg-gray-700 transition-colors">
+      上传创作
+    </button>
+  </div>
+</aside>
+
+
+<script>
+  /* ── Dark mode ── */
+  function toggleDark() {
+    const html = document.documentElement;
+    html.classList.toggle('dark');
+    const isDark = html.classList.contains('dark');
+    document.getElementById('theme-btn').innerHTML = isDark
+      ? `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>`
+      : `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>`;
+  }
+
+  /* ── Mobile drawer ── */
+  function toggleDrawer() {
+    const drawer  = document.getElementById('drawer');
+    const overlay = document.getElementById('drawer-overlay');
+    drawer.classList.toggle('-translate-x-full');
+    overlay.classList.toggle('hidden');
+    setTimeout(() => overlay.classList.toggle('opacity-0'), 10);
+  }
+  function closeDrawer() {
+    document.getElementById('drawer').classList.add('-translate-x-full');
+    const ov = document.getElementById('drawer-overlay');
+    ov.classList.add('opacity-0');
+    setTimeout(() => ov.classList.add('hidden'), 300);
+  }
+
+  /* ── Content type tabs ── */
+  function switchTab(btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      b.classList.remove('tab-active', 'bg-gray-900', 'text-white');
+      b.classList.add('bg-white', 'ds-card', 'text-gray-600', 'ds-subtext', 'border', 'border-gray-200', 'ds-border');
+    });
+    btn.classList.add('tab-active');
+    btn.classList.remove('bg-white', 'ds-card', 'text-gray-600', 'ds-subtext', 'border', 'border-gray-200', 'ds-border');
+  }
+
+  /* ── Filter tabs ── */
+  function switchFilt(btn) {
+    document.querySelectorAll('.filt-btn').forEach(b => {
+      b.classList.remove('filt-active', 'font-bold', 'text-gray-900', 'ds-text', 'border-b-2', 'border-gray-900', 'ds-border');
+      b.classList.add('text-gray-400', 'ds-subtext');
+    });
+    btn.classList.add('filt-active', 'font-bold', 'text-gray-900', 'ds-text', 'border-b-2', 'border-gray-900', 'ds-border');
+    btn.classList.remove('text-gray-400', 'ds-subtext');
+  }
+
+  /* ── Mobile carousel ── */
+  let mIdx = 0;
+  const mTotal = 3;
+
+  function mUpdate() {
+    document.getElementById('mtrack').style.transform = `translateX(-${mIdx * 100}%)`;
+    document.querySelectorAll('.mdot').forEach((d, i) => {
+      d.style.width  = i === mIdx ? '20px' : '6px';
+      d.style.opacity = i === mIdx ? '0.9'  : '0.5';
+    });
+  }
+  function mNext() { mIdx = (mIdx + 1) % mTotal; mUpdate(); }
+  function mPrev() { mIdx = (mIdx - 1 + mTotal) % mTotal; mUpdate(); }
+
+  document.querySelectorAll('.mdot').forEach(d => {
+    d.addEventListener('click', () => { mIdx = +d.dataset.i; mUpdate(); });
+  });
+
+  setInterval(mNext, 5000);
+</script>
+</body>
+</html>
