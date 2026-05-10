@@ -37,6 +37,7 @@ page-front:
     theme:
       css/pages/front.css: {}
   js:
+    js/front.js: { attributes: { defer: true } }
     js/infinite-scroll.js: { attributes: { defer: true } }
   dependencies:
     - core/drupal

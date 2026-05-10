@@ -1,6 +1,7 @@
 {#
-  page--front.html.twig — 首页专用模板
-  演示 Twig Tweak 大量调用
+  page--front.html.twig — 首页（三栏布局）
+  桌面：左侧固定导航 160px | 主内容区 | 右侧边栏 280px
+  移动：顶部 header + 底部 tabbar + 浮动 FAB
 #}
 <!DOCTYPE html>
 <html{{ html_attributes }}>
@@ -15,174 +16,352 @@
 <body{{ attributes.addClass('xedc-body', 'xedc-body--front') }}>
 {{ page_top }}
 
-{# ── 顶部导航栏 ── #}
-<header class="xedc-navbar" role="banner">
-  <div class="xedc-container xedc-flex xedc-flex-between" style="height:56px;">
-    <a href="{{ url('<front>') }}" class="xedc-navbar__logo" aria-label="{{ site_name }}">
+{# ══════════════════════════════════════════════════════════
+   LEFT SIDEBAR — 桌面端固定左侧 (lg+)
+══════════════════════════════════════════════════════════ #}
+<aside class="xedc-lsidebar" id="xedc-lsidebar" aria-label="侧边导航">
+
+  <div class="xedc-lsidebar__logo">
+    <a href="{{ url('<front>') }}">
       <span class="xedc-navbar__logo-text">{{ site_name }}</span>
     </a>
-    <nav class="xedc-navbar__nav" role="navigation" aria-label="主导航">
-      {{ drupal_menu('main') }}
-    </nav>
-    <div class="xedc-navbar__search">
-      <form action="/search" method="get" role="search">
-        <input type="search" name="q" placeholder="搜索视频、图片、文章..." class="xedc-search-input" aria-label="全站搜索" />
-        <button type="submit" class="xedc-search-btn" aria-label="搜索">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+  </div>
+
+  <nav class="xedc-lsidebar__nav" role="navigation" aria-label="主导航">
+    <a href="{{ url('<front>') }}" class="xedc-lsidebar__navitem is-active">
+      <svg class="xedc-lsidebar__icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M10.55 2.53a2 2 0 0 1 2.9 0l7 7.07A2 2 0 0 1 21 11.07V20a2 2 0 0 1-2 2h-4a1 1 0 0 1-1-1v-4h-4v4a1 1 0 0 1-1 1H5a2 2 0 0 1-2-2v-8.93a2 2 0 0 1 .55-1.38l7-7.07z"/>
+      </svg>
+      首页
+    </a>
+    <a href="/images" class="xedc-lsidebar__navitem">
+      <svg class="xedc-lsidebar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15 16 10 5 21"/>
+      </svg>
+      图片
+    </a>
+    <a href="/videos" class="xedc-lsidebar__navitem">
+      <svg class="xedc-lsidebar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="m16 13 5.223 3.482A1 1 0 0 0 23 15.65V8.35a1 1 0 0 0-1.777-.832L16 11V8a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-3z"/>
+      </svg>
+      视频
+    </a>
+    <a href="/articles" class="xedc-lsidebar__navitem">
+      <svg class="xedc-lsidebar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/>
+      </svg>
+      文章
+    </a>
+    <a href="/topics" class="xedc-lsidebar__navitem">
+      <svg class="xedc-lsidebar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M20.59 13.41 12 22l-8-8V4h10l6.59 9.41z"/><circle cx="7.5" cy="7.5" r="1.5"/>
+      </svg>
+      热门话题
+    </a>
+  </nav>
+
+  <div class="xedc-lsidebar__group">
+    <p class="xedc-lsidebar__group-label">分类</p>
+    <a href="/images?f[0]=category:anime"     class="xedc-lsidebar__catitem">✦ 二次元</a>
+    <a href="/images?f[0]=category:wallpaper" class="xedc-lsidebar__catitem">♡ 动漫壁纸</a>
+    <a href="/images?f[0]=category:cosplay"   class="xedc-lsidebar__catitem">◈ Cosplay</a>
+    <a href="/images?f[0]=category:photo"     class="xedc-lsidebar__catitem">◎ 写真美图</a>
+    <a href="/images?f[0]=category:gamecg"    class="xedc-lsidebar__catitem">◆ 游戏CG</a>
+    <a href="/images?f[0]=category:landscape" class="xedc-lsidebar__catitem">◇ 风景建筑</a>
+    <a href="/categories" class="xedc-lsidebar__catitem xedc-lsidebar__catitem--more">··· 更多分类</a>
+  </div>
+
+  {% if is_logged_in %}
+  <div class="xedc-lsidebar__group">
+    <p class="xedc-lsidebar__group-label">我的</p>
+    <a href="/user/{{ current_user.id() }}?tab=collects" class="xedc-lsidebar__catitem">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      收藏
+    </a>
+    <a href="/user/{{ current_user.id() }}?tab=history" class="xedc-lsidebar__catitem">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      历史浏览
+    </a>
+    <a href="/user/{{ current_user.id() }}?tab=posts" class="xedc-lsidebar__catitem">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
+      我的发布
+    </a>
+  </div>
+  {% endif %}
+
+  <div class="xedc-lsidebar__upload">
+    <a href="/node/add" class="xedc-lsidebar__upload-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="17 8 12 3 7 8"/>
+        <line x1="12" y1="3" x2="12" y2="15"/>
+      </svg>
+      上传创作
+    </a>
+    <span class="xedc-lsidebar__upload-hint">分享你的作品</span>
+  </div>
+
+</aside>
+
+{# 移动端抽屉遮罩 #}
+<div class="xedc-drawer-overlay" id="xedc-drawer-overlay" onclick="xedcCloseDrawer()"></div>
+
+{# ══════════════════════════════════════════════════════════
+   MAIN WRAPPER — 主内容区（桌面偏移 160px）
+══════════════════════════════════════════════════════════ #}
+<div class="xedc-main-wrapper">
+
+  {# ── 桌面 Header ── #}
+  <header class="xedc-navbar xedc-navbar--front" role="banner">
+    <div class="xedc-navbar__inner">
+      <nav class="xedc-navbar__front-nav" role="navigation" aria-label="页面导航">
+        <a href="{{ url('<front>') }}" class="xedc-navbar__front-link is-active">首页</a>
+        <a href="/images"   class="xedc-navbar__front-link">图片</a>
+        <a href="/videos"   class="xedc-navbar__front-link">视频</a>
+        <a href="/articles" class="xedc-navbar__front-link">文章</a>
+      </nav>
+      <div class="xedc-navbar__search">
+        <form action="/search" method="get" role="search">
+          <svg class="xedc-search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
           </svg>
-        </button>
-      </form>
+          <input type="search" name="q" placeholder="搜索图片、视频、文章、用户..." class="xedc-search-input" aria-label="全站搜索"/>
+        </form>
+      </div>
+      <div class="xedc-navbar__tools">
+        {% if is_logged_in %}
+          <a href="/messages" class="xedc-navbar__icon-btn" aria-label="消息通知">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </a>
+        {% else %}
+          <a href="/user/login" class="xedc-btn xedc-btn--default xedc-btn--sm">登录 / 注册</a>
+        {% endif %}
+        {% include 'xedc:theme-toggle' %}
+        {% if is_logged_in %}
+          {% set _hues = [220,280,155,30,340,190,320,55] %}
+          {% set _trigger %}
+            <div class="xedc-navbar__avatar" aria-label="个人中心">
+              {% if current_user_picture %}
+                <img class="xedc-avatar xedc-avatar--sm xedc-avatar--img"
+                     src="{{ current_user_picture }}" alt="{{ current_user_name }}"/>
+              {% else %}
+                <div class="xedc-avatar xedc-avatar--sm"
+                     style="background:oklch(0.62 0.16 {{ _hues[(current_user_name|default('U')|length) % 8] }});">
+                  {{ (current_user_name|default('U'))|slice(0,1)|upper }}
+                </div>
+              {% endif %}
+            </div>
+          {% endset %}
+          {% set _items %}
+            <a class="xedc-dropdown__item" href="/user/{{ current_user.id() }}">👤 个人中心</a>
+            <a class="xedc-dropdown__item" href="/user/{{ current_user.id() }}?tab=history">🕒 浏览历史</a>
+            <a class="xedc-dropdown__item" href="/user/{{ current_user.id() }}?tab=collects">🔖 收藏</a>
+            <div class="xedc-dropdown__separator"></div>
+            <a class="xedc-dropdown__item" href="/user/{{ current_user.id() }}/edit">⚙️ 设置</a>
+            <a class="xedc-dropdown__item xedc-dropdown__item--destructive" href="/user/logout">退出登录</a>
+          {% endset %}
+          {% include 'xedc:dropdown' with {id:'xedc-user-menu',align:'right',trigger:_trigger,items:_items,extra_classes:'xedc-dropdown--user'} only %}
+        {% endif %}
+      </div>
     </div>
-    <div class="xedc-navbar__tools xedc-flex xedc-items-center xedc-gap-2">
-      {% if is_logged_in %}
-        <a href="/messages" class="xedc-navbar__icon-btn" aria-label="消息通知">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-          </svg>
-        </a>
-      {% endif %}
-      {# 主题切换器 #}
+  </header>
+
+  {# ── 移动端 Header ── #}
+  <header class="xedc-mobile-header" role="banner">
+    <button class="xedc-mobile-header__menu" onclick="xedcOpenDrawer()" aria-label="打开菜单">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="3" y1="6"  x2="21" y2="6"/>
+        <line x1="3" y1="12" x2="21" y2="12"/>
+        <line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
+    <a href="{{ url('<front>') }}" class="xedc-navbar__logo-text" style="font-size:var(--text-lg);">{{ site_name }}</a>
+    <div class="xedc-mobile-header__tools">
+      <button class="xedc-navbar__icon-btn" aria-label="搜索"
+              onclick="this.closest('.xedc-mobile-header').nextElementSibling.classList.toggle('is-open')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+      </button>
       {% include 'xedc:theme-toggle' %}
       {% if is_logged_in %}
-        {% set _hues = [220, 280, 155, 30, 340, 190, 320, 55] %}
-        {% set _trigger %}
-          <div class="xedc-navbar__avatar" aria-label="个人中心">
-            {% if current_user_picture %}
-              <img class="xedc-avatar xedc-avatar--sm xedc-avatar--img"
-                   src="{{ current_user_picture }}"
-                   alt="{{ current_user_name }}" />
-            {% else %}
-              <div class="xedc-avatar xedc-avatar--sm"
-                   style="background:oklch(0.62 0.16 {{ _hues[(current_user_name|default('U')|length) % 8] }});">
-                {{ (current_user_name|default('U'))|slice(0,1)|upper }}
-              </div>
-            {% endif %}
-          </div>
-        {% endset %}
-        {% set _items %}
-          <a class="xedc-dropdown__item" href="/user/{{ current_user.id() }}">👤 个人中心</a>
-          <a class="xedc-dropdown__item" href="/user/{{ current_user.id() }}?tab=history">🕒 浏览历史</a>
-          <a class="xedc-dropdown__item" href="/user/{{ current_user.id() }}?tab=collects">🔖 收藏</a>
-          <a class="xedc-dropdown__item" href="/user/{{ current_user.id() }}?tab=posts">✍️ 我的文章</a>
-          <div class="xedc-dropdown__separator"></div>
-          <a class="xedc-dropdown__item" href="/user/{{ current_user.id() }}/edit">⚙️ 设置</a>
-          <a class="xedc-dropdown__item xedc-dropdown__item--destructive" href="/user/logout">退出登录</a>
-        {% endset %}
-        {% include 'xedc:dropdown' with { id: 'xedc-user-menu', align: 'right', trigger: _trigger, items: _items, extra_classes: 'xedc-dropdown--user' } only %}
+        <a href="/user/{{ current_user.id() }}" class="xedc-navbar__icon-btn" aria-label="个人中心">
+          {% if current_user_picture %}
+            <img src="{{ current_user_picture }}" alt="{{ current_user_name }}"
+                 style="width:28px;height:28px;border-radius:50%;object-fit:cover;"/>
+          {% else %}
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/>
+            </svg>
+          {% endif %}
+        </a>
       {% else %}
-        <a href="/user/login" class="xedc-btn xedc-btn--default xedc-btn--sm">登录</a>
+        <a href="/user/login" class="xedc-btn xedc-btn--default xedc-btn--sm" style="font-size:12px;padding:5px 12px;">登录</a>
       {% endif %}
     </div>
+  </header>
+
+  {# 移动端可收起搜索框 #}
+  <div class="xedc-mobile-search" role="search">
+    <form action="/search" method="get">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input type="search" name="q" placeholder="搜索图片、视频、文章..." class="xedc-search-input" aria-label="全站搜索"/>
+    </form>
   </div>
-</header>
 
-{# ── 系统消息 ── #}
-{% if page.highlighted %}
-  <div class="xedc-highlighted xedc-container" role="alert">{{ page.highlighted }}</div>
-{% endif %}
+  {% if page.highlighted %}
+    <div class="xedc-highlighted xedc-container" role="alert">{{ page.highlighted }}</div>
+  {% endif %}
 
-{# ── Banner 轮播区 ── #}
-<section class="xedc-front__banner">
-  <div class="xedc-container">
-    {{ drupal_view('front_banner', 'block_1') }}
-  </div>
-</section>
+  {# ── 内容行：主区 + 右侧栏 ── #}
+  <div class="xedc-content-row">
 
-{# ── 分类快捷导航 ── #}
-<section class="xedc-front__categories">
-  <div class="xedc-container">
-    <div class="xedc-category-nav" id="xedc-category-nav">
-      <a href="/videos" class="xedc-category-nav__item">
-        <span class="xedc-category-nav__icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="m16 13 5.223 3.482A1 1 0 0 0 23 15.65V8.35a1 1 0 0 0-1.777-.832L16 11V8a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-3z"/>
-          </svg>
-        </span>
-        <span>视频</span>
-      </a>
-      <a href="/images" class="xedc-category-nav__item">
-        <span class="xedc-category-nav__icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="3" width="18" height="18" rx="3"/>
-            <circle cx="9" cy="9" r="2"/>
-            <path d="M21 15 16 10 5 21"/>
-          </svg>
-        </span>
-        <span>图片</span>
-      </a>
-      <a href="/articles" class="xedc-category-nav__item">
-        <span class="xedc-category-nav__icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-            <path d="M14 2v6h6"/>
-            <path d="M8 13h8"/>
-            <path d="M8 17h8"/>
-            <path d="M8 9h2"/>
-          </svg>
-        </span>
-        <span>文章</span>
-      </a>
-      <a href="/topics" class="xedc-category-nav__item">
-        <span class="xedc-category-nav__icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M20.59 13.41 12 22l-8-8V4h10l6.59 9.41z"/>
-            <circle cx="7.5" cy="7.5" r="1.5"/>
-          </svg>
-        </span>
-        <span>话题</span>
-      </a>
-    </div>
-  </div>
-</section>
+    {# ═══════════════ 主内容 ═══════════════ #}
+    <main class="xedc-front__main" id="main-content" role="main">
 
-{# ── 主体：推荐流 + 侧边栏 ── #}
-<div class="xedc-front__layout xedc-container">
+      {# Banner 精选区 #}
+      <section class="xedc-front__banner-wrap" aria-label="精选内容">
+        {{ drupal_view('front_banner', 'block_1') }}
+      </section>
 
-  {# 个性化推荐流 #}
-  <main class="xedc-front__main" id="main-content" role="main">
-    <div class="xedc-front__section-title">
-      <h2>推荐内容</h2>
-    </div>
-    {{ drupal_view('front_recommend', 'default') }}
-  </main>
+      {# 内容类型 Tabs #}
+      <nav class="xedc-content-tabs" aria-label="内容类型">
+        <a href="/images" class="xedc-content-tab is-active">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15 16 10 5 21"/></svg>
+          图片
+        </a>
+        <a href="/videos" class="xedc-content-tab">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m16 13 5.223 3.482A1 1 0 0 0 23 15.65V8.35a1 1 0 0 0-1.777-.832L16 11V8a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-3z"/></svg>
+          视频
+        </a>
+        <a href="/articles" class="xedc-content-tab">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8"/></svg>
+          文章
+        </a>
+        <a href="/topics" class="xedc-content-tab">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20.59 13.41 12 22l-8-8V4h10l6.59 9.41z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>
+          热门话题
+        </a>
+      </nav>
 
-  {# 右侧边栏（PC端）#}
-  <aside class="xedc-front__sidebar" role="complementary">
+      {# 推荐内容 #}
+      <section class="xedc-front__section">
+        <div class="xedc-front__section-hd">
+          <h2 class="xedc-section-title">推荐内容</h2>
+          <div class="xedc-filter-tabs" id="xedc-filter-tabs">
+            <button class="xedc-filter-tab is-active" data-filter="recommend">推荐</button>
+            <button class="xedc-filter-tab" data-filter="latest">最新</button>
+            <button class="xedc-filter-tab" data-filter="hot">最热</button>
+          </div>
+          <a href="/images" class="xedc-more-link">
+            查看更多
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+          </a>
+        </div>
+        {{ drupal_view('front_recommend', 'default') }}
+      </section>
 
-    {# 实时热榜 TOP10 #}
-    <div class="xedc-sidebar__widget">
-      <h3 class="xedc-sidebar__title">🔥 热门榜单</h3>
-      {{ drupal_view('hot_rank', 'block_1') }}
-    </div>
+      {# 热门话题 #}
+      <section class="xedc-front__section">
+        <div class="xedc-front__section-hd">
+          <h2 class="xedc-section-title">热门话题</h2>
+          <a href="/topics" class="xedc-more-link">
+            查看更多
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+          </a>
+        </div>
+        <div class="xedc-topics-wrap">
+          {{ drupal_view('hot_topics', 'block_1') }}
+        </div>
+      </section>
 
-    {# 未登录显示登录引导 #}
-    {% if not is_logged_in %}
-      <div class="xedc-sidebar__widget xedc-sidebar__login">
-        <h3 class="xedc-sidebar__title">加入我们</h3>
-        <p class="xedc-text-sm xedc-text-muted">登录后享受个性化推荐</p>
-        <div class="xedc-flex xedc-gap-2" style="margin-top: var(--space-3);">
-          <a href="/user/login" class="xedc-btn xedc-btn--default xedc-btn--sm">登录</a>
-          <a href="/user/register" class="xedc-btn xedc-btn--outline xedc-btn--sm">注册</a>
+      {# Footer #}
+      <footer class="xedc-footer" role="contentinfo">
+        <div class="xedc-footer__inner">
+          <p class="xedc-text-xs xedc-text-muted">© {{ "now"|date("Y") }} {{ site_name }}. All rights reserved.</p>
+          <nav class="xedc-footer__nav" aria-label="底部链接">{{ drupal_menu('footer') }}</nav>
+        </div>
+      </footer>
+
+    </main>
+
+    {# ═══════════════ 右侧边栏 (xl+) ═══════════════ #}
+    <aside class="xedc-rsidebar" role="complementary" aria-label="推荐内容边栏">
+
+      {# 精选迷你轮播（复用 banner view，CSS 控制小样式）#}
+      <div class="xedc-rsidebar__banner">
+        {{ drupal_view('front_banner', 'block_1') }}
+      </div>
+
+      {# 内容类型 tabs #}
+      <nav class="xedc-rsidebar__tabs" aria-label="内容类型">
+        <a href="/images"   class="xedc-rsidebar__tab is-active">图片</a>
+        <a href="/videos"   class="xedc-rsidebar__tab">视频</a>
+        <a href="/articles" class="xedc-rsidebar__tab">文章</a>
+        <a href="/topics"   class="xedc-rsidebar__tab">话题</a>
+      </nav>
+
+      {# 推荐卡片 2 列 #}
+      <div class="xedc-rsidebar__section">
+        <div class="xedc-rsidebar__hd">
+          <h3 class="xedc-rsidebar__title">推荐内容</h3>
+          <div class="xedc-rsidebar__filters">
+            <button class="xedc-rsidebar__filter is-active">推荐</button>
+            <button class="xedc-rsidebar__filter">最新</button>
+            <button class="xedc-rsidebar__filter">最热</button>
+          </div>
+          <a href="/images" class="xedc-more-link" style="font-size:11px;">查看更多 ›</a>
+        </div>
+        <div class="xedc-rsidebar__feed">
+          {{ drupal_view('front_recommend', 'default') }}
         </div>
       </div>
-    {% endif %}
 
-  </aside>
-</div>
+    </aside>
 
-{# ── Footer ── #}
-<footer class="xedc-footer" role="contentinfo">
-  <div class="xedc-container">
-    <nav class="xedc-footer__nav" aria-label="底部导航">
-      {{ drupal_menu('footer') }}
-    </nav>
-    <div class="xedc-footer__bottom">
-      <p class="xedc-text-xs xedc-text-muted">© {{ "now"|date("Y") }} {{ site_name }}. All rights reserved.</p>
-    </div>
-  </div>
-</footer>
+  </div>{# end .xedc-content-row #}
+
+</div>{# end .xedc-main-wrapper #}
+
+{# ══ 移动端底部导航 ══ #}
+<nav class="xedc-bottom-nav" role="navigation" aria-label="底部导航">
+  <a href="{{ url('<front>') }}" class="xedc-bottom-nav__item is-active">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M10.55 2.53a2 2 0 0 1 2.9 0l7 7.07A2 2 0 0 1 21 11.07V20a2 2 0 0 1-2 2h-4a1 1 0 0 1-1-1v-4h-4v4a1 1 0 0 1-1 1H5a2 2 0 0 1-2-2v-8.93a2 2 0 0 1 .55-1.38l7-7.07z"/>
+    </svg>
+    <span>首页</span>
+  </a>
+  <a href="/categories" class="xedc-bottom-nav__item">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+      <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+    </svg>
+    <span>分类</span>
+  </a>
+  <div class="xedc-bottom-nav__fab-slot" aria-hidden="true"></div>
+  <a href="/messages" class="xedc-bottom-nav__item">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+    </svg>
+    <span>消息</span>
+  </a>
+  <a href="/user/{{ is_logged_in ? current_user.id() : 'login' }}" class="xedc-bottom-nav__item">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/>
+    </svg>
+    <span>我的</span>
+  </a>
+</nav>
+
+{# 移动端浮动发布按钮 #}
+<a href="/node/add" class="xedc-fab" aria-label="发布内容">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+    <line x1="12" y1="5" x2="12" y2="19"/>
+    <line x1="5"  y1="12" x2="19" y2="12"/>
+  </svg>
+</a>
 
 {{ page_bottom }}
 {{ scripts }}

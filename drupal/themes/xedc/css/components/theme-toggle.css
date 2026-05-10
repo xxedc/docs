@@ -1,13 +1,57 @@
 /* ================================================================
-   theme-toggle.css — 主题切换器下拉菜单样式
+   theme-toggle.css — shadcn/ui 风格图标切换按钮
    ================================================================ */
 
-/* ── 切换器容器 ── */
+/* ── 切换按钮 ── */
 .xedc-theme-toggle {
-  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius);
+  color: var(--muted-foreground);
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background-color var(--transition-fast),
+              color var(--transition-fast),
+              border-color var(--transition-fast);
+  flex-shrink: 0;
 }
 
-/* ── 图标按钮 ── */
+.xedc-theme-toggle:hover {
+  background-color: var(--muted);
+  border-color: var(--border);
+  color: var(--foreground);
+}
+
+/* ── SVG 图标 ── */
+.xedc-theme-icon {
+  display: none;
+  pointer-events: none;
+}
+
+/* 浅色模式：显示月亮 */
+[data-theme="light"] .xedc-theme-icon--moon,
+:root:not([data-theme="dark"]) .xedc-theme-icon--moon {
+  display: block;
+}
+
+/* 深色模式：显示太阳 */
+[data-theme="dark"] .xedc-theme-icon--sun {
+  display: block;
+}
+
+/* ── 过渡动画 ── */
+.theme-transitioning .xedc-theme-icon {
+  transition: opacity 0.15s ease;
+}
+
+/* ================================================================
+   theme-toggle.css — 导航栏通用样式
+   ================================================================ */
+
 .xedc-navbar__icon-btn {
   display: inline-flex;
   align-items: center;
@@ -15,71 +59,22 @@
   width: 36px;
   height: 36px;
   border-radius: var(--radius);
-  color: var(--foreground);
+  color: var(--muted-foreground);
   background: transparent;
   border: 1px solid transparent;
   cursor: pointer;
-  font-size: 18px;
   transition: background-color var(--transition-fast),
+              color var(--transition-fast),
               border-color var(--transition-fast);
 }
 
 .xedc-navbar__icon-btn:hover {
   background-color: var(--muted);
   border-color: var(--border);
-}
-
-/* ── 下拉菜单：默认隐藏 ── */
-.xedc-theme-dropdown {
-  display: none;
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
-  min-width: 140px;
-  background-color: var(--popover);
-  color: var(--popover-foreground);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-lg);
-  z-index: var(--z-dropdown);
-  overflow: hidden;
-  padding: var(--space-1) 0;
-}
-
-/* ── 下拉菜单：打开时显示 ── */
-.xedc-theme-dropdown.is-open {
-  display: block;
-}
-
-/* ── 选项按钮 ── */
-.xedc-theme-dropdown__item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  width: 100%;
-  padding: var(--space-2) var(--space-3);
-  font-size: var(--text-sm);
   color: var(--foreground);
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  text-align: left;
-  transition: background-color var(--transition-fast);
-  white-space: nowrap;
 }
 
-.xedc-theme-dropdown__item:hover {
-  background-color: var(--muted);
-}
-
-/* ── 选中状态 ── */
-.xedc-theme-dropdown__item.is-active {
-  color: var(--primary);
-  font-weight: 600;
-  background-color: var(--accent);
-}
-
-/* ── 导航栏整体布局修复 ── */
+/* ── 导航栏整体布局 ── */
 .xedc-navbar__nav {
   display: flex;
   align-items: center;
@@ -120,7 +115,6 @@
 .xedc-navbar__search form {
   display: flex;
   align-items: center;
-  gap: 0;
   background-color: var(--muted);
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -171,7 +165,7 @@
   letter-spacing: -0.02em;
 }
 
-/* ── 登录按钮 ── */
+/* ── 按钮通用样式 ── */
 .xedc-btn {
   display: inline-flex;
   align-items: center;
@@ -200,7 +194,7 @@
   height: 32px;
 }
 
-/* ── 响应式：移动端隐藏部分导航 ── */
+/* ── 响应式 ── */
 @media (max-width: 768px) {
   .xedc-navbar__nav {
     display: none;
