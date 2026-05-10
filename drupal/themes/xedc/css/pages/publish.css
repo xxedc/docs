@@ -1,0 +1,201 @@
+/* ================================================================
+   publish.css — 发布选择页（shadcn/ui 设计语言）
+   ================================================================ */
+
+.xedc-publish-page {
+  padding: var(--space-8) 0 calc(96px + env(safe-area-inset-bottom));
+  max-width: 1024px;
+  animation: xedc-page-fade 280ms ease both;
+}
+
+@keyframes xedc-page-fade {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── 标题 ── */
+.xedc-publish-types__head {
+  text-align: center;
+  margin-bottom: var(--space-8);
+}
+
+.xedc-publish-types__title {
+  font-size: var(--text-3xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--foreground);
+  margin: 0 0 var(--space-2);
+}
+
+.xedc-publish-types__sub {
+  font-size: var(--text-sm);
+  color: var(--muted-foreground);
+  margin: 0;
+}
+
+/* ── 类型卡片网格 ── */
+.xedc-publish-types__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+@media (max-width: 768px) {
+  .xedc-publish-types__grid { grid-template-columns: 1fr; }
+}
+
+/* ── 单个类型卡片 ── */
+.xedc-publish-type-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  text-decoration: none;
+  color: var(--foreground);
+  transition: background-color var(--transition-fast),
+              border-color var(--transition-fast),
+              transform 220ms ease,
+              box-shadow 220ms ease;
+}
+
+.xedc-publish-type-card:hover {
+  background: var(--muted);
+  border-color: oklch(from var(--foreground) l c h / 0.15);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.xedc-publish-type-card__icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: var(--muted);
+  color: var(--foreground);
+  margin-bottom: var(--space-2);
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.xedc-publish-type-card:hover .xedc-publish-type-card__icon {
+  background: var(--foreground);
+  color: var(--background);
+}
+
+.xedc-publish-type-card__title {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--foreground);
+}
+
+.xedc-publish-type-card__desc {
+  font-size: var(--text-sm);
+  color: var(--muted-foreground);
+  line-height: var(--leading-relaxed);
+  margin: 0;
+}
+
+.xedc-publish-type-card__cta {
+  margin-top: auto;
+  padding-top: var(--space-3);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  transition: color var(--transition-fast), gap var(--transition-fast);
+}
+
+.xedc-publish-type-card:hover .xedc-publish-type-card__cta {
+  color: var(--foreground);
+  gap: 10px;
+}
+
+/* ── 草稿箱链接 ── */
+.xedc-publish-types__drafts {
+  margin-top: var(--space-8);
+  display: flex;
+  justify-content: center;
+}
+
+.xedc-publish-types__drafts-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 999px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted-foreground);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.xedc-publish-types__drafts-link:hover {
+  background: var(--muted);
+  color: var(--foreground);
+  border-color: oklch(from var(--foreground) l c h / 0.2);
+}
+
+/* ── 未登录锁屏 ── */
+.xedc-publish-locked {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-16) var(--space-4);
+  text-align: center;
+  min-height: 60vh;
+}
+
+.xedc-publish-locked__icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background: var(--muted);
+  color: var(--muted-foreground);
+  display: grid;
+  place-items: center;
+  margin-bottom: var(--space-4);
+}
+
+.xedc-publish-locked__title {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  margin: 0 0 var(--space-2);
+}
+
+.xedc-publish-locked__desc {
+  font-size: var(--text-sm);
+  color: var(--muted-foreground);
+  margin: 0 0 var(--space-5);
+}
+
+.xedc-publish-locked__btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 24px;
+  border-radius: 10px;
+  background: var(--foreground);
+  color: var(--background);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: opacity var(--transition-fast);
+}
+
+.xedc-publish-locked__btn:hover { opacity: 0.9; }
+
+/* ── 发布页移动端导航调整 ── */
+@media (max-width: 960px) {
+  body:has(.xedc-publish-page) .xedc-navbar__nav     { display: none; }
+  body:has(.xedc-publish-page) .xedc-navbar__search  { max-width: 0; padding: 0; margin: 0; visibility: hidden; }
+  body:has(.xedc-publish-page) .xedc-navbar__tools > a[href="/messages"] { display: none; }
+}
