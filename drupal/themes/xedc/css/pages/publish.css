@@ -193,9 +193,4 @@
 
 .xedc-publish-locked__btn:hover { opacity: 0.9; }
 
-/* ── 发布页移动端导航调整 ── */
-@media (max-width: 960px) {
-  body:has(.xedc-publish-page) .xedc-navbar__nav     { display: none; }
-  body:has(.xedc-publish-page) .xedc-navbar__search  { max-width: 0; padding: 0; margin: 0; visibility: hidden; }
-  body:has(.xedc-publish-page) .xedc-navbar__tools > a[href="/messages"] { display: none; }
-}
+/* 移动端导航由 mobile-shell + theme-toggle 统一处理 */

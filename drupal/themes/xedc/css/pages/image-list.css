@@ -552,12 +552,11 @@ body:has(.xedc-image-waterfall) .xedc-navbar__nav a.is-active {
   width: 100%;
   height: auto;
   display: block;
-  opacity: 0;
-  transition: opacity 260ms ease;
+  opacity: 1;
+  transition: opacity 260ms ease, transform 400ms ease;
 }
 
-.xedc-image-card__img-wrap img.is-loaded { opacity: 1; }
-.xedc-image-card:hover .xedc-image-card__img-wrap img.is-loaded { transform: scale(1.03); transition: opacity 260ms ease, transform 400ms ease; }
+.xedc-image-card:hover .xedc-image-card__img-wrap img { transform: scale(1.03); }
 
 .xedc-image-card__placeholder {
   aspect-ratio: 4 / 3;
@@ -770,13 +769,10 @@ body:has(.xedc-image-waterfall) .xedc-navbar__nav a.is-active {
 .xedc-back-to-top:hover { background: var(--muted); }
 
 /* 移动端底部导航由全站 mobile-shell.css 统一处理 */
-@media (max-width: 960px) {
+@media (max-width: 1023px) {
   .xedc-image-waterfall {
-    padding-bottom: calc(var(--page-padding-bottom) + 68px + env(safe-area-inset-bottom));
+    padding-bottom: calc(var(--page-padding-bottom) + env(safe-area-inset-bottom));
   }
-  body:has(.xedc-image-waterfall) .xedc-navbar__nav { display: none; }
-  body:has(.xedc-image-waterfall) .xedc-navbar__publish { display: none; }
-  body:has(.xedc-image-waterfall) .xedc-navbar__tools > a[href="/messages"] { display: none; }
 }
 
 /* ── 暗色模式微调 ── */

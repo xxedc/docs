@@ -283,9 +283,4 @@ body:has(.xedc-video-list) .xedc-navbar {
   .xedc-back-to-top { bottom: var(--space-8); }
 }
 
-/* 移动端底部导航由全站 mobile-shell.css 统一处理 */
-@media (max-width: 960px) {
-  body:has(.xedc-video-list) .xedc-navbar__nav     { display: none; }
-  body:has(.xedc-video-list) .xedc-navbar__publish { display: none; }
-  body:has(.xedc-video-list) .xedc-navbar__tools > a[href="/messages"] { display: none; }
-}
+/* 底部导航全站统一，本页无额外覆盖 */
