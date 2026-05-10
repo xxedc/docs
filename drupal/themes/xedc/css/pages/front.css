@@ -17,7 +17,7 @@
     position: fixed;
     top: 0;
     left: 0;
-    width: 160px;
+    width: 240px;
     height: 100vh;
     background: var(--background);
     border-right: 1px solid var(--border);
@@ -176,7 +176,7 @@
   min-height: 100vh;
 }
 @media (min-width: 1024px) {
-  .xedc-main-wrapper { margin-left: 160px; }
+  .xedc-main-wrapper { margin-left: 240px; }
 }
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

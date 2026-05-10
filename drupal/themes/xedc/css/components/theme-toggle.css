@@ -183,10 +183,24 @@
   background-color: var(--primary);
   color: var(--primary-foreground);
 }
+.xedc-btn--primary:hover { opacity: 0.9; }
 
-.xedc-btn--primary:hover {
-  opacity: 0.9;
+.xedc-btn--default {
+  background-color: var(--secondary);
+  color: var(--secondary-foreground);
+  border: 1px solid var(--border);
 }
+.xedc-btn--default:hover {
+  background-color: var(--muted);
+  border-color: oklch(from var(--foreground) l c h / 0.2);
+}
+
+.xedc-btn--outline {
+  background: transparent;
+  color: var(--foreground);
+  border: 1px solid var(--border);
+}
+.xedc-btn--outline:hover { background-color: var(--muted); }
 
 .xedc-btn--sm {
   font-size: var(--text-sm);

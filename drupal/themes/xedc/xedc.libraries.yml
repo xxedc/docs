@@ -8,6 +8,7 @@ global-styles:
       css/base/typography.css: { weight: -180 }
       css/base/utilities.css: { weight: -170 }
     component:
+      css/components/sidebar.css: { weight: -105 }
       css/components/theme-toggle.css: { weight: -100 }
       css/components/mobile-shell.css: { weight: -95 }
       css/components/paragraphs.css: { weight: -90 }

@@ -1,0 +1,156 @@
+/* ================================================================
+   sidebar.css — 全站左侧固定导航栏（PC ≥1024px 显示，移动端隐藏）
+   shadcn/ui 设计语言
+   ================================================================ */
+
+/* ── 侧边栏默认隐藏（移动端）── */
+.xedc-gsidebar {
+  display: none;
+}
+
+/* ── PC 显示 ── */
+@media (min-width: 1024px) {
+  .xedc-gsidebar {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 240px;
+    height: 100vh;
+    background: var(--background);
+    border-right: 1px solid var(--border);
+    z-index: 40;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+  }
+  .xedc-gsidebar::-webkit-scrollbar { display: none; }
+
+  /* 主内容区右移 240px */
+  .xedc-page-body { margin-left: 240px; }
+
+  /* PC 端隐藏顶栏 logo 和主导航（侧边栏已有）*/
+  .xedc-page-body .xedc-navbar__logo { display: none; }
+  .xedc-page-body .xedc-navbar__nav  { display: none; }
+}
+
+/* ── 页面主体包裹（负责 margin 偏移）── */
+.xedc-page-body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ── Logo 区 ── */
+.xedc-gsidebar__logo {
+  padding: 18px 16px 12px;
+  flex-shrink: 0;
+}
+.xedc-gsidebar__logo a {
+  text-decoration: none;
+  font-size: var(--text-xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--foreground);
+  display: block;
+}
+
+/* ── 主导航项 ── */
+.xedc-gsidebar__nav {
+  padding: 0 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.xedc-gsidebar__navitem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  text-decoration: none;
+  transition: background-color 0.15s, color 0.15s;
+}
+.xedc-gsidebar__navitem:hover {
+  background: var(--muted);
+  color: var(--foreground);
+}
+.xedc-gsidebar__navitem.is-active {
+  background: var(--muted);
+  color: var(--foreground);
+  font-weight: 600;
+}
+.xedc-gsidebar__icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* ── 分组 ── */
+.xedc-gsidebar__group {
+  padding: 12px 8px 6px;
+  margin-top: 4px;
+  border-top: 1px solid var(--border);
+}
+.xedc-gsidebar__group-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 8px 4px;
+  margin: 0;
+}
+.xedc-gsidebar__catitem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: calc(var(--radius) - 2px);
+  font-size: 13px;
+  color: var(--muted-foreground);
+  text-decoration: none;
+  transition: background-color 0.15s, color 0.15s;
+}
+.xedc-gsidebar__catitem:hover {
+  background: var(--muted);
+  color: var(--foreground);
+}
+.xedc-gsidebar__catitem--more {
+  font-weight: 600;
+  font-size: 12px;
+}
+
+/* ── 上传 CTA ── */
+.xedc-gsidebar__upload {
+  margin-top: auto;
+  padding: 12px;
+  flex-shrink: 0;
+}
+.xedc-gsidebar__upload-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 10px;
+  background: var(--foreground);
+  color: var(--background);
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+.xedc-gsidebar__upload-btn:hover { opacity: 0.85; }
+.xedc-gsidebar__upload-hint {
+  display: block;
+  text-align: center;
+  font-size: 11px;
+  color: var(--muted-foreground);
+  margin-top: 4px;
+}
