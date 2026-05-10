@@ -1,7 +1,36 @@
-<div class="xedc-front-banner-row" aria-label="精选内容">
-  {% for row in rows %}
-    <div class="xedc-front-banner-row__item">
-      {{ row.content }}
-    </div>
-  {% endfor %}
+{#
+  views-view-unformatted--front-banner.html.twig
+  精选 Banner：桌面三列并排，移动端横向滑动
+#}
+<div class="xedc-banner" id="xedc-banner">
+  <div class="xedc-banner__track" id="xedc-banner-track">
+    {% for row in rows %}
+      <div class="xedc-banner__slide">
+        {# 精选角标 #}
+        <span class="xedc-banner__badge" aria-hidden="true">精选</span>
+        {{ row.content }}
+      </div>
+    {% endfor %}
+  </div>
+
+  {# 翻页箭头（移动端有效，桌面装饰） #}
+  <button class="xedc-banner__btn xedc-banner__btn--prev"
+          onclick="xedcBannerPrev()" aria-label="上一个">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <path d="m15 18-6-6 6-6"/>
+    </svg>
+  </button>
+  <button class="xedc-banner__btn xedc-banner__btn--next"
+          onclick="xedcBannerNext()" aria-label="下一个">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <path d="m9 18 6-6-6-6"/>
+    </svg>
+  </button>
+
+  {# 指示点（移动端有效） #}
+  <div class="xedc-banner__dots" aria-hidden="true">
+    {% for row in rows %}
+      <span class="xedc-banner__dot{% if loop.first %} is-active{% endif %}"></span>
+    {% endfor %}
+  </div>
 </div>
