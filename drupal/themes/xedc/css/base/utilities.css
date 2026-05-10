@@ -92,11 +92,10 @@
   position: sticky;
   top: 0;
   z-index: var(--z-sticky);
-  background-color: var(--background);
+  background: oklch(from var(--background) l c h / 0.92);
   border-bottom: 1px solid var(--border);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  background-color: oklch(from var(--background) l c h / 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
 
 /* ── 骨架屏动画 ── */
