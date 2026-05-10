@@ -9,6 +9,7 @@ global-styles:
       css/base/utilities.css: { weight: -170 }
     component:
       css/components/theme-toggle.css: { weight: -100 }
+      css/components/mobile-shell.css: { weight: -95 }
       css/components/paragraphs.css: { weight: -90 }
       css/components/gallery.css: { weight: -85 }
       css/components/search-suggest.css: { weight: -80 }
@@ -21,6 +22,7 @@ global-scripts:
   version: VERSION
   js:
     js/theme-toggle.js: { attributes: { defer: true } }
+    js/mobile-shell.js: { attributes: { defer: true } }
     components/dropdown/dropdown.js: { attributes: { defer: true } }
   dependencies:
     - core/drupal
@@ -127,6 +129,12 @@ page-error:
       css/pages/error.css: {}
   js:
     js/network-detect.js: { attributes: { defer: true } }
+
+page-publish:
+  version: VERSION
+  css:
+    theme:
+      css/pages/publish.css: {}
 
 # ── 搜索联想 ──
 search-suggest:
