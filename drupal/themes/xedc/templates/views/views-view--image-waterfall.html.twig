@@ -186,8 +186,12 @@
             {% endfor %}
           </nav>
           <div class="xedc-filter__actions">
-            <a class="xedc-filter-btn{% if _today %} is-active{% endif %}" href="{{ nav_today_url|default('/images?today=1') }}">今日</a>
-            <a class="xedc-filter-btn{% if _category != 'all' %} is-active{% endif %}" href="#image-sidebar">分类</a>
+            <a class="xedc-filter-icon-btn{% if _category != 'all' or _today %} is-active{% endif %}" href="#image-sidebar" aria-label="筛选">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/>
+              </svg>
+              筛选
+            </a>
           </div>
         </div>
         <nav class="xedc-category-pills" aria-label="分类筛选">
