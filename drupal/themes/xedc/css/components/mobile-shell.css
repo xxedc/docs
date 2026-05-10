@@ -91,8 +91,8 @@
     gap: 4px;
   }
 
-  /* 移动端：给 body 加底部安全区，避免最后一行被 tabbar 遮挡（首页除外，首页有自己的处理）*/
-  body:not(.xedc-body--front) {
+  /* 移动端：给 body 加底部安全区，避免最后一行被 tabbar 遮挡 */
+  body {
     padding-bottom: calc(68px + env(safe-area-inset-bottom));
   }
 }

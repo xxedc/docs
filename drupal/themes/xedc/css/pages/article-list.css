@@ -116,28 +116,25 @@ body:has(.xedc-articles-home) .xedc-navbar {
   border-color: var(--foreground);
 }
 
-/* ── 三栏布局 ── */
-.xedc-articles-home__layout {
-  display: grid;
-  grid-template-columns: var(--articles-left-width) minmax(0, 1fr) var(--articles-right-width);
-  gap: var(--space-6);
-  align-items: start;
-  padding-top: var(--space-6);
-}
+/* ── 单列布局（左侧导航由全站 .xedc-gsidebar 提供）── */
+.xedc-articles-home__layout { display: block; padding-top: var(--space-6); }
 
 .xedc-articles-home__main {
   width: 100%;
-  max-width: 720px;
-  justify-self: center;
+  max-width: 880px;
+  margin: 0 auto;
 }
 
+/* 旧的内嵌侧边栏：彻底隐藏 */
 .xedc-articles-home__left,
-.xedc-articles-home__right {
-  position: sticky;
-  top: calc(var(--articles-navbar-height) + var(--articles-tabs-height) + var(--space-3));
+.xedc-articles-home__right { display: none !important; }
+
+/* 顶部热门标签条 */
+.xedc-articles-home__tags {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: var(--space-3) 0;
 }
 
 /* ── 左侧导航 ── */
