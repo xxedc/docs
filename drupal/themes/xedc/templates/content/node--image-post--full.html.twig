@@ -1,206 +1,286 @@
 {#
-  node--image-post--full.html.twig — 图集详情页
-  使用 node.field_image 直接循环，确保全部图片显示
+  node--image-post--full.html.twig — 图集详情页（shadcn/ui 风格）
+  布局：
+    PC ≥1024px：两栏（左：图片查看器 / 右：信息卡片 320px）
+    Mobile <1024px：单栏（查看器在上，信息卡片在下）
 #}
 {% set _image_count = node.field_image|length %}
+{% set _owner = node.getOwner() %}
+{% set _owner_name = _owner.getDisplayName() %}
+{% set _owner_id = node.getOwnerId() %}
 
-<div class="xedc-image-detail" data-view-mode="slideshow">
+<article class="xedc-image-detail" data-view-mode="slideshow">
   <div class="xedc-container">
 
-    {# ── 大图展示区 ── #}
-    <div class="xedc-lightbox-area" id="xedc-lightbox-area">
+    {# ── 面包屑 ── #}
+    <nav class="xedc-image-detail__crumbs" aria-label="面包屑">
+      <a href="{{ url('<front>') }}">首页</a>
+      <span class="xedc-image-detail__crumb-sep">/</span>
+      <a href="/images">图片</a>
+      <span class="xedc-image-detail__crumb-sep">/</span>
+      <span class="xedc-image-detail__crumb-current">{{ label }}</span>
+    </nav>
 
-      <div class="xedc-view-mode-bar">
-        <button class="xedc-view-mode-toggle" id="xedc-view-mode-toggle" type="button">平铺</button>
-      </div>
+    <div class="xedc-image-detail__layout">
 
-      <div class="xedc-image-viewer" id="xedc-image-viewer">
+      {# ═══════════ 左侧：图片查看器 ═══════════ #}
+      <div class="xedc-image-detail__viewer-col">
 
-        {# 图片计数器（多图时显示）#}
-        {% if _image_count > 1 %}
-          <div class="xedc-viewer-counter" id="xedc-viewer-counter">
-            <span id="xedc-viewer-current">1</span> / <span id="xedc-viewer-total">{{ _image_count }}</span>
+        <div class="xedc-lightbox-area" id="xedc-lightbox-area">
+
+          <div class="xedc-view-mode-bar">
+            <button class="xedc-view-mode-toggle" id="xedc-view-mode-toggle" type="button">平铺</button>
           </div>
-        {% endif %}
 
-        {# 主图展示区：循环所有图片，仅第一张可见 #}
-        <div class="xedc-image-viewer__stage" id="xedc-viewer-stage">
-          {% if _image_count > 0 %}
-            {% for item in node.field_image %}
-              {% set _f = item.entity %}
-              {% if _f %}
+          <div class="xedc-image-viewer" id="xedc-image-viewer">
+
+            {% if _image_count > 1 %}
+              <div class="xedc-viewer-counter" id="xedc-viewer-counter">
+                <span id="xedc-viewer-current">1</span> / <span id="xedc-viewer-total">{{ _image_count }}</span>
+              </div>
+            {% endif %}
+
+            <div class="xedc-image-viewer__stage" id="xedc-viewer-stage">
+              {% if _image_count > 0 %}
+                {% for item in node.field_image %}
+                  {% set _f = item.entity %}
+                  {% if _f %}
+                    <img
+                      src="{{ file_url(_f.fileUri) }}"
+                      alt="{{ item.alt|default(label) }}"
+                      loading="{{ loop.first ? 'eager' : 'lazy' }}"
+                      class="xedc-viewer__main-img{% if loop.first %} is-active{% endif %}"
+                      data-index="{{ loop.index0 }}"
+                    />
+                  {% endif %}
+                {% endfor %}
+              {% elseif node.field_cover_image.entity %}
                 <img
-                  src="{{ file_url(_f.fileUri) }}"
-                  alt="{{ item.alt|default(label) }}"
-                  loading="{{ loop.first ? 'eager' : 'lazy' }}"
-                  class="xedc-viewer__main-img{% if loop.first %} is-active{% endif %}"
-                  data-index="{{ loop.index0 }}"
+                  src="{{ file_url(node.field_cover_image.entity.fileUri) }}"
+                  alt="{{ label }}"
+                  loading="eager"
+                  class="xedc-viewer__main-img is-active"
+                  data-index="0"
                 />
               {% endif %}
-            {% endfor %}
-          {% elseif node.field_cover_image.entity %}
-            <img
-              src="{{ file_url(node.field_cover_image.entity.fileUri) }}"
-              alt="{{ label }}"
-              loading="eager"
-              class="xedc-viewer__main-img is-active"
-              data-index="0"
-            />
+            </div>
+
+            {% if _image_count > 1 %}
+              <button class="xedc-viewer-nav xedc-viewer-nav--prev" id="xedc-viewer-prev" aria-label="上一张">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polyline points="15 18 9 12 15 6"/>
+                </svg>
+              </button>
+              <button class="xedc-viewer-nav xedc-viewer-nav--next" id="xedc-viewer-next" aria-label="下一张">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polyline points="9 18 15 12 9 6"/>
+                </svg>
+              </button>
+            {% endif %}
+
+            <div class="xedc-image-viewer__controls" aria-label="图片控制">
+              <button class="xedc-viewer-btn" id="xedc-zoom-in" title="放大" aria-label="放大">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                  <line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/>
+                </svg>
+              </button>
+              <button class="xedc-viewer-btn" id="xedc-zoom-out" title="缩小" aria-label="缩小">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                  <line x1="8" y1="11" x2="14" y2="11"/>
+                </svg>
+              </button>
+              <button class="xedc-viewer-btn" id="xedc-zoom-reset" title="重置" aria-label="重置">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>
+                </svg>
+              </button>
+              <button class="xedc-viewer-btn" id="xedc-fullscreen" title="全屏" aria-label="全屏">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/>
+                  <line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          {% if _image_count > 1 %}
+            <div class="xedc-image-thumbs" id="xedc-image-thumbs">
+              {% for item in node.field_image %}
+                {% set _f = item.entity %}
+                {% if _f %}
+                  <img
+                    src="{{ file_url(_f.fileUri) }}"
+                    alt="{{ item.alt|default(label) }}"
+                    loading="lazy"
+                    class="{% if loop.first %}is-active{% endif %}"
+                    data-index="{{ loop.index0 }}"
+                  />
+                {% endif %}
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          {% if _image_count > 0 %}
+            <div class="xedc-image-tiles" id="xedc-image-tiles">
+              {% for item in node.field_image %}
+                {% set _f = item.entity %}
+                {% if _f %}
+                  <img
+                    src="{{ file_url(_f.fileUri) }}"
+                    alt="{{ item.alt|default(label) }}"
+                    loading="lazy"
+                    data-index="{{ loop.index0 }}"
+                  />
+                {% endif %}
+              {% endfor %}
+            </div>
+          {% endif %}
+
+        </div>
+
+        {# ── 操作栏（移动端：贴在查看器下方）── #}
+        <div class="xedc-image-detail__actions">
+          {% if logged_in %}
+            <div class="xedc-flag-btn">
+              {{ content.flag_like is defined ? content.flag_like : '' }}
+            </div>
+            <div class="xedc-flag-btn">
+              {{ content.flag_collect is defined ? content.flag_collect : '' }}
+            </div>
+          {% else %}
+            <a href="/user/login" class="xedc-action-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+              点赞
+            </a>
+            <a href="/user/login" class="xedc-action-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+              </svg>
+              收藏
+            </a>
+          {% endif %}
+
+          {% if node.field_allow_download.value %}
+            <a href="{{ path('xedc_core.image_post_download', {'nid': node.id()}) }}" class="xedc-action-btn xedc-action-btn--primary">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              下载
+            </a>
+          {% endif %}
+
+          <button class="xedc-action-btn"
+            onclick="navigator.clipboard.writeText(window.location.href).then(function(){alert('链接已复制')})">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+            </svg>
+            分享
+          </button>
+        </div>
+
+      </div>
+
+      {# ═══════════ 右侧：信息卡片 ═══════════ #}
+      <aside class="xedc-image-detail__info-col" aria-label="图集信息">
+
+        {# 标题卡片 #}
+        <div class="xedc-info-card">
+          <h1 class="xedc-image-detail__title">{{ label }}</h1>
+
+          {# 元信息 #}
+          <div class="xedc-image-detail__meta">
+            <span class="xedc-meta-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+              {{ view_count|default(0) }} 浏览
+            </span>
+            <span class="xedc-meta-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v6l3 2"/></svg>
+              {{ node.getCreatedTime()|date('Y-m-d') }}
+            </span>
+            {% if _image_count > 0 %}
+              <span class="xedc-meta-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15 16 10 5 21"/></svg>
+                {{ _image_count }} 张
+              </span>
+            {% endif %}
+          </div>
+
+          {% if content.body %}
+            <div class="xedc-image-detail__desc">{{ content.body }}</div>
+          {% endif %}
+
+          {% if content.field_tags %}
+            <div class="xedc-image-detail__tags">
+              {{ content.field_tags }}
+            </div>
           {% endif %}
         </div>
 
-        {# Prev / Next 箭头（多图才显示）#}
-        {% if _image_count > 1 %}
-          <button class="xedc-viewer-nav xedc-viewer-nav--prev" id="xedc-viewer-prev" aria-label="上一张">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <polyline points="15 18 9 12 15 6"/>
-            </svg>
-          </button>
-          <button class="xedc-viewer-nav xedc-viewer-nav--next" id="xedc-viewer-next" aria-label="下一张">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <polyline points="9 18 15 12 9 6"/>
-            </svg>
-          </button>
+        {# 作者卡片 #}
+        <div class="xedc-info-card xedc-author-card">
+          <div class="xedc-author-card__head">
+            {% include 'xedc:avatar' with {
+              size: 'md',
+              name: _owner_name,
+              url: '/user/' ~ _owner_id
+            } only %}
+            <div class="xedc-author-card__info">
+              <a href="/user/{{ _owner_id }}" class="xedc-author-card__name">{{ _owner_name }}</a>
+              <p class="xedc-author-card__sub">作者</p>
+            </div>
+          </div>
+        </div>
+
+        {# 媒体字段（field_media）#}
+        {% if content.field_media|render|trim is not empty %}
+          <div class="xedc-info-card xedc-media-card">
+            <h3 class="xedc-info-card__title">关联媒体</h3>
+            <div class="xedc-media-card__body">
+              {{ content.field_media }}
+            </div>
+          </div>
         {% endif %}
 
-        {# 缩放/全屏控制 #}
-        <div class="xedc-image-viewer__controls" aria-label="图片控制">
-          <button class="xedc-viewer-btn" id="xedc-zoom-in" title="放大" aria-label="放大">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-              <line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/>
-            </svg>
-          </button>
-          <button class="xedc-viewer-btn" id="xedc-zoom-out" title="缩小" aria-label="缩小">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-              <line x1="8" y1="11" x2="14" y2="11"/>
-            </svg>
-          </button>
-          <button class="xedc-viewer-btn" id="xedc-zoom-reset" title="重置" aria-label="重置">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>
-            </svg>
-          </button>
-          <button class="xedc-viewer-btn" id="xedc-fullscreen" title="全屏" aria-label="全屏">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/>
-              <line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      {# 缩略图导航条（多图才显示）#}
-      {% if _image_count > 1 %}
-        <div class="xedc-image-thumbs" id="xedc-image-thumbs">
-          {% for item in node.field_image %}
-            {% set _f = item.entity %}
-            {% if _f %}
-              <img
-                src="{{ file_url(_f.fileUri) }}"
-                alt="{{ item.alt|default(label) }}"
-                loading="lazy"
-                class="{% if loop.first %}is-active{% endif %}"
-                data-index="{{ loop.index0 }}"
-              />
-            {% endif %}
-          {% endfor %}
-        </div>
-      {% endif %}
-
-      {% if _image_count > 0 %}
-        <div class="xedc-image-tiles" id="xedc-image-tiles">
-          {% for item in node.field_image %}
-            {% set _f = item.entity %}
-            {% if _f %}
-              <img
-                src="{{ file_url(_f.fileUri) }}"
-                alt="{{ item.alt|default(label) }}"
-                loading="lazy"
-                data-index="{{ loop.index0 }}"
-              />
-            {% endif %}
-          {% endfor %}
-        </div>
-      {% endif %}
-
-    </div>
-
-    {# ── 操作栏 ── #}
-    <div class="xedc-image-detail__actions">
-      {% if node.field_allow_download.value %}
-        <a href="{{ path('xedc_core.image_post_download', {'nid': node.id()}) }}" class="xedc-action-btn">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-            <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
-          </svg>
-          下载
-        </a>
-      {% endif %}
-
-      {% if logged_in %}
-        <div class="xedc-flag-btn">
-          {{ content.flag_like is defined ? content.flag_like : '' }}
-        </div>
-        <div class="xedc-flag-btn">
-          {{ content.flag_collect is defined ? content.flag_collect : '' }}
-        </div>
-      {% else %}
-        <a href="/user/login" class="xedc-action-btn">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-          </svg>
-          点赞
-        </a>
-        <a href="/user/login" class="xedc-action-btn">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
-          </svg>
-          收藏
-        </a>
-      {% endif %}
-
-      <button class="xedc-action-btn"
-        onclick="navigator.clipboard.writeText(window.location.href).then(function(){alert('链接已复制')})">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
-          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
-        </svg>
-        分享
-      </button>
-    </div>
-
-    {# ── 图片信息 ── #}
-    <div class="xedc-image-detail__info">
-      <h1 class="xedc-image-detail__title">{{ label }}</h1>
-      {% if content.body %}
-        <div class="xedc-image-detail__desc">{{ content.body }}</div>
-      {% endif %}
-      <div class="xedc-image-detail__meta">
-        <span class="xedc-text-sm xedc-text-muted">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="display:inline;vertical-align:middle;margin-right:3px;">
-            <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
-          </svg>
-          {{ view_count|default(0) }} 次浏览
-        </span>
-        <span class="xedc-text-sm xedc-text-muted">{{ node.getCreatedTime()|date('Y-m-d') }}</span>
-        {% if _image_count > 0 %}
-          <span class="xedc-text-sm xedc-text-muted">{{ _image_count }} 张图片</span>
+        {# 其他字段（如分类、合集、来源等，避免重复输出已渲染过的）#}
+        {% set _hidden_fields = ['body', 'field_tags', 'field_image', 'field_cover_image',
+                                 'field_media', 'field_allow_download',
+                                 'flag_like', 'flag_collect', 'links', 'comment'] %}
+        {% set _has_extra = false %}
+        {% for k in content|keys %}
+          {% if k not in _hidden_fields and (k starts with 'field_') and content[k]|render|trim is not empty %}
+            {% set _has_extra = true %}
+          {% endif %}
+        {% endfor %}
+        {% if _has_extra %}
+          <div class="xedc-info-card">
+            <h3 class="xedc-info-card__title">详细信息</h3>
+            <dl class="xedc-info-card__fields">
+              {% for k in content|keys %}
+                {% if k not in _hidden_fields and (k starts with 'field_') and content[k]|render|trim is not empty %}
+                  {{ content[k] }}
+                {% endif %}
+              {% endfor %}
+            </dl>
+          </div>
         {% endif %}
-      </div>
-      {% if content.field_tags %}
-        <div class="xedc-image-detail__tags">
-          {{ content.field_tags }}
-        </div>
-      {% endif %}
+
+      </aside>
+
     </div>
 
     {# ── 相关推荐 ── #}
-    <div class="xedc-image-detail__related">
-      <h3 class="xedc-section-title">相关图集</h3>
+    <section class="xedc-image-detail__related">
+      <div class="xedc-image-detail__related-hd">
+        <h2 class="xedc-section-title">相关图集</h2>
+      </div>
       {{ drupal_view('image_waterfall', 'block_1') }}
-    </div>
+    </section>
 
   </div>
-</div>
+</article>

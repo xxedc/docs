@@ -16,10 +16,12 @@
 {{ page_top }}
 {{ attach_library('xedc/page-profile') }}
 
+{% set _logo_html = (site_name|default('DCXE'))|replace({'X': '<span class="xedc-logo-x">X</span>'}) %}
+
 {# ── PC 左侧固定侧边栏 ── #}
 <aside class="xedc-gsidebar" aria-label="侧边导航">
   <div class="xedc-gsidebar__logo">
-    <a href="{{ url('<front>') }}">{{ site_name }}</a>
+    <a href="{{ url('<front>') }}">{{ _logo_html|raw }}</a>
   </div>
   <nav class="xedc-gsidebar__nav" role="navigation" aria-label="主导航">
     <a href="{{ url('<front>') }}" class="xedc-gsidebar__navitem">
@@ -96,7 +98,7 @@
       </svg>
     </button>
     <a href="{{ url('<front>') }}" class="xedc-navbar__logo" aria-label="{{ site_name }}">
-      <span class="xedc-navbar__logo-text">{{ site_name }}</span>
+      <span class="xedc-navbar__logo-text">{{ _logo_html|raw }}</span>
     </a>
     <nav class="xedc-navbar__nav" role="navigation" aria-label="主导航">
       {{ drupal_menu('main') }}
@@ -184,14 +186,21 @@
   {{ page.content }}
 </main>
 
-{# ── Footer ── #}
-<footer class="xedc-footer" role="contentinfo">
-  <div class="xedc-container">
-    <nav class="xedc-footer__nav" aria-label="底部导航">
-      {{ drupal_menu('footer') }}
-    </nav>
-    <div class="xedc-footer__bottom">
-      <p class="xedc-text-xs xedc-text-muted">© {{ "now"|date("Y") }} {{ site_name }}. All rights reserved.</p>
+{# ── Footer（shadcn/ui 风格）── #}
+<footer class="xedc-site-footer" role="contentinfo">
+  <div class="xedc-container xedc-site-footer__inner">
+    <div class="xedc-site-footer__top">
+      <a href="{{ url('<front>') }}" class="xedc-site-footer__brand">{{ _logo_html|raw }}</a>
+      <nav class="xedc-site-footer__nav" aria-label="底部导航">
+        {{ drupal_menu('footer') }}
+      </nav>
+    </div>
+    <div class="xedc-site-footer__bottom">
+      <span class="xedc-site-footer__copy">© {{ "now"|date("Y") }} {{ site_name }}. All rights reserved.</span>
+      <span class="xedc-site-footer__powered">
+        Powered by
+        <a href="https://www.drupal.org" target="_blank" rel="noopener">Drupal</a>
+      </span>
     </div>
   </div>
 </footer>
@@ -201,7 +210,7 @@
 {# ── 移动端抽屉 ── #}
 <div class="xedc-shell-overlay" id="xedc-shell-overlay" onclick="xedcCloseShell()"></div>
 <aside class="xedc-shell-drawer" id="xedc-shell-drawer" aria-label="侧边导航">
-  <a href="{{ url('<front>') }}" class="xedc-shell-drawer__brand">{{ site_name }}</a>
+  <a href="{{ url('<front>') }}" class="xedc-shell-drawer__brand">{{ _logo_html|raw }}</a>
   <nav class="xedc-shell-drawer__nav">
     <a href="{{ url('<front>') }}" class="xedc-shell-drawer__item">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>

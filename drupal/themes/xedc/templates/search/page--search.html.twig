@@ -2,11 +2,12 @@
   page--search.html.twig — 搜索结果页
 #}
 {% set q = app.request.query.get('q')|default('') %}
+{% set _logo_html = (site_name|default('DCXE'))|replace({'X': '<span class="xedc-logo-x">X</span>'}) %}
 
 <header class="xedc-navbar" role="banner">
   <div class="xedc-container xedc-flex xedc-flex-between" style="height:56px;">
     <a href="{{ url('<front>') }}" class="xedc-navbar__logo">
-      <span class="xedc-navbar__logo-text">{{ site_name }}</span>
+      <span class="xedc-navbar__logo-text">{{ _logo_html|raw }}</span>
     </a>
     <div class="xedc-navbar__search" style="flex:1;max-width:480px;margin-inline:var(--space-4);">
       <form action="/search" method="get" role="search">
@@ -114,10 +115,20 @@
   </div>
 </main>
 
-<footer class="xedc-footer">
-  <div class="xedc-container">
-    <div class="xedc-footer__bottom">
-      <p class="xedc-text-xs xedc-text-muted">© {{ "now"|date("Y") }} {{ site_name }}. All rights reserved.</p>
+<footer class="xedc-site-footer" role="contentinfo">
+  <div class="xedc-container xedc-site-footer__inner">
+    <div class="xedc-site-footer__top">
+      <a href="{{ url('<front>') }}" class="xedc-site-footer__brand">{{ _logo_html|raw }}</a>
+      <nav class="xedc-site-footer__nav" aria-label="底部导航">
+        {{ drupal_menu('footer') }}
+      </nav>
+    </div>
+    <div class="xedc-site-footer__bottom">
+      <span class="xedc-site-footer__copy">© {{ "now"|date("Y") }} {{ site_name }}. All rights reserved.</span>
+      <span class="xedc-site-footer__powered">
+        Powered by
+        <a href="https://www.drupal.org" target="_blank" rel="noopener">Drupal</a>
+      </span>
     </div>
   </div>
 </footer>
