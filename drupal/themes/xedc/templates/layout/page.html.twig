@@ -50,12 +50,10 @@
     {% if sidebar_categories is defined and sidebar_categories %}
     <div class="xedc-gsidebar__group">
       <p class="xedc-gsidebar__group-label">分类</p>
-      {% for cat in sidebar_categories|slice(0, 6) %}
-        <a href="{{ cat.url }}" class="xedc-gsidebar__catitem">{{ cat.label }}</a>
+      {% set _active_img_cat = image_active_category|default('') %}
+      {% for cat in sidebar_categories %}
+        <a href="{{ cat.url }}" class="xedc-gsidebar__catitem{% if _active_img_cat and _active_img_cat == (cat.tid ~ '') %} is-active{% endif %}">{{ cat.label }}</a>
       {% endfor %}
-      {% if sidebar_categories|length > 6 %}
-        <a href="/images" class="xedc-gsidebar__catitem xedc-gsidebar__catitem--more">··· 更多分类</a>
-      {% endif %}
     </div>
     {% endif %}
 

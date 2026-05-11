@@ -215,12 +215,87 @@
             <div class="xedc-image-detail__desc">{{ content.body }}</div>
           {% endif %}
 
-          {% if content.field_tags %}
+          {% if image_detail.tags is defined and image_detail.tags %}
             <div class="xedc-image-detail__tags">
-              {{ content.field_tags }}
+              {% for t in image_detail.tags %}
+                <a href="{{ t.url }}">{{ t.label }}</a>
+              {% endfor %}
             </div>
+          {% elseif content.field_tags %}
+            <div class="xedc-image-detail__tags">{{ content.field_tags }}</div>
           {% endif %}
         </div>
+
+        <div class="xedc-info-card xedc-image-facts xedc-image-facts--desktop">
+          <h3 class="xedc-info-card__title">详细信息</h3>
+          <div class="xedc-image-facts__grid">
+            {% if image_detail.category is defined and image_detail.category %}
+              <div class="xedc-image-facts__row">
+                <div class="xedc-image-facts__label">分类</div>
+                <div class="xedc-image-facts__value"><a href="{{ image_detail.category.url }}">{{ image_detail.category.label }}</a></div>
+              </div>
+            {% endif %}
+            {% if image_detail.tags is defined and image_detail.tags %}
+              <div class="xedc-image-facts__row">
+                <div class="xedc-image-facts__label">标签</div>
+                <div class="xedc-image-facts__value xedc-image-facts__chips">
+                  {% for t in image_detail.tags %}
+                    <a href="{{ t.url }}">{{ t.label }}</a>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endif %}
+            {% if image_detail.width is defined and image_detail.width and image_detail.height is defined and image_detail.height %}
+              <div class="xedc-image-facts__row">
+                <div class="xedc-image-facts__label">分辨率</div>
+                <div class="xedc-image-facts__value">{{ image_detail.width }} x {{ image_detail.height }}</div>
+              </div>
+            {% endif %}
+            {% if image_detail.file_size_human is defined and image_detail.file_size_human %}
+              <div class="xedc-image-facts__row">
+                <div class="xedc-image-facts__label">大小</div>
+                <div class="xedc-image-facts__value">{{ image_detail.file_size_human }}</div>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <details class="xedc-info-card xedc-image-facts xedc-image-facts--mobile">
+          <summary class="xedc-image-facts__summary">
+            <span>详细信息</span>
+            <span class="xedc-image-facts__chev" aria-hidden="true"></span>
+          </summary>
+          <div class="xedc-image-facts__grid">
+            {% if image_detail.category is defined and image_detail.category %}
+              <div class="xedc-image-facts__row">
+                <div class="xedc-image-facts__label">分类</div>
+                <div class="xedc-image-facts__value"><a href="{{ image_detail.category.url }}">{{ image_detail.category.label }}</a></div>
+              </div>
+            {% endif %}
+            {% if image_detail.tags is defined and image_detail.tags %}
+              <div class="xedc-image-facts__row">
+                <div class="xedc-image-facts__label">标签</div>
+                <div class="xedc-image-facts__value xedc-image-facts__chips">
+                  {% for t in image_detail.tags %}
+                    <a href="{{ t.url }}">{{ t.label }}</a>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endif %}
+            {% if image_detail.width is defined and image_detail.width and image_detail.height is defined and image_detail.height %}
+              <div class="xedc-image-facts__row">
+                <div class="xedc-image-facts__label">分辨率</div>
+                <div class="xedc-image-facts__value">{{ image_detail.width }} x {{ image_detail.height }}</div>
+              </div>
+            {% endif %}
+            {% if image_detail.file_size_human is defined and image_detail.file_size_human %}
+              <div class="xedc-image-facts__row">
+                <div class="xedc-image-facts__label">大小</div>
+                <div class="xedc-image-facts__value">{{ image_detail.file_size_human }}</div>
+              </div>
+            {% endif %}
+          </div>
+        </details>
 
         {# 作者卡片 #}
         <div class="xedc-info-card xedc-author-card">
@@ -247,10 +322,7 @@
           </div>
         {% endif %}
 
-        {# 其他字段（如分类、合集、来源等，避免重复输出已渲染过的）#}
-        {% set _hidden_fields = ['body', 'field_tags', 'field_image', 'field_cover_image',
-                                 'field_media', 'field_allow_download',
-                                 'flag_like', 'flag_collect', 'links', 'comment'] %}
+        {% set _hidden_fields = ['body', 'field_tags', 'field_image', 'field_cover_image', 'field_media', 'field_allow_download', 'flag_like', 'flag_collect', 'links', 'comment'] %}
         {% set _has_extra = false %}
         {% for k in content|keys %}
           {% if k not in _hidden_fields and (k starts with 'field_') and content[k]|render|trim is not empty %}
@@ -259,7 +331,7 @@
         {% endfor %}
         {% if _has_extra %}
           <div class="xedc-info-card">
-            <h3 class="xedc-info-card__title">详细信息</h3>
+            <h3 class="xedc-info-card__title">其他字段</h3>
             <dl class="xedc-info-card__fields">
               {% for k in content|keys %}
                 {% if k not in _hidden_fields and (k starts with 'field_') and content[k]|render|trim is not empty %}

@@ -120,6 +120,11 @@
   background: var(--muted);
   color: var(--foreground);
 }
+.xedc-gsidebar__catitem.is-active {
+  background: var(--muted);
+  color: var(--foreground);
+  font-weight: 600;
+}
 .xedc-gsidebar__catitem--more {
   font-weight: 600;
   font-size: 12px;
