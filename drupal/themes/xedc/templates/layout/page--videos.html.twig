@@ -60,7 +60,7 @@
     {% if video_sidebar_categories is defined and video_sidebar_categories %}
       {% for cat in video_sidebar_categories %}
         <a href="{{ cat.url }}"
-           class="xedc-gsidebar__catitem xedc-gsidebar__catitem--video{% if _active_cat == cat.tid|string %} is-active{% endif %}">
+           class="xedc-gsidebar__catitem xedc-gsidebar__catitem--video{% if _active_cat == (cat.tid ~ '') %} is-active{% endif %}">
           <span class="xedc-gsidebar__cat-dot"></span>
           {{ cat.label }}
           {% if cat.is_hot is defined and cat.is_hot %}
@@ -235,7 +235,7 @@
     <div class="xedc-shell-drawer__sublist">
       <a href="/videos" class="xedc-shell-drawer__subitem{% if _active_cat == 'all' %} is-active{% endif %}">全部视频</a>
       {% for cat in video_sidebar_categories %}
-        <a href="{{ cat.url }}" class="xedc-shell-drawer__subitem{% if _active_cat == cat.tid|string %} is-active{% endif %}">{{ cat.label }}</a>
+        <a href="{{ cat.url }}" class="xedc-shell-drawer__subitem{% if _active_cat == (cat.tid ~ '') %} is-active{% endif %}">{{ cat.label }}</a>
       {% endfor %}
     </div>
   </div>
