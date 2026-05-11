@@ -1065,27 +1065,34 @@ function xedc_preprocess_views_view(array &$variables): void {
  */
 function _xedc_disable_view_cache(\Drupal\views\ViewExecutable $view): void {
   try {
-    // Update the option so any later getPlugin('cache') gets the 'none' type.
+    // Method 1: set option before plugin is instantiated.
     $view->display_handler->setOption('cache', ['type' => 'none']);
 
-    // Replace the already-instantiated plugin instance, if any.
+    // Method 2: replace/flush the already-instantiated plugin via reflection.
     $reflection = new \ReflectionObject($view->display_handler);
-    if (!$reflection->hasProperty('plugins')) {
-      return;
-    }
-    $plugins_prop = $reflection->getProperty('plugins');
-    $plugins_prop->setAccessible(TRUE);
-    $plugins = $plugins_prop->getValue($view->display_handler);
+    if ($reflection->hasProperty('plugins')) {
+      $plugins_prop = $reflection->getProperty('plugins');
+      $plugins_prop->setAccessible(TRUE);
+      $plugins = $plugins_prop->getValue($view->display_handler);
 
-    $none = \Drupal\views\Views::pluginManager('cache')->createInstance('none');
-    if ($none) {
-      $none->init($view, $view->display_handler);
-      $plugins['cache'] = $none;
-      $plugins_prop->setValue($view->display_handler, $plugins);
+      // Flush existing cache so stale results can't be returned.
+      if (!empty($plugins['cache']) && is_object($plugins['cache'])) {
+        try { $plugins['cache']->cacheFlush(); } catch (\Throwable $e2) {}
+      }
+
+      $none = \Drupal\views\Views::pluginManager('cache')->createInstance('none');
+      if ($none) {
+        $none->init($view, $view->display_handler);
+        $plugins['cache'] = $none;
+        $plugins_prop->setValue($view->display_handler, $plugins);
+      }
     }
-  } catch (\Throwable $e) {
-    // Best-effort; if reflection fails, query still runs but may hit cache.
-  }
+
+    // Method 3: invalidate the views_results bin for this view's config tag.
+    \Drupal::cache('views_results')->invalidateTags([
+      'config:views.view.' . $view->id(),
+    ]);
+  } catch (\Throwable $e) {}
 }
 
 function xedc_views_query_alter(\Drupal\views\ViewExecutable $view, \Drupal\views\Plugin\views\query\QueryPluginBase $query): void {
@@ -1099,17 +1106,13 @@ function xedc_views_query_alter(\Drupal\views\ViewExecutable $view, \Drupal\view
   }
 
   $request = \Drupal::requestStack()->getCurrentRequest();
-  $has_filters = $request && (
-    (string) ($request->query->get('sort') ?? '') !== ''
-    || (string) ($request->query->get('tag') ?? '') !== ''
-    || (string) ($request->query->get('category') ?? '') !== ''
-    || (string) ($request->query->get('search') ?? '') !== ''
-    || (string) ($request->query->get('q') ?? '') !== ''
-    || (string) ($request->query->get('today') ?? '') !== ''
-  );
-  if ($has_filters) {
-    _xedc_disable_view_cache($view);
-  }
+
+  // Always disable the Views results cache for these views. The query is
+  // modified per-request via query params, and the Views tag-cache does not
+  // vary its key by URL query args, so cached results would ignore filters.
+  // The Drupal render cache (keyed by url.query_args) still deduplicates
+  // identical requests efficiently.
+  _xedc_disable_view_cache($view);
 
   if ($view->id() === 'article_list') {
     $category = $request?->query->get('category');

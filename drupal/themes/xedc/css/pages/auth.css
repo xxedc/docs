@@ -111,6 +111,14 @@
   border-bottom-color: var(--foreground);
 }
 
+/* ── 页面标题（替换 tab 行）── */
+.xedc-auth-dialog__heading {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--foreground);
+  margin: 0 0 var(--space-5);
+}
+
 /* ── 系统消息（仅在有内容时显示）── */
 .xedc-auth-messages {
   background: var(--muted);
@@ -199,10 +207,28 @@
 
 /* ── 底部链接 ── */
 .xedc-auth-dialog__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-top: var(--space-5);
   padding-top: var(--space-4);
   border-top: 1px solid var(--border);
 }
+
+.xedc-auth-footer-link {
+  font-size: var(--text-sm);
+  color: var(--muted-foreground);
+  transition: color var(--transition-fast);
+}
+.xedc-auth-footer-link:hover { color: var(--foreground); }
+
+.xedc-auth-register-link {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--primary);
+  transition: opacity var(--transition-fast);
+}
+.xedc-auth-register-link:hover { opacity: 0.75; }
 
 /* ── 旧卡片样式（保留兼容）── */
 .xedc-auth-page {
