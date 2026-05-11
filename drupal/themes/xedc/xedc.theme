@@ -31,6 +31,8 @@ function xedc_preprocess_page(array &$variables): void {
   $variables['site_slogan'] = $config->get('slogan');
   $variables['is_logged_in']  = \Drupal::currentUser()->isAuthenticated();
   $variables['current_user']  = \Drupal::currentUser();
+  $request = \Drupal::requestStack()->getCurrentRequest();
+  $route_name = (string) \Drupal::routeMatch()->getRouteName();
 
   // 加载当前用户头像 URL（供导航栏使用）
   $current_user = \Drupal::currentUser();
@@ -61,6 +63,20 @@ function xedc_preprocess_page(array &$variables): void {
     }
   } else {
     $variables['logout_url'] = '/user/logout';
+  }
+
+  $variables['search_query'] = (string) ($request?->query->get('q') ?? '');
+  if (str_contains($route_name, 'search')) {
+    $variables['#cache']['contexts'][] = 'url.query_args:q';
+  }
+
+  if ($route_name === 'view.video_list.page_1') {
+    $active_category = (string) ($request?->query->get('category') ?? 'all');
+    if ($active_category === '') {
+      $active_category = 'all';
+    }
+    $variables['video_active_category'] = $active_category;
+    $variables['#cache']['contexts'][] = 'url.query_args:category';
   }
 
   // Load sidebar categories from xie_zhen vocabulary.

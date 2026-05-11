@@ -1,7 +1,7 @@
 {#
   page--search.html.twig — 搜索结果页
 #}
-{% set q = app.request.query.get('q')|default('') %}
+{% set q = search_query|default('') %}
 {% set _logo_html = (site_name|default('DCXE'))|replace({'X': '<span class="xedc-logo-x">X</span>'}) %}
 
 <header class="xedc-navbar" role="banner">
