@@ -22,9 +22,13 @@ global-styles:
 
 global-scripts:
   version: VERSION
+  css:
+    theme:
+      css/pages/auth.css: { weight: -50 }
   js:
     js/theme-toggle.js: { attributes: { defer: true } }
     js/mobile-shell.js: { attributes: { defer: true } }
+    js/auth-modal.js: { attributes: { defer: true } }
     components/dropdown/dropdown.js: { attributes: { defer: true } }
   dependencies:
     - core/drupal
