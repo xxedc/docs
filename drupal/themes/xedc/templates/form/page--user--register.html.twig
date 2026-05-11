@@ -20,7 +20,7 @@
 <div class="xedc-auth-backdrop">
   <div class="xedc-auth-dialog" role="dialog" aria-modal="true" aria-labelledby="xedc-auth-title">
 
-    <a href="{{ url('<front>') }}" class="xedc-auth-dialog__close" aria-label="关闭，返回首页">
+    <a href="{{ url('<front>') }}" class="xedc-auth-dialog__close" aria-label="返回首页">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
       </svg>
@@ -30,12 +30,7 @@
       <a href="{{ url('<front>') }}" class="xedc-auth-dialog__logo" aria-label="{{ site_name }}">
         {{ _logo_html|raw }}
       </a>
-      <p class="xedc-auth-dialog__tagline">创建一个新账号</p>
-    </div>
-
-    <div class="xedc-auth-tabs xedc-flex" role="tablist" id="xedc-auth-title">
-      <a href="/user/login"    class="xedc-auth-tab" role="tab">登录</a>
-      <a href="/user/register" class="xedc-auth-tab is-active" role="tab" aria-selected="true">注册</a>
+      <p class="xedc-auth-dialog__tagline" id="xedc-auth-title">创建一个新账号</p>
     </div>
 
     {% set _highlighted = page.highlighted|render|trim %}
@@ -47,9 +42,9 @@
       {{ page.content }}
     </div>
 
-    <div class="xedc-auth-dialog__footer xedc-flex xedc-flex-between">
-      <a href="/user/login" class="xedc-text-sm xedc-text-muted">已有账号？登录</a>
-      <a href="{{ url('<front>') }}" class="xedc-text-sm xedc-text-muted">返回首页</a>
+    <div class="xedc-auth-dialog__footer">
+      <a href="/user/login" class="xedc-auth-footer-link">已有账号？立即登录</a>
+      <a href="{{ url('<front>') }}" class="xedc-auth-footer-link">返回首页</a>
     </div>
 
   </div>
