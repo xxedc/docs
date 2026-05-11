@@ -174,3 +174,10 @@ page-search:
   css:
     theme:
       css/pages/search.css: {}
+
+# ── 分类/标签术语页 ──
+page-taxonomy:
+  version: VERSION
+  css:
+    theme:
+      css/pages/taxonomy.css: {}

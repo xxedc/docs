@@ -1,59 +1,74 @@
 {#
-  page--user--login.html.twig — 登录页专用布局
+  page--user--login.html.twig — 登录/注册页（shadcn Dialog 风格）
 #}
+<!DOCTYPE html>
+<html{{ html_attributes }}>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ head_title|safe_join(' | ') }}</title>
+  {{ head }}
+  {{ styles }}
+  {{ scripts_top }}
+</head>
+<body{{ attributes.addClass('xedc-body', 'xedc-body--auth') }}>
+{{ page_top }}
 
-{# 顶部导航简化版 #}
-<header class="xedc-navbar" role="banner">
-  <div class="xedc-container xedc-flex xedc-flex-between" style="height:56px;">
-    <a href="{{ url('<front>') }}" class="xedc-navbar__logo" aria-label="{{ site_name }}">
-      <span class="xedc-navbar__logo-text">{{ site_name }}</span>
+{% set _logo_html = (site_name|default('DCXE'))|replace({'X': '<span class="xedc-logo-x">X</span>'}) %}
+
+{# 全屏背景 + 模态框 #}
+<div class="xedc-auth-backdrop">
+  <div class="xedc-auth-dialog" role="dialog" aria-modal="true" aria-labelledby="xedc-auth-title">
+
+    {# 关闭按钮 #}
+    <a href="{{ url('<front>') }}" class="xedc-auth-dialog__close" aria-label="关闭，返回首页">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+      </svg>
     </a>
-    {% include 'xedc:theme-toggle' %}
-  </div>
-</header>
 
-{# 登录卡片居中 #}
-<main class="xedc-auth-page" id="main-content" role="main">
-  <div class="xedc-auth-card xedc-card">
-    <div class="xedc-card__body">
-
-      {# Tab 切换：登录 / 注册 #}
-      <div class="xedc-auth-tabs xedc-flex" role="tablist">
-        <a href="/user/login"
-           class="xedc-auth-tab{% if current_path == '/user/login' %} is-active{% endif %}"
-           role="tab">
-          登录
-        </a>
-        <a href="/user/register"
-           class="xedc-auth-tab{% if current_path == '/user/register' %} is-active{% endif %}"
-           role="tab">
-          注册
-        </a>
-      </div>
-
-      {# 系统消息 #}
-      {% if page.highlighted %}
-        <div class="xedc-auth-messages" role="alert">{{ page.highlighted }}</div>
-      {% endif %}
-
-      {# 表单内容 #}
-      <div class="xedc-auth-form-wrap">
-        {{ page.content }}
-      </div>
-
-      {# 底部链接 #}
-      <div class="xedc-auth-card__footer xedc-flex xedc-flex-between">
-        <a href="/user/password" class="xedc-text-sm xedc-text-muted">忘记密码？</a>
-        <a href="{{ url('<front>') }}" class="xedc-text-sm xedc-text-muted">返回首页</a>
-      </div>
-
+    {# Logo #}
+    <div class="xedc-auth-dialog__brand">
+      <a href="{{ url('<front>') }}" class="xedc-auth-dialog__logo" aria-label="{{ site_name }}">
+        {{ _logo_html|raw }}
+      </a>
+      <p class="xedc-auth-dialog__tagline">欢迎回来，请登录您的账号</p>
     </div>
-  </div>
-</main>
 
-{# 简化 Footer #}
-<footer class="xedc-auth-footer">
-  <p class="xedc-text-xs xedc-text-muted">
-    © {{ "now"|date("Y") }} {{ site_name }}
-  </p>
-</footer>
+    {# Tab 切换：登录 / 注册 #}
+    <div class="xedc-auth-tabs xedc-flex" role="tablist" id="xedc-auth-title">
+      <a href="/user/login"
+         class="xedc-auth-tab{% if current_path starts with '/user/login' or current_path == '/user/login' %} is-active{% endif %}"
+         role="tab" aria-selected="{{ current_path starts with '/user/login' ? 'true' : 'false' }}">
+        登录
+      </a>
+      <a href="/user/register"
+         class="xedc-auth-tab{% if current_path starts with '/user/register' %} is-active{% endif %}"
+         role="tab" aria-selected="{{ current_path starts with '/user/register' ? 'true' : 'false' }}">
+        注册
+      </a>
+    </div>
+
+    {# 系统消息 #}
+    {% if page.highlighted %}
+      <div class="xedc-auth-messages" role="alert">{{ page.highlighted }}</div>
+    {% endif %}
+
+    {# 表单内容 #}
+    <div class="xedc-auth-form-wrap">
+      {{ page.content }}
+    </div>
+
+    {# 底部链接 #}
+    <div class="xedc-auth-dialog__footer xedc-flex xedc-flex-between">
+      <a href="/user/password" class="xedc-text-sm xedc-text-muted">忘记密码？</a>
+      <a href="{{ url('<front>') }}" class="xedc-text-sm xedc-text-muted">返回首页</a>
+    </div>
+
+  </div>
+</div>
+
+{{ page_bottom }}
+{{ scripts }}
+</body>
+</html>

@@ -1,0 +1,33 @@
+{#
+  taxonomy-term.html.twig — 分类/标签术语页头部（shadcn 风格）
+  Variables:
+    - term: 当前术语实体
+    - content: 已渲染内容字段
+    - url: 术语 URL
+    - name: 术语名称
+    - description: 术语描述
+    - view_mode: 视图模式
+#}
+<article{{ attributes.addClass('xedc-term') }}>
+
+  <header class="xedc-term__header">
+    <div class="xedc-term__badge">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
+        <line x1="7" y1="7" x2="7.01" y2="7"/>
+      </svg>
+      标签
+    </div>
+    <h1 class="xedc-term__title" {{ title_attributes }}>#{{ name }}</h1>
+    {% if description %}
+      <p class="xedc-term__desc">{{ description }}</p>
+    {% endif %}
+  </header>
+
+  {% if content %}
+    <div class="xedc-term__content">
+      {{ content }}
+    </div>
+  {% endif %}
+
+</article>
