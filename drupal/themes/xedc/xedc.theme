@@ -47,6 +47,43 @@ function xedc_preprocess_page(array &$variables): void {
     } catch (\Exception $e) {}
   }
 
+  // Generate logout URL with CSRF token (bypasses Drupal confirm page).
+  if ($current_user->isAuthenticated()) {
+    try {
+      $logout_url = Url::fromRoute('user.logout', [], [
+        'query' => ['token' => \Drupal::service('csrf_token')->get('/user/logout')],
+      ])->toString();
+      $variables['logout_url'] = $logout_url;
+      $variables['#attached']['drupalSettings']['xedc']['logoutUrl'] = $logout_url;
+    } catch (\Exception $e) {
+      $variables['logout_url'] = '/user/logout';
+    }
+  } else {
+    $variables['logout_url'] = '/user/logout';
+  }
+
+  // Load sidebar categories from xie_zhen vocabulary.
+  try {
+    $cat_tree = \Drupal::entityTypeManager()->getStorage('taxonomy_term')
+      ->loadTree('xie_zhen', 0, NULL, FALSE);
+    $sidebar_cats = [];
+    foreach ($cat_tree as $item) {
+      $tid = (int) ($item->tid ?? 0);
+      if (!$tid) {
+        continue;
+      }
+      $sidebar_cats[] = [
+        'tid' => $tid,
+        'label' => (string) ($item->name ?? ''),
+        'url' => '/images?category=' . $tid,
+      ];
+    }
+    $variables['sidebar_categories'] = $sidebar_cats;
+    $variables['#cache']['tags'][] = 'taxonomy_term_list:xie_zhen';
+  } catch (\Exception $e) {
+    $variables['sidebar_categories'] = [];
+  }
+
   $node = \Drupal::routeMatch()->getParameter('node');
   if ($node) {
     switch ($node->bundle()) {
@@ -538,6 +575,18 @@ function xedc_preprocess_views_view(array &$variables): void {
   $view_id = $variables['view']->id();
   if (isset($library_map[$view_id])) {
     $variables['#attached']['library'][] = $library_map[$view_id];
+  }
+
+  // Cache contexts so query-arg filtering/sorting is respected per unique URL.
+  if ($view_id === 'image_waterfall') {
+    foreach (['sort', 'tag', 'category', 'search', 'today'] as $arg) {
+      $variables['#cache']['contexts'][] = 'url.query_args:' . $arg;
+    }
+  }
+  if ($view_id === 'article_list') {
+    foreach (['sort', 'category'] as $arg) {
+      $variables['#cache']['contexts'][] = 'url.query_args:' . $arg;
+    }
   }
 
   $request = \Drupal::requestStack()->getCurrentRequest();
@@ -1090,6 +1139,20 @@ function xedc_views_query_alter(\Drupal\views\ViewExecutable $view, \Drupal\view
 
   if ($base_table) {
     $query->addOrderBy($base_table, 'created', 'DESC');
+  }
+}
+
+/**
+ * 预处理 taxonomy_term（标签/分类页）
+ */
+function xedc_preprocess_taxonomy_term(array &$variables): void {
+  $variables['#attached']['library'][] = 'xedc/page-taxonomy';
+
+  $term = $variables['term'];
+  $variables['name'] = $term->label();
+  $variables['description'] = '';
+  if ($term->hasField('description') && !$term->get('description')->isEmpty()) {
+    $variables['description'] = (string) ($term->get('description')->value ?? '');
   }
 }
 

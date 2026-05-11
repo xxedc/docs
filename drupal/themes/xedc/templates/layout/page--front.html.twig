@@ -46,16 +46,17 @@
     </a>
   </nav>
 
+  {% if sidebar_categories is defined and sidebar_categories %}
   <div class="xedc-gsidebar__group">
     <p class="xedc-gsidebar__group-label">分类</p>
-    <a href="/images?f[0]=category:anime"     class="xedc-gsidebar__catitem">二次元</a>
-    <a href="/images?f[0]=category:wallpaper" class="xedc-gsidebar__catitem">动漫壁纸</a>
-    <a href="/images?f[0]=category:cosplay"   class="xedc-gsidebar__catitem">Cosplay</a>
-    <a href="/images?f[0]=category:photo"     class="xedc-gsidebar__catitem">写真美图</a>
-    <a href="/images?f[0]=category:gamecg"    class="xedc-gsidebar__catitem">游戏CG</a>
-    <a href="/images?f[0]=category:landscape" class="xedc-gsidebar__catitem">风景建筑</a>
-    <a href="/categories" class="xedc-gsidebar__catitem xedc-gsidebar__catitem--more">··· 更多分类</a>
+    {% for cat in sidebar_categories|slice(0, 6) %}
+      <a href="{{ cat.url }}" class="xedc-gsidebar__catitem">{{ cat.label }}</a>
+    {% endfor %}
+    {% if sidebar_categories|length > 6 %}
+      <a href="/images" class="xedc-gsidebar__catitem xedc-gsidebar__catitem--more">··· 更多分类</a>
+    {% endif %}
   </div>
+  {% endif %}
 
   {% if is_logged_in %}
   <div class="xedc-gsidebar__group">
@@ -149,7 +150,7 @@
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93A10 10 0 0 1 21.25 9m-2.18-4.07C17.16 3.41 14.68 2.5 12 2.5c-5.25 0-9.5 4.25-9.5 9.5 0 2.68.91 5.16 2.43 7.07M19.07 4.93C20.59 6.84 21.5 9.32 21.5 12c0 5.25-4.25 9.5-9.5 9.5-2.68 0-5.16-.91-7.07-2.43"/></svg>
             设置
           </a>
-          <a class="xedc-dropdown__item xedc-dropdown__item--destructive" href="/user/logout">
+          <a class="xedc-dropdown__item xedc-dropdown__item--destructive" href="{{ logout_url }}">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
             退出登录
           </a>

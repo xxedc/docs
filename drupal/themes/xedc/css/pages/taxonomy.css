@@ -1,0 +1,68 @@
+/* ================================================================
+   taxonomy.css — 分类 / 标签术语页样式（shadcn/ui 风格）
+   ================================================================ */
+
+/* ── 术语头部 ── */
+.xedc-term__header {
+  padding: var(--space-8) 0 var(--space-6);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: var(--space-6);
+}
+
+.xedc-term__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  background: var(--muted);
+  color: var(--muted-foreground);
+  border-radius: var(--radius);
+  padding: var(--space-1) var(--space-2-5);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  margin-bottom: var(--space-3);
+  letter-spacing: 0.03em;
+}
+
+.xedc-term__title {
+  font-size: clamp(var(--text-2xl), 4vw, var(--text-4xl));
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--foreground);
+  line-height: 1.15;
+  margin: 0 0 var(--space-3);
+}
+
+.xedc-term__desc {
+  font-size: var(--text-base);
+  color: var(--muted-foreground);
+  line-height: var(--leading-relaxed);
+  max-width: 640px;
+  margin: 0;
+}
+
+/* ── 分页容器 ── */
+.xedc-term { max-width: 100%; }
+
+/* ── 术语内容区（Views 嵌入）── */
+.xedc-term__content { padding-top: var(--space-2); }
+
+/* ── 术语页内的 Views 网格（若用默认未格式化列表）── */
+.xedc-term__content .view-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--space-4);
+}
+
+@media (min-width: 640px) {
+  .xedc-term__content .view-content {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  }
+}
+
+/* ── 空状态 ── */
+.xedc-term__content .view-empty {
+  text-align: center;
+  padding: var(--space-16) var(--space-4);
+  color: var(--muted-foreground);
+  font-size: var(--text-base);
+}

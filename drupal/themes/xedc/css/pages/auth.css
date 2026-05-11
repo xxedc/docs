@@ -1,26 +1,90 @@
 /* ================================================================
-   auth.css — 登录/注册页 + 错误页样式
+   auth.css — 登录/注册页（shadcn Dialog 风格）+ 错误页样式
    ================================================================ */
 
-/* ── 登录页整体布局 ── */
-.xedc-auth-page {
-  min-height: calc(100vh - 120px);
+/* ── 全屏遮罩背景 ── */
+.xedc-auth-backdrop {
+  position: fixed;
+  inset: 0;
+  background: oklch(0.09 0 0 / 0.65);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-6) var(--space-4);
-  background: var(--background);
+  padding: var(--space-4);
+  z-index: 200;
 }
 
-/* ── 登录卡片 ── */
-.xedc-auth-card {
+[data-theme="dark"] .xedc-auth-backdrop {
+  background: oklch(0.06 0 0 / 0.8);
+}
+
+/* ── 模态对话框 ── */
+.xedc-auth-dialog {
+  position: relative;
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) + 4px);
+  box-shadow:
+    0 4px 6px -1px oklch(0.09 0 0 / 0.1),
+    0 20px 40px -8px oklch(0.09 0 0 / 0.35);
   width: 100%;
   max-width: 420px;
-  box-shadow: var(--shadow-lg);
+  padding: var(--space-8);
+  animation: xedc-dialog-in 0.18s ease;
 }
 
-.xedc-auth-card .xedc-card__body {
-  padding: var(--space-8);
+[data-theme="dark"] .xedc-auth-dialog {
+  box-shadow:
+    0 4px 6px -1px oklch(0 0 0 / 0.4),
+    0 20px 40px -8px oklch(0 0 0 / 0.6);
+}
+
+@keyframes xedc-dialog-in {
+  from { opacity: 0; transform: scale(0.96) translateY(-6px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0);    }
+}
+
+/* ── 关闭按钮 ── */
+.xedc-auth-dialog__close {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius);
+  color: var(--muted-foreground);
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.xedc-auth-dialog__close:hover {
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+/* ── 品牌区域 ── */
+.xedc-auth-dialog__brand {
+  text-align: center;
+  margin-bottom: var(--space-6);
+}
+
+.xedc-auth-dialog__logo {
+  display: inline-block;
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--foreground);
+  margin-bottom: var(--space-2);
+}
+
+.xedc-auth-dialog__tagline {
+  font-size: var(--text-sm);
+  color: var(--muted-foreground);
+  margin: 0;
 }
 
 /* ── Tab 切换 ── */
@@ -43,15 +107,63 @@
 
 .xedc-auth-tab:hover,
 .xedc-auth-tab.is-active {
-  color: var(--primary);
-  border-bottom-color: var(--primary);
+  color: var(--foreground);
+  border-bottom-color: var(--foreground);
+}
+
+/* ── 系统消息 ── */
+.xedc-auth-messages {
+  background: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-4);
+  font-size: var(--text-sm);
 }
 
 /* ── 表单内容 ── */
-.xedc-auth-form { display: flex; flex-direction: column; gap: var(--space-4); }
+.xedc-auth-form-wrap { display: flex; flex-direction: column; gap: var(--space-4); }
 
-.xedc-auth-form .xedc-auth-form__actions .button,
-.xedc-auth-form .xedc-auth-form__actions input[type="submit"] {
+/* Drupal form-item */
+.xedc-auth-form-wrap .form-item,
+.xedc-auth-form-wrap .js-form-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1-5);
+  margin-bottom: var(--space-4);
+}
+
+.xedc-auth-form-wrap label {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--foreground);
+}
+
+.xedc-auth-form-wrap input[type="text"],
+.xedc-auth-form-wrap input[type="email"],
+.xedc-auth-form-wrap input[type="password"] {
+  width: 100%;
+  height: 42px;
+  padding: 0 var(--space-3);
+  background: var(--background);
+  border: 1px solid var(--input);
+  border-radius: var(--radius);
+  font-size: var(--text-sm);
+  color: var(--foreground);
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.xedc-auth-form-wrap input:focus {
+  border-color: var(--ring);
+  box-shadow: 0 0 0 3px oklch(from var(--ring) l c h / 0.15);
+}
+
+/* Submit button */
+.xedc-auth-form-wrap .form-actions .button,
+.xedc-auth-form-wrap .form-actions input[type="submit"],
+.xedc-auth-form-wrap input[type="submit"] {
   width: 100%;
   height: 44px;
   background: var(--primary);
@@ -62,55 +174,44 @@
   font-weight: 600;
   cursor: pointer;
   transition: opacity var(--transition-fast);
+  margin-top: var(--space-2);
 }
 
-.xedc-auth-form .xedc-auth-form__actions .button:hover,
-.xedc-auth-form .xedc-auth-form__actions input[type="submit"]:hover {
-  opacity: 0.9;
-}
-
-/* Drupal 默认表单字段美化 */
-.xedc-auth-form .form-item { display: flex; flex-direction: column; gap: var(--space-1); }
-
-.xedc-auth-form label {
-  font-size: var(--text-sm);
-  font-weight: 500;
-  color: var(--foreground);
-}
-
-.xedc-auth-form input[type="text"],
-.xedc-auth-form input[type="email"],
-.xedc-auth-form input[type="password"] {
-  width: 100%;
-  height: 42px;
-  padding: var(--space-2) var(--space-3);
-  background: var(--background);
-  border: 1px solid var(--input);
-  border-radius: var(--radius);
-  font-size: var(--text-sm);
-  color: var(--foreground);
-  outline: none;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-}
-
-.xedc-auth-form input:focus {
-  border-color: var(--ring);
-  box-shadow: 0 0 0 2px oklch(from var(--ring) l c h / 0.2);
+.xedc-auth-form-wrap .form-actions .button:hover,
+.xedc-auth-form-wrap input[type="submit"]:hover {
+  opacity: 0.88;
 }
 
 /* ── 底部链接 ── */
+.xedc-auth-dialog__footer {
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+/* ── 旧卡片样式（保留兼容）── */
+.xedc-auth-page {
+  min-height: calc(100vh - 120px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6) var(--space-4);
+  background: var(--background);
+}
+
+.xedc-auth-card {
+  width: 100%;
+  max-width: 420px;
+  box-shadow: var(--shadow-lg);
+}
+
+.xedc-auth-card .xedc-card__body { padding: var(--space-8); }
 .xedc-auth-card__footer {
   margin-top: var(--space-4);
   padding-top: var(--space-4);
   border-top: 1px solid var(--border);
 }
-
-/* ── Auth Footer ── */
-.xedc-auth-footer {
-  text-align: center;
-  padding: var(--space-4);
-  color: var(--muted-foreground);
-}
+.xedc-auth-footer { text-align: center; padding: var(--space-4); color: var(--muted-foreground); }
 
 /* ── 错误页 ── */
 .xedc-error-page {

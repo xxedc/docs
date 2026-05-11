@@ -27,3 +27,21 @@
     if (e.key === 'Escape') closeShell();
   });
 })();
+
+// Rewrite logout links to include CSRF token (prevents Drupal confirm page).
+(function (Drupal) {
+  'use strict';
+  Drupal.behaviors.xedcLogoutUrl = {
+    attach: function (context, settings) {
+      var url = settings.xedc && settings.xedc.logoutUrl;
+      if (!url) return;
+      var links = context.querySelectorAll('a[href*="user/logout"]');
+      for (var i = 0; i < links.length; i++) {
+        var href = links[i].getAttribute('href');
+        if (href && href.indexOf('token=') === -1) {
+          links[i].setAttribute('href', url);
+        }
+      }
+    }
+  };
+})(Drupal);
