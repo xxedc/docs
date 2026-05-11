@@ -45,3 +45,18 @@
     }
   };
 })(Drupal);
+
+// Close button on Drupal status messages.
+(function () {
+  'use strict';
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-xedc-msg-close]');
+    if (!btn) return;
+    var card = btn.closest('.xedc-msg');
+    if (!card) return;
+    card.style.transition = 'opacity .15s, transform .15s';
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(-4px)';
+    setTimeout(function () { card.remove(); }, 150);
+  });
+})();

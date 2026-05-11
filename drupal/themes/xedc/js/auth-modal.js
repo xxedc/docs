@@ -147,16 +147,13 @@
           return;
         }
 
-        // Pull any pre-form status messages.
-        var messages = doc.querySelector('.messages__wrapper, [data-drupal-messages], .messages');
+        // Pull any pre-form status messages (already rendered with our
+        // shadcn template if Drupal added any via messenger()->addError() etc.).
+        var messages = doc.querySelector('[data-drupal-messages], .xedc-msgs, .messages__wrapper, .messages');
 
         content.innerHTML = '';
         if (messages && messages.textContent.trim()) {
-          var msgWrap = document.createElement('div');
-          msgWrap.className = 'xedc-auth-messages';
-          msgWrap.setAttribute('role', 'alert');
-          msgWrap.appendChild(messages);
-          content.appendChild(msgWrap);
+          content.appendChild(messages);
         }
         content.appendChild(form);
 
