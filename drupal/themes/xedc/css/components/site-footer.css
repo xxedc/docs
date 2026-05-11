@@ -1,0 +1,116 @@
+/* ================================================================
+   site-footer.css — 全站底部（shadcn/ui 风格）
+   ================================================================ */
+
+.xedc-site-footer {
+  margin-top: var(--space-10);
+  padding: var(--space-8) 0 var(--space-6);
+  background: var(--background);
+  border-top: 1px solid var(--border);
+  color: var(--muted-foreground);
+}
+
+.xedc-site-footer__inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* ── Top: 品牌 + 导航链接 ── */
+.xedc-site-footer__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+}
+
+.xedc-site-footer__brand {
+  display: inline-flex;
+  align-items: center;
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--foreground);
+  letter-spacing: -0.02em;
+  text-decoration: none;
+}
+
+.xedc-site-footer__nav {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-wrap: wrap;
+}
+.xedc-site-footer__nav a {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  transition: background-color 0.15s, color 0.15s;
+}
+.xedc-site-footer__nav a:hover {
+  background: var(--muted);
+  color: var(--foreground);
+}
+
+/* ── Bottom: 版权 + Powered by ── */
+.xedc-site-footer__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  font-size: 12px;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+.xedc-site-footer__copy {
+  color: var(--muted-foreground);
+}
+
+.xedc-site-footer__powered {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--muted-foreground);
+}
+.xedc-site-footer__powered a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--foreground);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.15s;
+}
+.xedc-site-footer__powered a:hover {
+  color: oklch(0.58 0.21 27);
+}
+.xedc-site-footer__powered svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+@media (max-width: 640px) {
+  .xedc-site-footer__top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+  .xedc-site-footer__bottom {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ── 隐藏 Drupal 默认的 Powered by Drupal 区块（我们在 footer 内自己渲染了）── */
+.block-system-powered-by-block,
+[id^="block-"][id*="powered-by"],
+[id^="block-"][id*="poweredby"] {
+  display: none !important;
+}

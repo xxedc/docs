@@ -1,10 +1,11 @@
 {#
   page--system--403.html.twig — 无权限访问
 #}
+{% set _logo_html = (site_name|default('DCXE'))|replace({'X': '<span class="xedc-logo-x">X</span>'}) %}
 <header class="xedc-navbar" role="banner">
   <div class="xedc-container xedc-flex xedc-flex-between" style="height:56px;">
     <a href="{{ url('<front>') }}" class="xedc-navbar__logo">
-      <span class="xedc-navbar__logo-text">{{ site_name }}</span>
+      <span class="xedc-navbar__logo-text">{{ _logo_html|raw }}</span>
     </a>
     <div class="xedc-navbar__tools xedc-flex xedc-items-center xedc-gap-2">
       {% include 'xedc:theme-toggle' %}
