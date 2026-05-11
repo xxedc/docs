@@ -85,6 +85,32 @@ function xedc_preprocess_page(array &$variables): void {
     $variables['sidebar_categories'] = [];
   }
 
+  // Load video sidebar categories from video_class vocabulary.
+  $hot_video_labels = ['短视频', '短片', 'short'];
+  try {
+    $video_cat_tree = \Drupal::entityTypeManager()->getStorage('taxonomy_term')
+      ->loadTree('video_class', 0, NULL, FALSE);
+    $video_sidebar_cats = [];
+    foreach ($video_cat_tree as $item) {
+      $tid = (int) ($item->tid ?? 0);
+      $label = (string) ($item->name ?? '');
+      if (!$tid || $label === '') {
+        continue;
+      }
+      $is_hot = in_array($label, $hot_video_labels, TRUE);
+      $video_sidebar_cats[] = [
+        'tid' => $tid,
+        'label' => $label,
+        'url' => '/videos?category=' . $tid,
+        'is_hot' => $is_hot,
+      ];
+    }
+    $variables['video_sidebar_categories'] = $video_sidebar_cats;
+    $variables['#cache']['tags'][] = 'taxonomy_term_list:video_class';
+  } catch (\Exception $e) {
+    $variables['video_sidebar_categories'] = [];
+  }
+
   $node = \Drupal::routeMatch()->getParameter('node');
   if ($node) {
     switch ($node->bundle()) {
@@ -1048,6 +1074,230 @@ function xedc_preprocess_views_view(array &$variables): void {
       }
     } catch (\Exception $e) {}
   }
+
+  // ── video_list ──────────────────────────────────────────────────────────
+  if ($view_id === 'video_list') {
+    foreach (['sort', 'category', 'tag'] as $arg) {
+      $variables['#cache']['contexts'][] = 'url.query_args:' . $arg;
+    }
+    $variables['#cache']['tags'][] = 'node_list:video';
+
+    $active_category = (string) ($request?->query->get('category') ?? 'all');
+    if ($active_category === '') {
+      $active_category = 'all';
+    }
+    $active_sort = (string) ($request?->query->get('sort') ?? 'recommend');
+    if (!in_array($active_sort, ['recommend', 'new', 'hot'], TRUE)) {
+      $active_sort = 'recommend';
+    }
+    $active_tag = (string) ($request?->query->get('tag') ?? '');
+    if ($active_tag !== '' && !ctype_digit($active_tag)) {
+      $active_tag = '';
+    }
+
+    $variables['active_category'] = $active_category;
+    $variables['active_sort']     = $active_sort;
+    $variables['active_tag']      = $active_tag;
+
+    $route_name = 'view.video_list.page_1';
+
+    // ── 分类列表（video_class）──
+    $variables['video_categories'] = [];
+    try {
+      $vc_tree = \Drupal::entityTypeManager()->getStorage('taxonomy_term')
+        ->loadTree('video_class', 0, NULL, FALSE);
+      $variables['video_categories'][] = [
+        'key' => 'all',
+        'label' => '全部',
+        'url' => Url::fromRoute($route_name)->toString(),
+      ];
+      foreach ($vc_tree as $item) {
+        $tid  = (int) ($item->tid ?? 0);
+        $name = (string) ($item->name ?? '');
+        if (!$tid || $name === '') {
+          continue;
+        }
+        $variables['video_categories'][] = [
+          'key' => (string) $tid,
+          'label' => $name,
+          'url' => Url::fromRoute($route_name, [], ['query' => ['category' => $tid]])->toString(),
+        ];
+      }
+      $variables['#cache']['tags'][] = 'taxonomy_term_list:video_class';
+    } catch (\Exception $e) {
+      $variables['video_categories'] = [['key' => 'all', 'label' => '全部', 'url' => '/videos']];
+    }
+
+    // ── 标签 Tabs（video_tags + 固定排序选项）──
+    $variables['tag_tabs'] = [];
+    try {
+      $base_q = $active_category !== 'all' ? ['category' => $active_category] : [];
+      $variables['tag_tabs'] = [
+        ['key' => 'recommend', 'label' => '推荐',
+          'url' => Url::fromRoute($route_name, [], ['query' => $base_q])->toString()],
+        ['key' => 'new', 'label' => '最新',
+          'url' => Url::fromRoute($route_name, [], ['query' => array_merge($base_q, ['sort' => 'new'])])->toString()],
+        ['key' => 'hot', 'label' => '最热',
+          'url' => Url::fromRoute($route_name, [], ['query' => array_merge($base_q, ['sort' => 'hot'])])->toString()],
+      ];
+      $vt_tree = \Drupal::entityTypeManager()->getStorage('taxonomy_term')
+        ->loadTree('video_tags', 0, NULL, FALSE);
+      foreach ($vt_tree as $t) {
+        $tid  = (int) ($t->tid ?? 0);
+        $name = (string) ($t->name ?? '');
+        if (!$tid || $name === '') {
+          continue;
+        }
+        $variables['tag_tabs'][] = [
+          'key' => (string) $tid,
+          'label' => $name,
+          'url' => Url::fromRoute($route_name, [], [
+            'query' => array_merge($base_q, ['tag' => $tid]),
+          ])->toString(),
+        ];
+        if (count($variables['tag_tabs']) >= 12) {
+          break;
+        }
+      }
+      $variables['#cache']['tags'][] = 'taxonomy_term_list:video_tags';
+    } catch (\Exception $e) {}
+
+    $file_url_generator = \Drupal::service('file_url_generator');
+
+    $format_count = static function (int $n): string {
+      if ($n >= 10_000_000) return round($n / 1_000_000, 1) . 'm';
+      if ($n >= 10_000)     return round($n / 10_000, 1) . 'w';
+      if ($n >= 1_000)      return round($n / 1_000, 1) . 'k';
+      return (string) $n;
+    };
+
+    $format_duration = static function (int $secs): string {
+      $h = (int) ($secs / 3600);
+      $m = (int) (($secs % 3600) / 60);
+      $s = $secs % 60;
+      if ($h > 0) {
+        return sprintf('%d:%02d:%02d', $h, $m, $s);
+      }
+      return sprintf('%d:%02d', $m, $s);
+    };
+
+    $build_video_card = static function ($n) use ($file_url_generator, $format_count, $format_duration): array {
+      $cover_url  = NULL;
+      $owner      = $n->getOwner();
+      $view_count = (int) ($n->hasField('field_view_count') ? ($n->get('field_view_count')->value ?? 0) : 0);
+      $duration   = (int) ($n->hasField('field_duration')   ? ($n->get('field_duration')->value   ?? 0) : 0);
+      $summary    = '';
+      if ($n->hasField('field_summary') && !$n->get('field_summary')->isEmpty()) {
+        $summary = (string) ($n->get('field_summary')->value ?? '');
+      }
+      $cat_label = '';
+      if ($n->hasField('field_category') && !$n->get('field_category')->isEmpty()) {
+        $cat_term  = $n->get('field_category')->entity;
+        $cat_label = $cat_term ? (string) $cat_term->label() : '';
+      }
+      if ($n->hasField('field_cover_image') && !$n->get('field_cover_image')->isEmpty()) {
+        $f = $n->get('field_cover_image')->entity;
+        if ($f) {
+          $cover_url = $file_url_generator->generateAbsoluteString($f->getFileUri());
+        }
+      }
+      return [
+        'nid'           => (int) $n->id(),
+        'title'         => (string) $n->getTitle(),
+        'url'           => $n->toUrl()->toString(),
+        'cover_url'     => $cover_url,
+        'owner_name'    => $owner ? (string) $owner->getDisplayName() : '',
+        'view_count'    => $view_count,
+        'view_count_fmt'=> $format_count($view_count),
+        'duration'      => $duration,
+        'duration_fmt'  => $duration ? $format_duration($duration) : '',
+        'year'          => date('Y', (int) $n->getCreatedTime()),
+        'summary'       => $summary,
+        'category_label'=> $cat_label,
+      ];
+    };
+
+    // ── 精选视频（banner 第一条）──
+    $variables['featured_video'] = NULL;
+    try {
+      $featured_nids = \Drupal::entityQuery('node')
+        ->accessCheck(TRUE)
+        ->condition('type', 'video')
+        ->condition('status', 1)
+        ->sort('created', 'DESC')
+        ->range(0, 1)
+        ->execute();
+      if ($featured_nids) {
+        $fn = \Drupal::entityTypeManager()->getStorage('node')
+          ->load(reset($featured_nids));
+        if ($fn) {
+          $variables['featured_video'] = $build_video_card($fn);
+        }
+      }
+    } catch (\Exception $e) {}
+
+    // ── 今日热门（播放量最高的 5 条）──
+    $variables['hot_rank_videos'] = [];
+    try {
+      $hot_nids = \Drupal::entityQuery('node')
+        ->accessCheck(TRUE)
+        ->condition('type', 'video')
+        ->condition('status', 1)
+        ->sort('field_view_count', 'DESC')
+        ->range(0, 5)
+        ->execute();
+      if ($hot_nids) {
+        $hot_nodes = \Drupal::entityTypeManager()->getStorage('node')->loadMultiple($hot_nids);
+        foreach ($hot_nids as $nid) {
+          $n = $hot_nodes[$nid] ?? NULL;
+          if ($n) {
+            $variables['hot_rank_videos'][] = $build_video_card($n);
+          }
+        }
+      }
+    } catch (\Exception $e) {}
+
+    // ── 短视频精选（时长 ≤ 60 秒，最新 10 条）──
+    $variables['short_videos'] = [];
+    try {
+      // 先找 short_vid_tid（名称包含"短"的 video_class 术语）
+      $vc_all = \Drupal::entityTypeManager()->getStorage('taxonomy_term')
+        ->loadTree('video_class', 0, NULL, FALSE);
+      $short_tid = NULL;
+      foreach ($vc_all as $item) {
+        if (mb_strpos((string) ($item->name ?? ''), '短') !== FALSE) {
+          $short_tid = (int) ($item->tid ?? 0);
+          break;
+        }
+      }
+
+      $sq = \Drupal::entityQuery('node')
+        ->accessCheck(TRUE)
+        ->condition('type', 'video')
+        ->condition('status', 1);
+
+      if ($short_tid) {
+        $sq->condition('field_category', $short_tid);
+      } else {
+        // 无短视频分类则按时长过滤
+        $sq->condition('field_duration', 60, '<=');
+      }
+
+      $short_nids = $sq->sort('created', 'DESC')->range(0, 10)->execute();
+      if ($short_nids) {
+        $short_nodes = \Drupal::entityTypeManager()->getStorage('node')->loadMultiple($short_nids);
+        foreach ($short_nids as $nid) {
+          $n = $short_nodes[$nid] ?? NULL;
+          if ($n) {
+            $variables['short_videos'][] = $build_video_card($n);
+          }
+        }
+      }
+    } catch (\Exception $e) {}
+
+    return;
+  }
+  // ── end video_list ──────────────────────────────────────────────────────
 }
 
 /**

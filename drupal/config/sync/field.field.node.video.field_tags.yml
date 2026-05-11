@@ -5,13 +5,13 @@ dependencies:
   config:
     - field.storage.node.field_tags
     - node.type.video
-    - taxonomy.vocabulary.tags
+    - taxonomy.vocabulary.video_tags
 id: node.video.field_tags
 field_name: field_tags
 entity_type: node
 bundle: video
 label: 标签
-description: '请输入一个逗号分割的列表。如：Amsterdam, Mexico City, "Cleveland, Ohio"。'
+description: '请输入一个逗号分割的列表。如：动作、爱情、科幻'
 required: false
 translatable: false
 default_value: {  }
@@ -20,10 +20,10 @@ settings:
   handler: 'default:taxonomy_term'
   handler_settings:
     target_bundles:
-      tags: tags
+      video_tags: video_tags
     sort:
-      field: _none
+      field: name
       direction: asc
     auto_create: true
-    auto_create_bundle: ''
+    auto_create_bundle: video_tags
 field_type: entity_reference

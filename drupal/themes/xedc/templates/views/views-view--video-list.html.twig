@@ -1,61 +1,270 @@
 {#
-  views-view--video-list.html.twig — 视频列表页视图模板
+  views-view--video-list.html.twig — 视频列表页主内容
+  PC：Banner + 今日热门 | 视频分类图标 | 精选推荐（标签筛选 + 网格）| 短视频精选
+  移动：Banner | 分类图标宫格 | 推荐视频列表 | 短视频精选三列
 #}
 {{ attach_library('xedc/page-video-list') }}
-<div class="xedc-video-list">
 
-  {# 筛选排序栏 #}
-  <div class="xedc-list-toolbar xedc-flex xedc-flex-between">
-    <div class="xedc-list-toolbar__filters">
-      {% if exposed %}
-        <div class="xedc-exposed-filters">{{ exposed }}</div>
-      {% endif %}
-    </div>
-    {# 视图模式切换 #}
-    <div class="xedc-view-mode-switch" data-xedc-view-mode="video-list">
-      <button class="xedc-view-mode-btn is-active" data-mode="grid" aria-label="网格视图" title="网格">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-          <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
-          <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
-        </svg>
-      </button>
-      <button class="xedc-view-mode-btn" data-mode="list" aria-label="列表视图" title="列表">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
-          <line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/>
-          <line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
-        </svg>
-      </button>
-    </div>
-  </div>
+{% set _active_cat  = active_category|default('all') %}
+{% set _active_tag  = active_tag|default('') %}
+{% set _active_sort = active_sort|default('recommend') %}
+{% set _categories  = video_categories|default([]) %}
+{% set _tag_tabs    = tag_tabs|default([]) %}
+{% set _hot_rank    = hot_rank_videos|default([]) %}
+{% set _featured    = featured_video|default(null) %}
+{% set _short_vids  = short_videos|default([]) %}
 
-  {# 内容区 #}
-  {% if rows %}
-    <div class="xedc-video-grid" data-view-container="video-list">
-      {{ rows }}
-    </div>
-  {% elseif empty %}
-    <div class="xedc-empty-state">
-      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.4" style="margin:0 auto var(--space-3)"><path d="m16 13 5.223 3.482A1 1 0 0 0 23 15.65V8.35a1 1 0 0 0-1.777-.832L16 11V8a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-3z"/></svg>
-      <h3 class="xedc-empty-state__title">暂无视频</h3>
-      <p class="xedc-empty-state__desc xedc-text-muted">还没有视频内容，快来上传第一个吧</p>
-      {% if is_logged_in %}
-        <a href="/publish" class="xedc-btn xedc-btn--default xedc-btn--md" style="margin-top: var(--space-4);">上传视频</a>
+{# ── 分类图标映射 ── #}
+{% set _cat_icons = {
+  '电影':   { color: '#3b82f6', bg: '#eff6ff', label: '精彩大片',   icon: 'film' },
+  '电视剧': { color: '#10b981', bg: '#ecfdf5', label: '热播剧集',   icon: 'tv' },
+  '动漫':   { color: '#f97316', bg: '#fff7ed', label: '热门新番',   icon: 'sparkles' },
+  '短视频': { color: '#ef4444', bg: '#fef2f2', label: '精彩短片',   icon: 'play', hot: true },
+  '纪录片': { color: '#8b5cf6', bg: '#f5f3ff', label: '探索世界',   icon: 'globe' },
+  '综艺':   { color: '#ec4899', bg: '#fdf2f8', label: '欢乐无限',   icon: 'star' },
+  'MV':     { color: '#0ea5e9', bg: '#f0f9ff', label: '音乐现场',   icon: 'music' },
+} %}
+
+<div class="xedc-video-list-page" data-page="video-list">
+
+  {# ════════════════════════════════════
+     SECTION 1：Hero Banner + 今日热门
+  ════════════════════════════════════ #}
+  <section class="xedc-vl-hero" aria-label="精选视频">
+    {# Banner #}
+    <div class="xedc-vl-banner">
+      {% if _featured %}
+        <div class="xedc-vl-banner__slide">
+          {% if _featured.cover_url %}
+            <img class="xedc-vl-banner__img" src="{{ _featured.cover_url }}" alt="{{ _featured.title }}" loading="eager" />
+          {% else %}
+            <div class="xedc-vl-banner__placeholder"></div>
+          {% endif %}
+          <div class="xedc-vl-banner__overlay">
+            <div class="xedc-vl-banner__info">
+              {% if _featured.category_label %}
+                <span class="xedc-vl-banner__type-badge">{{ _featured.category_label }}</span>
+              {% endif %}
+              {% if _featured.year %}
+                <span class="xedc-vl-banner__year">{{ _featured.year }}</span>
+              {% endif %}
+              <h2 class="xedc-vl-banner__title">{{ _featured.title }}</h2>
+              {% if _featured.summary %}
+                <p class="xedc-vl-banner__desc">{{ _featured.summary }}</p>
+              {% endif %}
+              <a href="{{ _featured.url }}" class="xedc-vl-banner__play-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                立即播放
+              </a>
+            </div>
+          </div>
+        </div>
+      {% else %}
+        <div class="xedc-vl-banner__placeholder">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3"><path d="m16 13 5.223 3.482A1 1 0 0 0 23 15.65V8.35a1 1 0 0 0-1.777-.832L16 11V8a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-3z"/></svg>
+        </div>
       {% endif %}
+      {# Banner 导航点（可通过 JS 扩展为轮播）#}
+      <div class="xedc-vl-banner__dots" aria-hidden="true">
+        <span class="xedc-vl-banner__dot is-active"></span>
+        <span class="xedc-vl-banner__dot"></span>
+        <span class="xedc-vl-banner__dot"></span>
+      </div>
+      <button class="xedc-vl-banner__nav xedc-vl-banner__nav--prev" aria-label="上一个">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <button class="xedc-vl-banner__nav xedc-vl-banner__nav--next" aria-label="下一个">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
     </div>
+
+    {# 今日热门（PC 端右侧）#}
+    {% if _hot_rank %}
+    <aside class="xedc-vl-hotrank" aria-label="今日热门">
+      <div class="xedc-vl-hotrank__hd">
+        <h3 class="xedc-vl-hotrank__title">今日热门</h3>
+        <a href="/videos?sort=hot" class="xedc-vl-hotrank__more">
+          更多
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+        </a>
+      </div>
+      <ol class="xedc-vl-hotrank__list">
+        {% for item in _hot_rank %}
+          <li class="xedc-vl-hotrank__item">
+            <span class="xedc-vl-hotrank__rank xedc-vl-hotrank__rank--{{ loop.index <= 3 ? 'top' : 'normal' }}">{{ loop.index }}</span>
+            {% if item.cover_url %}
+              <a href="{{ item.url }}" class="xedc-vl-hotrank__thumb" aria-label="{{ item.title }}">
+                <img src="{{ item.cover_url }}" alt="{{ item.title }}" loading="lazy" />
+                <span class="xedc-vl-hotrank__duration">{{ item.duration_fmt|default('') }}</span>
+              </a>
+            {% endif %}
+            <div class="xedc-vl-hotrank__meta">
+              <a href="{{ item.url }}" class="xedc-vl-hotrank__name">{{ item.title }}</a>
+              <span class="xedc-vl-hotrank__views">{{ item.view_count_fmt|default('0') }}次观看</span>
+            </div>
+          </li>
+        {% endfor %}
+      </ol>
+    </aside>
+    {% endif %}
+  </section>
+
+  {# ════════════════════════════════════
+     SECTION 2：视频分类图标行
+  ════════════════════════════════════ #}
+  {% if _categories %}
+  <section class="xedc-vl-cats" aria-label="视频分类">
+    <div class="xedc-vl-cats__hd">
+      <h2 class="xedc-vl-cats__title">视频分类</h2>
+    </div>
+    <div class="xedc-vl-cats__row">
+      {% for cat in _categories %}
+        {% if cat.key != 'all' %}
+          {% set _meta = _cat_icons[cat.label]|default({ color: '#6b7280', bg: '#f3f4f6', label: '', icon: 'play', hot: false }) %}
+          <a href="{{ cat.url }}"
+             class="xedc-vl-cat-icon{% if _active_cat == cat.key %} is-active{% endif %}"
+             aria-label="{{ cat.label }}">
+            <div class="xedc-vl-cat-icon__badge" style="background:{{ _meta.bg }};color:{{ _meta.color }};">
+              {# 图标按类型切换 #}
+              {% if _meta.icon == 'film' %}
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="17" y1="7" x2="22" y2="7"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="2" y1="17" x2="7" y2="17"/></svg>
+              {% elseif _meta.icon == 'tv' %}
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>
+              {% elseif _meta.icon == 'sparkles' %}
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M3 12h18M5.636 5.636l12.728 12.728M18.364 5.636 5.636 18.364"/></svg>
+              {% elseif _meta.icon == 'globe' %}
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              {% elseif _meta.icon == 'star' %}
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              {% elseif _meta.icon == 'music' %}
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+              {% else %}
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              {% endif %}
+              {% if _meta.hot is defined and _meta.hot %}
+                <span class="xedc-vl-cat-icon__hot">HOT</span>
+              {% endif %}
+            </div>
+            <span class="xedc-vl-cat-icon__name">{{ cat.label }}</span>
+            {% if _meta.label %}
+              <span class="xedc-vl-cat-icon__sub">{{ _meta.label }}</span>
+            {% endif %}
+          </a>
+        {% endif %}
+      {% endfor %}
+      <a href="/videos" class="xedc-vl-cat-icon xedc-vl-cat-icon--more" aria-label="全部分类">
+        <div class="xedc-vl-cat-icon__badge" style="background:var(--muted);color:var(--foreground);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>
+        </div>
+        <span class="xedc-vl-cat-icon__name">全部分类</span>
+        <span class="xedc-vl-cat-icon__sub">&nbsp;</span>
+      </a>
+    </div>
+  </section>
   {% endif %}
 
-  {# 分页 #}
-  {% if pager %}
-    <div class="xedc-pager">{{ pager }}</div>
+  {# ════════════════════════════════════
+     SECTION 3：精选推荐（标签筛选 + 视频网格）
+  ════════════════════════════════════ #}
+  <section class="xedc-vl-recommend" aria-label="精选推荐">
+    <div class="xedc-vl-recommend__hd">
+      <h2 class="xedc-vl-recommend__title">精选推荐</h2>
+
+      {# 筛选 tabs（来自 video_tags 术语表 + 排序选项）#}
+      {% if _tag_tabs %}
+      <nav class="xedc-vl-tabs" role="tablist" aria-label="视频筛选" id="xedc-vl-tabs">
+        {% for tab in _tag_tabs %}
+          <a href="{{ tab.url }}"
+             class="xedc-vl-tab{% if (tab.key == _active_sort and _active_tag == '') or tab.key == _active_tag %} is-active{% endif %}"
+             role="tab"
+             aria-selected="{{ (tab.key == _active_sort and _active_tag == '') or tab.key == _active_tag ? 'true' : 'false' }}">
+            {{ tab.label }}
+          </a>
+        {% endfor %}
+      </nav>
+      {% endif %}
+
+      <div class="xedc-vl-recommend__actions">
+        <button class="xedc-vl-filter-btn" id="xedc-vl-filter-btn" aria-label="筛选">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+          筛选
+        </button>
+      </div>
+    </div>
+
+    {# 视频网格 + 视图模式切换 #}
+    <div class="xedc-vl-grid-wrap">
+      {# 移动端：列表视图 / PC：网格视图 切换 #}
+      <div class="xedc-vl-view-switch" data-xedc-view-mode="video-list">
+        <button class="xedc-vl-view-btn is-active" data-mode="grid" aria-label="网格视图" title="网格">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        </button>
+        <button class="xedc-vl-view-btn" data-mode="list" aria-label="列表视图" title="列表">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        </button>
+      </div>
+
+      {% if rows %}
+        {# PC：网格布局；移动端：单列列表 #}
+        <div class="xedc-vl-grid" data-view-container="video-list" id="xedc-vl-grid">
+          {{ rows }}
+        </div>
+      {% elseif empty %}
+        <div class="xedc-empty-state">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.4" style="margin:0 auto var(--space-3)"><path d="m16 13 5.223 3.482A1 1 0 0 0 23 15.65V8.35a1 1 0 0 0-1.777-.832L16 11V8a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-3z"/></svg>
+          <h3 class="xedc-empty-state__title">暂无视频</h3>
+          <p class="xedc-text-muted" style="font-size:14px;">还没有视频内容，快来上传第一个吧</p>
+          {% if is_logged_in %}
+            <a href="/publish" class="xedc-btn xedc-btn--default xedc-btn--md" style="margin-top:var(--space-4);">上传视频</a>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+
+    {# 分页 / 加载更多 #}
+    {% if pager %}
+      <div class="xedc-vl-pager">{{ pager }}</div>
+    {% endif %}
+  </section>
+
+  {# ════════════════════════════════════
+     SECTION 4：短视频精选（移动端横向 + PC 5列）
+  ════════════════════════════════════ #}
+  {% if _short_vids %}
+  <section class="xedc-vl-short" aria-label="短视频精选">
+    <div class="xedc-vl-short__hd">
+      <h2 class="xedc-vl-short__title">短视频精选</h2>
+      <a href="/videos?category=short" class="xedc-vl-short__more">
+        更多
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+      </a>
+    </div>
+    <div class="xedc-vl-short__grid">
+      {% for v in _short_vids %}
+        <a href="{{ v.url }}" class="xedc-vl-short-card" aria-label="{{ v.title }}">
+          <div class="xedc-vl-short-card__cover">
+            {% if v.cover_url %}
+              <img src="{{ v.cover_url }}" alt="{{ v.title }}" loading="lazy" />
+            {% else %}
+              <div class="xedc-vl-short-card__placeholder">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.4"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              </div>
+            {% endif %}
+            <span class="xedc-vl-short-card__duration">{{ v.duration_fmt|default('00:00') }}</span>
+          </div>
+          <div class="xedc-vl-short-card__info">
+            <p class="xedc-vl-short-card__title">{{ v.title }}</p>
+            <span class="xedc-vl-short-card__meta">{{ v.owner_name }}・{{ v.view_count_fmt|default('0') }}次观看</span>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  </section>
   {% endif %}
 
   {# 回到顶部 #}
-  <button class="xedc-back-to-top" id="xedc-back-to-top" aria-label="回到顶部" title="回到顶部">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <polyline points="18 15 12 9 6 15"/>
-    </svg>
+  <button class="xedc-back-to-top" id="xedc-back-to-top" aria-label="回到顶部">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
   </button>
 
-</div>
-
+</div>{# end .xedc-video-list-page #}

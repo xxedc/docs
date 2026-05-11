@@ -57,6 +57,7 @@ page-video-list:
     theme:
       css/pages/video-list.css: {}
   js:
+    js/video-list.js: { attributes: { defer: true } }
     js/view-mode-switch.js: { attributes: { defer: true } }
     js/infinite-scroll.js: { attributes: { defer: true } }
   dependencies:

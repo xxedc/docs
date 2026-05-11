@@ -1,0 +1,9 @@
+uuid: 7c2f8d5a-3b1e-4a9f-8d2c-6e5b4c3a2d1f
+langcode: zh-hans
+status: true
+dependencies: {}
+name: 视频分类
+vid: video_class
+description: 视频内容分类（电影、电视剧、动漫、短视频等）
+weight: -7
+new_revision: false
