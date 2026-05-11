@@ -17,7 +17,7 @@
 {{ page_top }}
 
 {% set _logo_html = (site_name|default('DCXE'))|replace({'X': '<span class="xedc-logo-x">X</span>'}) %}
-{% set _active_cat = app.request.query.get('category')|default('all') %}
+{% set _active_cat = video_active_category|default('all') %}
 
 {# ── PC 左侧固定侧边栏 ── #}
 <aside class="xedc-gsidebar" aria-label="侧边导航">
