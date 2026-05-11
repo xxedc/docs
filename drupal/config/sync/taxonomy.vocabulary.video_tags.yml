@@ -1,0 +1,9 @@
+uuid: 9d4e6b8a-5c2f-4e1d-9b7a-3f2c5e8d1a6b
+langcode: zh-hans
+status: true
+dependencies: {}
+name: 视频标签
+vid: video_tags
+description: 视频内容标签（如：动作、爱情、科幻等）
+weight: -6
+new_revision: false
