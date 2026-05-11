@@ -479,6 +479,84 @@
 }
 .xedc-info-card__fields .field__item { color: var(--foreground); }
 
+.xedc-image-facts__grid {
+  display: grid;
+  gap: var(--space-2);
+}
+.xedc-image-facts__row {
+  display: grid;
+  grid-template-columns: 68px 1fr;
+  gap: var(--space-3);
+  align-items: start;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+.xedc-image-facts__row:last-child { border-bottom: none; }
+.xedc-image-facts__label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted-foreground);
+}
+.xedc-image-facts__value {
+  font-size: 13px;
+  color: var(--foreground);
+  min-width: 0;
+}
+.xedc-image-facts__value a {
+  color: var(--foreground);
+  text-decoration: none;
+  border-bottom: 1px solid oklch(from var(--foreground) l c h / 0.2);
+}
+.xedc-image-facts__value a:hover {
+  border-bottom-color: oklch(from var(--foreground) l c h / 0.5);
+}
+.xedc-image-facts__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.xedc-image-facts__chips a {
+  border-bottom: none;
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--muted);
+  color: var(--muted-foreground);
+  font-size: 11px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color 0.15s, color 0.15s;
+}
+.xedc-image-facts__chips a:hover {
+  background: var(--foreground);
+  color: var(--background);
+}
+
+.xedc-image-facts--mobile { display: none; }
+.xedc-image-facts__summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--foreground);
+}
+.xedc-image-facts__summary::-webkit-details-marker { display: none; }
+.xedc-image-facts__chev {
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid var(--muted-foreground);
+  border-bottom: 2px solid var(--muted-foreground);
+  transform: rotate(45deg);
+  transition: transform 0.15s;
+  margin-right: 2px;
+}
+details[open] .xedc-image-facts__chev { transform: rotate(-135deg); }
+
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    相关推荐
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
@@ -533,4 +611,7 @@
   .xedc-image-viewer { min-height: 280px; }
   .xedc-image-detail__title { font-size: var(--text-xl); }
   .xedc-info-card { padding: var(--space-4); }
+  .xedc-image-facts--desktop { display: none; }
+  .xedc-image-facts--mobile { display: block; }
+  .xedc-image-facts__grid { padding-top: var(--space-3); }
 }
