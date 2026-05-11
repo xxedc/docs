@@ -111,7 +111,7 @@
   border-bottom-color: var(--foreground);
 }
 
-/* ── 系统消息 ── */
+/* ── 系统消息（仅在有内容时显示）── */
 .xedc-auth-messages {
   background: var(--muted);
   border: 1px solid var(--border);
@@ -120,6 +120,21 @@
   margin-bottom: var(--space-4);
   font-size: var(--text-sm);
 }
+.xedc-auth-messages:empty { display: none; }
+
+/* ── 加载占位 ── */
+.xedc-auth-loading {
+  text-align: center;
+  padding: var(--space-6) var(--space-4);
+  color: var(--muted-foreground);
+  font-size: var(--text-sm);
+}
+
+/* ── Modal 标签（注册/找回时支持 3 个 tab）── */
+.xedc-auth-modal-content { min-height: 180px; }
+
+/* ── 隐藏 backdrop（hidden 属性 ── */
+.xedc-auth-backdrop[hidden] { display: none !important; }
 
 /* ── 表单内容 ── */
 .xedc-auth-form-wrap { display: flex; flex-direction: column; gap: var(--space-4); }

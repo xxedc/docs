@@ -18,6 +18,7 @@ function xedc_preprocess_html(array &$variables): void {
   $variables['#attached']['library'][] = 'xedc/global-styles';
   $variables['#attached']['library'][] = 'xedc/global-scripts';
   $variables['#attached']['drupalSettings']['xedc']['defaultTheme'] = 'light';
+  $variables['#attached']['drupalSettings']['xedc']['siteName'] = \Drupal::config('system.site')->get('name');
   $variables['html_attributes']->setAttribute('data-theme', 'light');
 }
 
@@ -1050,26 +1051,40 @@ function xedc_preprocess_views_view(array &$variables): void {
 }
 
 /**
- * Disable the Views result/output cache for image_waterfall and article_list
- * so that hook_views_query_alter always runs with the current request params.
- * Without this, Drupal's Views cache returns a stale cached result before our
- * query_alter ever fires, making sort/tag/category filters silently ignored.
+ * Replace the view's cache plugin with 'none' at runtime. We need this because:
+ *   - hook_views_pre_view / hook_views_pre_execute are MODULE-only hooks and
+ *     are NOT invoked for theme implementations in Drupal 10.
+ *   - hook_views_query_alter IS invoked for themes (it goes through alter()),
+ *     so we piggyback on it.
+ *   - The Views cache plugin caches results by view-id + display-id + args,
+ *     NOT by URL query args, so our sort/tag/category params are ignored on
+ *     a cache hit (the SQL we built here never executes).
+ *
+ * By reaching into $display_handler->plugins (protected) via reflection and
+ * swapping the cache plugin for a 'none' instance, we force a fresh query.
  */
-function xedc_views_pre_view(\Drupal\views\ViewExecutable $view, string $display_id, array &$args): void {
-  if (!in_array($view->id(), ['image_waterfall', 'article_list'], TRUE)) {
-    return;
-  }
-  $request = \Drupal::requestStack()->getCurrentRequest();
-  if (!$request) {
-    return;
-  }
-  $filter_params = ['sort', 'tag', 'category', 'search', 'today'];
-  foreach ($filter_params as $p) {
-    if ((string) ($request->query->get($p) ?? '') !== '') {
-      // Disable Views-level caching so the query reruns with our WHERE/ORDER.
-      $view->display_handler->setOption('cache', ['type' => 'none']);
+function _xedc_disable_view_cache(\Drupal\views\ViewExecutable $view): void {
+  try {
+    // Update the option so any later getPlugin('cache') gets the 'none' type.
+    $view->display_handler->setOption('cache', ['type' => 'none']);
+
+    // Replace the already-instantiated plugin instance, if any.
+    $reflection = new \ReflectionObject($view->display_handler);
+    if (!$reflection->hasProperty('plugins')) {
       return;
     }
+    $plugins_prop = $reflection->getProperty('plugins');
+    $plugins_prop->setAccessible(TRUE);
+    $plugins = $plugins_prop->getValue($view->display_handler);
+
+    $none = \Drupal\views\Views::pluginManager('cache')->createInstance('none');
+    if ($none) {
+      $none->init($view, $view->display_handler);
+      $plugins['cache'] = $none;
+      $plugins_prop->setValue($view->display_handler, $plugins);
+    }
+  } catch (\Throwable $e) {
+    // Best-effort; if reflection fails, query still runs but may hit cache.
   }
 }
 
@@ -1084,6 +1099,18 @@ function xedc_views_query_alter(\Drupal\views\ViewExecutable $view, \Drupal\view
   }
 
   $request = \Drupal::requestStack()->getCurrentRequest();
+  $has_filters = $request && (
+    (string) ($request->query->get('sort') ?? '') !== ''
+    || (string) ($request->query->get('tag') ?? '') !== ''
+    || (string) ($request->query->get('category') ?? '') !== ''
+    || (string) ($request->query->get('search') ?? '') !== ''
+    || (string) ($request->query->get('q') ?? '') !== ''
+    || (string) ($request->query->get('today') ?? '') !== ''
+  );
+  if ($has_filters) {
+    _xedc_disable_view_cache($view);
+  }
+
   if ($view->id() === 'article_list') {
     $category = $request?->query->get('category');
     if ($category && $category !== 'all' && ctype_digit((string) $category)) {
