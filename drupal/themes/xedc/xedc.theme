@@ -331,6 +331,72 @@ function xedc_preprocess_node(array &$variables): void {
         } catch (\Exception $e) {}
       }
     } catch (\Exception $e) {}
+
+    // Build related image posts by shared tags/category.
+    $variables['related_image_posts'] = [];
+    try {
+      $tag_ids = [];
+      if ($node->hasField('field_tags') && !$node->get('field_tags')->isEmpty()) {
+        foreach ($node->get('field_tags')->getValue() as $item) {
+          $tid = (int) ($item['target_id'] ?? 0);
+          if ($tid > 0) {
+            $tag_ids[] = $tid;
+          }
+        }
+      }
+      $category_tid = 0;
+      if ($node->hasField('field_category') && !$node->get('field_category')->isEmpty()) {
+        $category_tid = (int) ($node->get('field_category')->target_id ?? 0);
+      }
+
+      $query = \Drupal::entityQuery('node')
+        ->accessCheck(TRUE)
+        ->condition('type', 'image_post')
+        ->condition('status', 1)
+        ->condition('nid', (int) $node->id(), '<>')
+        ->range(0, 12)
+        ->sort('created', 'DESC');
+
+      if (!empty($tag_ids)) {
+        $query->condition('field_tags.target_id', $tag_ids, 'IN');
+      } elseif ($category_tid > 0) {
+        $query->condition('field_category.target_id', $category_tid);
+      } else {
+        // No tags/category to match, keep list empty to avoid random unrelated content.
+        $query->condition('nid', 0);
+      }
+
+      $nids = $query->execute();
+      if (!empty($nids)) {
+        $items = \Drupal::entityTypeManager()->getStorage('node')->loadMultiple($nids);
+        foreach ($items as $item) {
+          if (!$item instanceof NodeInterface) {
+            continue;
+          }
+          $cover_url = '';
+          if ($item->hasField('field_cover_image') && !$item->get('field_cover_image')->isEmpty()) {
+            $cover = $item->get('field_cover_image')->entity;
+            if ($cover) {
+              $cover_url = \Drupal::service('file_url_generator')->generateString($cover->getFileUri());
+            }
+          }
+          if ($cover_url === '' && $item->hasField('field_image') && !$item->get('field_image')->isEmpty()) {
+            $first = $item->get('field_image')->first()?->entity;
+            if ($first) {
+              $cover_url = \Drupal::service('file_url_generator')->generateString($first->getFileUri());
+            }
+          }
+          $variables['related_image_posts'][] = [
+            'title' => (string) $item->label(),
+            'url' => $item->toUrl()->toString(),
+            'cover' => $cover_url,
+          ];
+          if (count($variables['related_image_posts']) >= 6) {
+            break;
+          }
+        }
+      }
+    } catch (\Exception $e) {}
   }
 }
 

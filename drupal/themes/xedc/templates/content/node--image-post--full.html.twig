@@ -322,36 +322,27 @@
           </div>
         {% endif %}
 
-        {% set _hidden_fields = ['body', 'field_tags', 'field_image', 'field_cover_image', 'field_media', 'field_allow_download', 'flag_like', 'flag_collect', 'links', 'comment'] %}
-        {% set _has_extra = false %}
-        {% for k in content|keys %}
-          {% if k not in _hidden_fields and (k starts with 'field_') and content[k]|render|trim is not empty %}
-            {% set _has_extra = true %}
-          {% endif %}
-        {% endfor %}
-        {% if _has_extra %}
-          <div class="xedc-info-card">
-            <h3 class="xedc-info-card__title">其他字段</h3>
-            <dl class="xedc-info-card__fields">
-              {% for k in content|keys %}
-                {% if k not in _hidden_fields and (k starts with 'field_') and content[k]|render|trim is not empty %}
-                  {{ content[k] }}
-                {% endif %}
-              {% endfor %}
-            </dl>
-          </div>
-        {% endif %}
-
       </aside>
 
     </div>
 
     {# ── 相关推荐 ── #}
     <section class="xedc-image-detail__related">
-      <div class="xedc-image-detail__related-hd">
-        <h2 class="xedc-section-title">相关图集</h2>
-      </div>
-      {{ drupal_view('image_waterfall', 'block_1') }}
+      {% if related_image_posts is defined and related_image_posts %}
+        <div class="xedc-image-detail__related-hd">
+          <h2 class="xedc-section-title">相关图集</h2>
+        </div>
+        <div class="xedc-related-gallery">
+          {% for item in related_image_posts %}
+            <a class="xedc-related-gallery__item" href="{{ item.url }}" title="{{ item.title }}">
+              {% if item.cover %}
+                <img src="{{ item.cover }}" alt="{{ item.title }}" loading="lazy" />
+              {% endif %}
+              <span>{{ item.title }}</span>
+            </a>
+          {% endfor %}
+        </div>
+      {% endif %}
     </section>
 
   </div>
