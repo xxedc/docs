@@ -182,10 +182,8 @@ function xedc_core_theme(): array {
 /**
  * Implements hook_views_pre_view().
  *
- * Disable the Views results cache for image_waterfall / article_list BEFORE
- * the cache plugin is instantiated. Custom filtering via query params
- * (category/tag/sort/search/today) is invisible to Views' default cache key,
- * so cached results would ignore filters.
+ * Disable Views results cache before the cache plugin is instantiated.
+ * Custom query-param filtering is invisible to Views' default cache key.
  */
 function xedc_core_views_pre_view(\Drupal\views\ViewExecutable $view, $display_id, array &$args): void {
   if (!in_array($view->id(), ['image_waterfall', 'article_list'], TRUE)) {
@@ -199,44 +197,9 @@ function xedc_core_views_pre_view(\Drupal\views\ViewExecutable $view, $display_i
 }
 
 /**
- * Implements hook_views_pre_execute().
- *
- * Belt-and-suspenders: just before the cache check in execute(), force the
- * cache plugin to 'none' via reflection (in case pre_view didn't catch it).
- */
-function xedc_core_views_pre_execute(\Drupal\views\ViewExecutable $view): void {
-  if (!in_array($view->id(), ['image_waterfall', 'article_list'], TRUE)) {
-    return;
-  }
-  try {
-    $view->display_handler->setOption('cache', ['type' => 'none']);
-
-    $reflection = new \ReflectionObject($view->display_handler);
-    if ($reflection->hasProperty('plugins')) {
-      $plugins_prop = $reflection->getProperty('plugins');
-      $plugins_prop->setAccessible(TRUE);
-      $plugins = $plugins_prop->getValue($view->display_handler);
-
-      if (!empty($plugins['cache']) && is_object($plugins['cache'])) {
-        try { $plugins['cache']->cacheFlush(); } catch (\Throwable $e2) {}
-      }
-
-      $none = \Drupal\views\Views::pluginManager('cache')->createInstance('none');
-      if ($none) {
-        $none->init($view, $view->display_handler);
-        $plugins['cache'] = $none;
-        $plugins_prop->setValue($view->display_handler, $plugins);
-      }
-    }
-  } catch (\Throwable $e) {}
-}
-
-/**
  * Implements hook_views_query_alter().
  *
  * Apply category / tag / sort / search / today filters from URL query args.
- * Module-level implementation: themes can also implement this hook, but
- * the module path is the most reliable (guaranteed discovery).
  */
 function xedc_core_views_query_alter(\Drupal\views\ViewExecutable $view, \Drupal\views\Plugin\views\query\QueryPluginBase $query): void {
   if (!in_array($view->id(), ['image_waterfall', 'article_list'], TRUE)) {
@@ -251,58 +214,65 @@ function xedc_core_views_query_alter(\Drupal\views\ViewExecutable $view, \Drupal
     return;
   }
 
+  try {
+    _xedc_core_apply_view_filters($view, $query, $request);
+  } catch (\Throwable $e) {
+    \Drupal::logger('xedc_core')->error('views_query_alter error: @msg', ['@msg' => $e->getMessage()]);
+  }
+}
+
+function _xedc_core_apply_view_filters(\Drupal\views\ViewExecutable $view, \Drupal\views\Plugin\views\query\Sql $query, $request): void {
   if ($view->id() === 'article_list') {
     $category = $request->query->get('category');
     if ($category && $category !== 'all' && ctype_digit((string) $category)) {
-      $category_table = $query->ensureTable('node__field_category', $view->relationship);
-      if ($category_table) {
-        $query->addWhere(0, $category_table . '.field_category_target_id', (int) $category, '=');
+      $t = $query->ensureTable('node__field_category', $view->relationship);
+      if ($t) {
+        $query->addWhere(0, "$t.field_category_target_id", (int) $category, '=');
       }
     }
 
     $sort = (string) ($request->query->get('sort') ?? '');
-    if ($sort !== 'new') {
-      $view_count_table = $query->ensureTable('node__field_view_count', $view->relationship);
-      if ($view_count_table) {
-        $query->addOrderBy($view_count_table, 'field_view_count_value', 'DESC');
+    if ($sort === 'hot') {
+      $t = $query->ensureTable('node__field_view_count', $view->relationship);
+      if ($t) {
+        $query->addOrderBy($t, 'field_view_count_value', 'DESC');
       }
     }
     return;
   }
 
-  // image_waterfall
+  // image_waterfall filters
   $category = $request->query->get('category');
   if ($category && $category !== 'all' && ctype_digit((string) $category)) {
-    $category_table = $query->ensureTable('node__field_category', $view->relationship);
-    if ($category_table) {
-      $query->addWhere(0, $category_table . '.field_category_target_id', (int) $category, '=');
-    }
-  }
-
-  $search = (string) ($request->query->get('search') ?? $request->query->get('q') ?? '');
-  $search = trim($search);
-  if ($search !== '') {
-    $base_table = $query->ensureTable('node_field_data', $view->relationship);
-    if ($base_table) {
-      $escaped = \Drupal::database()->escapeLike($search);
-      $query->addWhere(0, $base_table . '.title', '%' . $escaped . '%', 'LIKE');
+    $t = $query->ensureTable('node__field_category', $view->relationship);
+    if ($t) {
+      $query->addWhere(0, "$t.field_category_target_id", (int) $category, '=');
     }
   }
 
   $tag = (string) ($request->query->get('tag') ?? '');
   if ($tag !== '' && ctype_digit($tag)) {
-    $tag_table = $query->ensureTable('node__field_tags', $view->relationship);
-    if ($tag_table) {
-      $query->addWhere(0, $tag_table . '.field_tags_target_id', (int) $tag, '=');
+    $t = $query->ensureTable('node__field_tags', $view->relationship);
+    if ($t) {
+      $query->addWhere(0, "$t.field_tags_target_id", (int) $tag, '=');
+    }
+  }
+
+  $search = trim((string) ($request->query->get('search') ?? $request->query->get('q') ?? ''));
+  if ($search !== '') {
+    $t = $query->ensureTable('node_field_data', $view->relationship);
+    if ($t) {
+      $escaped = \Drupal::database()->escapeLike($search);
+      $query->addWhere(0, "$t.title", '%' . $escaped . '%', 'LIKE');
     }
   }
 
   $today = (string) ($request->query->get('today') ?? '');
   if ($today === '1' || $today === 'true') {
-    $start_today = (new \DateTimeImmutable('today', new \DateTimeZone(date_default_timezone_get())))->getTimestamp();
-    $base_table_today = $query->ensureTable('node_field_data', $view->relationship);
-    if ($base_table_today) {
-      $query->addWhere(0, $base_table_today . '.created', $start_today, '>=');
+    $start = (new \DateTimeImmutable('today', new \DateTimeZone(date_default_timezone_get())))->getTimestamp();
+    $t = $query->ensureTable('node_field_data', $view->relationship);
+    if ($t) {
+      $query->addWhere(0, "$t.created", $start, '>=');
     }
   }
 
@@ -311,24 +281,30 @@ function xedc_core_views_query_alter(\Drupal\views\ViewExecutable $view, \Drupal
     $sort = 'new';
   }
 
-  try { $query->orderby = []; } catch (\Throwable $e) {}
+  // Replace default sort.
+  if (isset($query->orderby)) {
+    $query->orderby = [];
+  }
 
-  $base_table = $query->ensureTable('node_field_data', $view->relationship);
+  $base = $query->ensureTable('node_field_data', $view->relationship);
 
   if ($sort === 'random') {
-    $query->addOrderBy(NULL, 'RAND()', 'ASC');
+    if ($base) {
+      $query->addOrderBy($base, 'nid', 'ASC');
+    }
+    $query->addOrderBy(NULL, 'RAND()', 'ASC', 'rand_order');
     return;
   }
 
   if ($sort === 'hot') {
-    $view_count_table = $query->ensureTable('node__field_view_count', $view->relationship);
-    if ($view_count_table) {
-      $query->addOrderBy($view_count_table, 'field_view_count_value', 'DESC');
+    $t = $query->ensureTable('node__field_view_count', $view->relationship);
+    if ($t) {
+      $query->addOrderBy($t, 'field_view_count_value', 'DESC');
     }
   }
 
-  if ($base_table) {
-    $query->addOrderBy($base_table, 'created', 'DESC');
+  if ($base) {
+    $query->addOrderBy($base, 'created', 'DESC');
   }
 }
 
