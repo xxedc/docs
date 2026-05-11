@@ -575,6 +575,30 @@ details[open] .xedc-image-facts__chev { transform: rotate(-135deg); }
   color: var(--foreground);
   margin: 0;
 }
+.xedc-related-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--space-3);
+}
+.xedc-related-gallery__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  text-decoration: none;
+  color: inherit;
+}
+.xedc-related-gallery__item img {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+}
+.xedc-related-gallery__item span {
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--foreground);
+}
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    全屏模式
