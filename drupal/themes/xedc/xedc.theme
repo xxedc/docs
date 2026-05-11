@@ -1049,6 +1049,30 @@ function xedc_preprocess_views_view(array &$variables): void {
   }
 }
 
+/**
+ * Disable the Views result/output cache for image_waterfall and article_list
+ * so that hook_views_query_alter always runs with the current request params.
+ * Without this, Drupal's Views cache returns a stale cached result before our
+ * query_alter ever fires, making sort/tag/category filters silently ignored.
+ */
+function xedc_views_pre_view(\Drupal\views\ViewExecutable $view, string $display_id, array &$args): void {
+  if (!in_array($view->id(), ['image_waterfall', 'article_list'], TRUE)) {
+    return;
+  }
+  $request = \Drupal::requestStack()->getCurrentRequest();
+  if (!$request) {
+    return;
+  }
+  $filter_params = ['sort', 'tag', 'category', 'search', 'today'];
+  foreach ($filter_params as $p) {
+    if ((string) ($request->query->get($p) ?? '') !== '') {
+      // Disable Views-level caching so the query reruns with our WHERE/ORDER.
+      $view->display_handler->setOption('cache', ['type' => 'none']);
+      return;
+    }
+  }
+}
+
 function xedc_views_query_alter(\Drupal\views\ViewExecutable $view, \Drupal\views\Plugin\views\query\QueryPluginBase $query): void {
   if ($view->id() !== 'article_list') {
     if ($view->id() !== 'image_waterfall') {
