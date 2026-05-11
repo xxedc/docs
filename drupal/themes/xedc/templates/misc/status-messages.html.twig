@@ -1,0 +1,77 @@
+{#
+  status-messages.html.twig — Drupal 系统消息（shadcn Alert/Toast 风格）
+
+  覆盖 core/modules/system/templates/status-messages.html.twig，将
+  Drupal 的 status / error / warning 消息渲染成 shadcn 风格的 Alert 卡片。
+
+  Available variables:
+   - message_list:    Dict keyed by message type ("status", "error", "warning").
+                      Each value is an array of message strings/render arrays.
+   - status_headings: Map of type → human-readable heading (eg. "Status message").
+   - attributes:      HTML attributes for the wrapper.
+
+  消息来源 (PHP)：
+   - \Drupal::messenger()->addStatus('...');
+   - \Drupal::messenger()->addWarning('...');
+   - \Drupal::messenger()->addError('...');
+  消息位置：默认渲染到 page.highlighted 区域（由 page.html.twig 输出）。
+#}
+{% if message_list is not empty %}
+  <div data-drupal-messages
+       class="xedc-msgs{% if attributes %} {{ attributes.class }}{% endif %}"
+       role="region"
+       aria-label="系统消息">
+    {% for type, messages in message_list %}
+
+      {# 按类型选择图标 & 配色 (shadcn 风格) #}
+      {% set _variant = 'info' %}
+      {% if type == 'error' %}      {% set _variant = 'error'   %}
+      {% elseif type == 'warning' %}{% set _variant = 'warning' %}
+      {% elseif type == 'status' %} {% set _variant = 'success' %}
+      {% endif %}
+
+      <div class="xedc-msg xedc-msg--{{ _variant }}"
+           role="{{ type == 'error' ? 'alert' : 'status' }}"
+           aria-label="{{ status_headings[type] }}">
+
+        {# 左侧图标 #}
+        <div class="xedc-msg__icon" aria-hidden="true">
+          {% if _variant == 'success' %}
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+          {% elseif _variant == 'error' %}
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+          {% elseif _variant == 'warning' %}
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+          {% else %}
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+          {% endif %}
+        </div>
+
+        {# 消息正文 #}
+        <div class="xedc-msg__body">
+          {% if status_headings[type] %}
+            <div class="xedc-msg__heading">{{ status_headings[type] }}</div>
+          {% endif %}
+          {% if messages|length > 1 %}
+            <ul class="xedc-msg__list">
+              {% for message in messages %}
+                <li class="xedc-msg__item">{{ message }}</li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <div class="xedc-msg__text">{{ messages|first }}</div>
+          {% endif %}
+        </div>
+
+        {# 关闭按钮 #}
+        <button type="button"
+                class="xedc-msg__close"
+                aria-label="关闭消息"
+                data-xedc-msg-close>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}

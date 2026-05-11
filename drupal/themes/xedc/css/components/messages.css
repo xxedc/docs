@@ -1,0 +1,148 @@
+/* ================================================================
+   messages.css — Drupal 系统消息（shadcn Alert 风格）
+
+   消息来源:
+     \Drupal::messenger()->addStatus('...')    → .xedc-msg--success (绿)
+     \Drupal::messenger()->addWarning('...')   → .xedc-msg--warning (黄)
+     \Drupal::messenger()->addError('...')     → .xedc-msg--error   (红)
+   消息位置:
+     由 status_messages 块输出，默认在 page.highlighted 区域。
+   ================================================================ */
+
+/* ── 消息组容器 ── */
+.xedc-msgs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin: var(--space-4) 0;
+}
+.xedc-msgs:empty { display: none; }
+
+/* ── 单条消息卡 ── */
+.xedc-msg {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: flex-start;
+  gap: var(--space-3);
+  position: relative;
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-sm);
+  line-height: var(--leading-snug);
+  color: var(--foreground);
+  box-shadow: 0 1px 2px oklch(0.09 0 0 / 0.04);
+  animation: xedc-msg-in 0.18s ease-out;
+}
+
+@keyframes xedc-msg-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* ── 左侧色条（左边框）── */
+.xedc-msg::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  border-radius: var(--radius) 0 0 var(--radius);
+}
+
+/* ── 图标 ── */
+.xedc-msg__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+  flex-shrink: 0;
+}
+
+/* ── 标题 ── */
+.xedc-msg__heading {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+/* ── 正文 ── */
+.xedc-msg__body { min-width: 0; }
+.xedc-msg__text { color: var(--muted-foreground); font-size: var(--text-sm); }
+.xedc-msg__list { margin: 0; padding: 0; list-style: none; }
+.xedc-msg__item {
+  color: var(--muted-foreground);
+  font-size: var(--text-sm);
+  padding: 2px 0;
+}
+.xedc-msg__item + .xedc-msg__item { border-top: 1px dashed var(--border); padding-top: 4px; margin-top: 4px; }
+.xedc-msg__body a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+
+/* ── 关闭按钮 ── */
+.xedc-msg__close {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  width: 24px; height: 24px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: var(--radius-sm);
+  color: var(--muted-foreground);
+  margin-top: -2px;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+.xedc-msg__close:hover { background: var(--accent); color: var(--accent-foreground); }
+
+/* ─────────────────────────── 变体 ─────────────────────────── */
+
+/* 成功（绿）— Drupal status */
+.xedc-msg--success::before { background: oklch(0.62 0.17 145); }
+.xedc-msg--success .xedc-msg__icon { color: oklch(0.55 0.17 145); }
+.xedc-msg--success .xedc-msg__heading { color: oklch(0.40 0.14 145); }
+[data-theme="dark"] .xedc-msg--success::before    { background: oklch(0.70 0.17 145); }
+[data-theme="dark"] .xedc-msg--success .xedc-msg__icon    { color: oklch(0.72 0.17 145); }
+[data-theme="dark"] .xedc-msg--success .xedc-msg__heading { color: oklch(0.82 0.13 145); }
+
+/* 警告（橙）— Drupal warning */
+.xedc-msg--warning::before { background: oklch(0.72 0.17 65); }
+.xedc-msg--warning .xedc-msg__icon { color: oklch(0.65 0.17 65); }
+.xedc-msg--warning .xedc-msg__heading { color: oklch(0.45 0.15 65); }
+[data-theme="dark"] .xedc-msg--warning::before    { background: oklch(0.78 0.17 65); }
+[data-theme="dark"] .xedc-msg--warning .xedc-msg__icon    { color: oklch(0.80 0.17 65); }
+[data-theme="dark"] .xedc-msg--warning .xedc-msg__heading { color: oklch(0.88 0.13 65); }
+
+/* 错误（红）— Drupal error */
+.xedc-msg--error::before { background: oklch(0.58 0.21 27); }
+.xedc-msg--error .xedc-msg__icon { color: oklch(0.55 0.20 27); }
+.xedc-msg--error .xedc-msg__heading { color: oklch(0.42 0.18 27); }
+[data-theme="dark"] .xedc-msg--error::before    { background: oklch(0.68 0.20 27); }
+[data-theme="dark"] .xedc-msg--error .xedc-msg__icon    { color: oklch(0.72 0.20 27); }
+[data-theme="dark"] .xedc-msg--error .xedc-msg__heading { color: oklch(0.84 0.16 27); }
+
+/* 信息（蓝）— 默认/info */
+.xedc-msg--info::before { background: oklch(0.62 0.17 235); }
+.xedc-msg--info .xedc-msg__icon { color: oklch(0.58 0.17 235); }
+.xedc-msg--info .xedc-msg__heading { color: oklch(0.42 0.15 235); }
+[data-theme="dark"] .xedc-msg--info::before    { background: oklch(0.72 0.17 235); }
+[data-theme="dark"] .xedc-msg--info .xedc-msg__icon    { color: oklch(0.74 0.17 235); }
+[data-theme="dark"] .xedc-msg--info .xedc-msg__heading { color: oklch(0.86 0.13 235); }
+
+/* ── 兼容 Drupal 默认 .messages 选择器（其他模块/未覆盖输出）── */
+.messages,
+.messages-list__item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-2);
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-sm);
+  margin: var(--space-3) 0;
+}
+.messages--status, .messages-list__item--status { border-left: 3px solid oklch(0.62 0.17 145); }
+.messages--warning, .messages-list__item--warning { border-left: 3px solid oklch(0.72 0.17 65); }
+.messages--error, .messages-list__item--error { border-left: 3px solid oklch(0.58 0.21 27); }
+
+/* ── 高亮区容器（page.highlighted 包裹消息）── */
+.xedc-highlighted { padding: 0 var(--space-4); }
+.xedc-highlighted .xedc-container { padding-top: var(--space-3); }

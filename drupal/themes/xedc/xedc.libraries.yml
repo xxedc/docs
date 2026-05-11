@@ -10,6 +10,7 @@ global-styles:
     component:
       css/components/sidebar.css: { weight: -105 }
       css/components/site-footer.css: { weight: -103 }
+      css/components/messages.css: { weight: -102 }
       css/components/theme-toggle.css: { weight: -100 }
       css/components/mobile-shell.css: { weight: -95 }
       css/components/paragraphs.css: { weight: -90 }
