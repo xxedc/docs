@@ -23,6 +23,14 @@
   window.xedcOpenShell  = openShell;
   window.xedcCloseShell = closeShell;
 
+function toggleMobileSearch() {
+  var panel = document.getElementById('xedc-mobile-search');
+  if (!panel) return;
+  panel.classList.toggle('is-open');
+}
+window.xedcToggleMobileSearch = toggleMobileSearch;
+
+
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') closeShell();
   });

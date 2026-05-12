@@ -141,6 +141,12 @@
       {# 右侧工具区 #}
       <div class="xedc-navbar__tools xedc-flex xedc-items-center xedc-gap-2">
 
+        <button class="xedc-navbar__search-toggle" type="button" onclick="xedcToggleMobileSearch()" aria-label="打开搜索">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+        </button>
+
         <a href="/publish" class="xedc-btn xedc-btn--default xedc-btn--sm xedc-navbar__publish">发布</a>
 
         {# 消息通知图标（已登录显示）#}
@@ -208,6 +214,20 @@
       </div>
     </div>
   </header>
+
+  <div class="xedc-mobile-search" id="xedc-mobile-search">
+    <div class="xedc-container">
+      <form action="/search" method="get" role="search">
+        <input type="search" name="q" placeholder="搜索视频、图片、文章..." class="xedc-search-input" aria-label="全站搜索" />
+        <button type="submit" class="xedc-search-btn" aria-label="搜索">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+        </button>
+      </form>
+    </div>
+  </div>
+
 
   {# ── 高亮提示区（系统消息）── #}
   {% if page.highlighted %}
