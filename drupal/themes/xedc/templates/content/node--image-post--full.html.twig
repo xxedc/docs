@@ -225,21 +225,6 @@
             <div class="xedc-image-detail__desc">{{ content.body }}</div>
           {% endif %}
 
-          {% if image_detail.tags is defined and image_detail.tags %}
-            <div class="xedc-image-detail__tags">
-              {% for t in image_detail.tags %}
-                <a href="{{ t.url }}">{{ t.label }}</a>
-              {% endfor %}
-            </div>
-          {% elseif node.field_tags is defined and node.field_tags|length > 0 %}
-            <div class="xedc-image-detail__tags">
-              {% for tag in node.field_tags %}
-                {% if tag.entity %}<a href="{{ path('entity.taxonomy_term.canonical', {'taxonomy_term': tag.entity.id}) }}">{{ tag.entity.label }}</a>{% endif %}
-              {% endfor %}
-            </div>
-          {% elseif content.field_tags %}
-            <div class="xedc-image-detail__tags">{{ content.field_tags }}</div>
-          {% endif %}
         </div>
 
         <div class="xedc-info-card xedc-image-facts xedc-image-facts--desktop">
