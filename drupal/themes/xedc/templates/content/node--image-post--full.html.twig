@@ -4,7 +4,34 @@
     PC ≥1024px：两栏（左：图片查看器 / 右：信息卡片 320px）
     Mobile <1024px：单栏（查看器在上，信息卡片在下）
 #}
-{% set _image_count = node.field_image|length %}
+{% set _media_items = [] %}
+{% if node.field_cover_image.entity %}
+  {% set _media_items = _media_items|merge([{
+    uri: file_url(node.field_cover_image.entity.fileUri),
+    alt: label,
+  }]) %}
+{% endif %}
+{% if node.field_media is defined and node.field_media|length > 0 %}
+  {% for media_item in node.field_media %}
+    {% if media_item.entity and media_item.entity.field_media_image.entity %}
+      {% set _media_items = _media_items|merge([{
+        uri: file_url(media_item.entity.field_media_image.entity.fileUri),
+        alt: media_item.entity.name.value|default(label),
+      }]) %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+{% if _media_items is empty and node.field_image|length > 0 %}
+  {% for item in node.field_image %}
+    {% if item.entity %}
+      {% set _media_items = _media_items|merge([{
+        uri: file_url(item.entity.fileUri),
+        alt: item.alt|default(label),
+      }]) %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+{% set _image_count = _media_items|length %}
 {% set _owner = node.getOwner() %}
 {% set _owner_name = _owner.getDisplayName() %}
 {% set _owner_id = node.getOwnerId() %}
@@ -42,26 +69,15 @@
 
             <div class="xedc-image-viewer__stage" id="xedc-viewer-stage">
               {% if _image_count > 0 %}
-                {% for item in node.field_image %}
-                  {% set _f = item.entity %}
-                  {% if _f %}
+                {% for media in _media_items %}
                     <img
-                      src="{{ file_url(_f.fileUri) }}"
-                      alt="{{ item.alt|default(label) }}"
+                      src="{{ media.uri }}"
+                      alt="{{ media.alt }}"
                       loading="{{ loop.first ? 'eager' : 'lazy' }}"
                       class="xedc-viewer__main-img{% if loop.first %} is-active{% endif %}"
                       data-index="{{ loop.index0 }}"
                     />
-                  {% endif %}
                 {% endfor %}
-              {% elseif node.field_cover_image.entity %}
-                <img
-                  src="{{ file_url(node.field_cover_image.entity.fileUri) }}"
-                  alt="{{ label }}"
-                  loading="eager"
-                  class="xedc-viewer__main-img is-active"
-                  data-index="0"
-                />
               {% endif %}
             </div>
 
@@ -107,33 +123,27 @@
 
           {% if _image_count > 1 %}
             <div class="xedc-image-thumbs" id="xedc-image-thumbs">
-              {% for item in node.field_image %}
-                {% set _f = item.entity %}
-                {% if _f %}
+              {% for media in _media_items %}
                   <img
-                    src="{{ file_url(_f.fileUri) }}"
-                    alt="{{ item.alt|default(label) }}"
+                    src="{{ media.uri }}"
+                    alt="{{ media.alt }}"
                     loading="lazy"
                     class="{% if loop.first %}is-active{% endif %}"
                     data-index="{{ loop.index0 }}"
                   />
-                {% endif %}
               {% endfor %}
             </div>
           {% endif %}
 
           {% if _image_count > 0 %}
             <div class="xedc-image-tiles" id="xedc-image-tiles">
-              {% for item in node.field_image %}
-                {% set _f = item.entity %}
-                {% if _f %}
+              {% for media in _media_items %}
                   <img
-                    src="{{ file_url(_f.fileUri) }}"
-                    alt="{{ item.alt|default(label) }}"
+                    src="{{ media.uri }}"
+                    alt="{{ media.alt }}"
                     loading="lazy"
                     data-index="{{ loop.index0 }}"
                   />
-                {% endif %}
               {% endfor %}
             </div>
           {% endif %}
@@ -219,6 +229,12 @@
             <div class="xedc-image-detail__tags">
               {% for t in image_detail.tags %}
                 <a href="{{ t.url }}">{{ t.label }}</a>
+              {% endfor %}
+            </div>
+          {% elseif node.field_tags is defined and node.field_tags|length > 0 %}
+            <div class="xedc-image-detail__tags">
+              {% for tag in node.field_tags %}
+                {% if tag.entity %}<a href="{{ path('entity.taxonomy_term.canonical', {'taxonomy_term': tag.entity.id}) }}">{{ tag.entity.label }}</a>{% endif %}
               {% endfor %}
             </div>
           {% elseif content.field_tags %}
