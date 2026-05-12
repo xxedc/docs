@@ -2,6 +2,8 @@
 
 本目录是该仓库的 **AI 系统入口**。目标是让 AI 通过反向工程 Drupal 配置，自动理解内容结构、Feed 结构与 UI 组件系统，并统一到 shadcn/ui 设计语言。
 
+> 路径约定：仓库名本身叫 `docs`，仓库内文档目录就是根目录下的 `docs/`。生成文档时必须写入 `docs/drupal/`、`docs/ui/` 等目录，禁止再生成一层 `docs/docs/`。Drupal 代码与配置放在根目录下的 `drupal/`。
+
 ## 读取顺序（强烈建议）
 1. `ai/rules.md`（全局行为约束）
 2. `ai/drupal-rules.md` / `ai/ui-rules.md`

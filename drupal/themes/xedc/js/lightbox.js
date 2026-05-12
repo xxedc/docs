@@ -76,7 +76,14 @@
     if (!currentImg) return;
 
     // ── 滚轮缩放 ──
+    // 移动端/触摸设备上下滑动页面时不接管滚轮，避免浏览器地址栏变化或触摸板事件导致图片自动忽大忽小。
     stage.addEventListener('wheel', function (e) {
+      var isCoarsePointer = false;
+      try {
+        isCoarsePointer = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+      } catch (err) {}
+      if (isCoarsePointer) return;
+
       e.preventDefault();
       var delta = e.deltaY > 0 ? -0.1 : 0.1;
       scale = Math.min(Math.max(0.5, scale + delta), 4);
@@ -197,7 +204,7 @@
       if (scale > 1) {
         stageEl.style.touchAction = 'none';
       } else {
-        stageEl.style.touchAction = '';
+        stageEl.style.touchAction = 'pan-y';
       }
     }
   }

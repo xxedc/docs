@@ -5,29 +5,55 @@
     Mobile <1024px：单栏（查看器在上，信息卡片在下）
 #}
 {% set _media_items = [] %}
+{% set _media_seen = [] %}
+
+{#
+  图集详情主图来源：
+  1. field_cover_image：封面优先展示；
+  2. field_image：图片内容的直接图片字段；
+  3. field_media -> media:image.field_media_image：多媒体内容字段图片。
+  注意：field_media 是图片素材来源，不再只作为侧栏“关联媒体”原始字段渲染。
+#}
 {% if node.field_cover_image.entity %}
-  {% set _media_items = _media_items|merge([{
-    uri: file_url(node.field_cover_image.entity.fileUri),
-    alt: label,
-  }]) %}
+  {% set _cover_uri = node.field_cover_image.entity.uri.value|default(node.field_cover_image.entity.fileUri) %}
+  {% if _cover_uri %}
+    {% set _media_seen = _media_seen|merge([_cover_uri]) %}
+    {% set _media_items = _media_items|merge([{
+      uri: file_url(_cover_uri),
+      alt: node.field_cover_image.alt|default(label),
+      source: 'cover',
+    }]) %}
+  {% endif %}
 {% endif %}
-{% if node.field_media is defined and node.field_media|length > 0 %}
-  {% for media_item in node.field_media %}
-    {% if media_item.entity and media_item.entity.field_media_image.entity %}
-      {% set _media_items = _media_items|merge([{
-        uri: file_url(media_item.entity.field_media_image.entity.fileUri),
-        alt: media_item.entity.name.value|default(label),
-      }]) %}
+
+{% if node.field_image is defined and node.field_image|length > 0 %}
+  {% for item in node.field_image %}
+    {% if item.entity %}
+      {% set _image_uri = item.entity.uri.value|default(item.entity.fileUri) %}
+      {% if _image_uri and _image_uri not in _media_seen %}
+        {% set _media_seen = _media_seen|merge([_image_uri]) %}
+        {% set _media_items = _media_items|merge([{
+          uri: file_url(_image_uri),
+          alt: item.alt|default(label),
+          source: 'field_image',
+        }]) %}
+      {% endif %}
     {% endif %}
   {% endfor %}
 {% endif %}
-{% if _media_items is empty and node.field_image|length > 0 %}
-  {% for item in node.field_image %}
-    {% if item.entity %}
-      {% set _media_items = _media_items|merge([{
-        uri: file_url(item.entity.fileUri),
-        alt: item.alt|default(label),
-      }]) %}
+
+{% if node.field_media is defined and node.field_media|length > 0 %}
+  {% for media_item in node.field_media %}
+    {% if media_item.entity and media_item.entity.field_media_image.entity %}
+      {% set _media_image_uri = media_item.entity.field_media_image.entity.uri.value|default(media_item.entity.field_media_image.entity.fileUri) %}
+      {% if _media_image_uri and _media_image_uri not in _media_seen %}
+        {% set _media_seen = _media_seen|merge([_media_image_uri]) %}
+        {% set _media_items = _media_items|merge([{
+          uri: file_url(_media_image_uri),
+          alt: media_item.entity.field_media_image.alt|default(media_item.entity.name.value|default(label)),
+          source: 'field_media',
+        }]) %}
+      {% endif %}
     {% endif %}
   {% endfor %}
 {% endif %}
@@ -328,13 +354,10 @@
           </div>
         </div>
 
-        {# 媒体字段（field_media）#}
-        {% if content.field_media|render|trim is not empty %}
+        {% if node.field_media is defined and node.field_media|length > 0 %}
           <div class="xedc-info-card xedc-media-card">
-            <h3 class="xedc-info-card__title">关联媒体</h3>
-            <div class="xedc-media-card__body">
-              {{ content.field_media }}
-            </div>
+            <h3 class="xedc-info-card__title">多媒体图片</h3>
+            <p class="xedc-media-card__note">多媒体内容字段图片已合并到左侧图集查看器中展示。</p>
           </div>
         {% endif %}
 

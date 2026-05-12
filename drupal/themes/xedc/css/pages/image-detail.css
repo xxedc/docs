@@ -112,6 +112,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  touch-action: pan-y;
 }
 
 .xedc-viewer__main-img {
@@ -456,6 +457,12 @@
   transition: background-color 0.15s;
 }
 .xedc-media-card__body a:hover { background: oklch(from var(--muted) calc(l - 0.05) c h); }
+.xedc-media-card__note {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: 13px;
+  line-height: 1.6;
+}
 
 .xedc-info-card__fields .field {
   margin-bottom: var(--space-2);
@@ -632,7 +639,18 @@ details[open] .xedc-image-facts__chev { transform: rotate(-135deg); }
     top: var(--space-2);
     right: var(--space-2);
   }
-  .xedc-image-viewer { min-height: 280px; }
+  .xedc-image-viewer {
+    min-height: 280px;
+    height: clamp(280px, 62svh, 520px);
+  }
+  .xedc-image-viewer__stage,
+  .xedc-viewer__main-img,
+  .xedc-image-viewer__stage img:not(.xedc-viewer__main-img) {
+    max-height: 62svh;
+  }
+  .xedc-viewer__main-img {
+    transition: none;
+  }
   .xedc-image-detail__title { font-size: var(--text-xl); }
   .xedc-info-card { padding: var(--space-4); }
   .xedc-image-facts--desktop { display: none; }

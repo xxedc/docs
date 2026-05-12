@@ -143,14 +143,34 @@
 }
 
 .xedc-search-btn {
-  padding: var(--space-2) var(--space-3);
+  width: 0;
+  padding: var(--space-2) 0;
   color: var(--muted-foreground);
   background: transparent;
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
-  transition: color var(--transition-fast);
+  justify-content: center;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transition:
+    width var(--transition-fast),
+    padding var(--transition-fast),
+    opacity var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.xedc-navbar__search form:focus-within .xedc-search-btn,
+.xedc-navbar__search form:has(.xedc-search-input:not(:placeholder-shown)) .xedc-search-btn,
+.xedc-mobile-search form:focus-within .xedc-search-btn,
+.xedc-mobile-search form:has(.xedc-search-input:not(:placeholder-shown)) .xedc-search-btn,
+.xedc-search-page .xedc-navbar__search form .xedc-search-btn {
+  width: 40px;
+  padding: var(--space-2) var(--space-3);
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .xedc-search-btn:hover {
