@@ -1,9 +1,9 @@
-uuid: 9d4e6b8a-5c2f-4e1d-9b7a-3f2c5e8d1a6b
+uuid: 8ad3113e-c29c-4487-8c94-a678704991ed
 langcode: zh-hans
 status: true
-dependencies: {}
-name: 视频标签
+dependencies: {  }
+name: 视频tags
 vid: video_tags
-description: 视频内容标签（如：动作、爱情、科幻等）
-weight: -6
+description: null
+weight: 0
 new_revision: false

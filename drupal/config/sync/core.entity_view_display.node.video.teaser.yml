@@ -12,6 +12,7 @@ dependencies:
     - field.field.node.video.field_like_count
     - field.field.node.video.field_quality
     - field.field.node.video.field_tags
+    - field.field.node.video.field_video_class
     - field.field.node.video.field_video_file
     - field.field.node.video.field_video_url
     - field.field.node.video.field_view_count
@@ -32,6 +33,16 @@ content:
     third_party_settings: {  }
     weight: 10
     region: content
+  flag_collect:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 10
+    region: content
+  flag_like:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 10
+    region: content
   links:
     settings: {  }
     third_party_settings: {  }
@@ -45,6 +56,7 @@ hidden:
   field_duration: true
   field_like_count: true
   field_quality: true
+  field_video_class: true
   field_video_file: true
   field_video_url: true
   field_view_count: true

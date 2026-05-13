@@ -75,8 +75,13 @@
                  || stage.querySelector('img');
     if (!currentImg) return;
 
-    // 页面滚动不再触发图片缩放，避免移动端/触控板上下滑动时主图自己放大缩小。
-    // 缩放仅保留给查看器上的放大、缩小、重置按钮。
+    // ── 滚轮缩放 ──
+    stage.addEventListener('wheel', function (e) {
+      e.preventDefault();
+      var delta = e.deltaY > 0 ? -0.1 : 0.1;
+      scale = Math.min(Math.max(0.5, scale + delta), 4);
+      applyTransform();
+    }, { passive: false });
 
     // ── 拖拽移动 ──
     stage.addEventListener('pointerdown', function (e) {
@@ -189,7 +194,11 @@
     currentImg.style.transform =
       'translate3d(' + translate.x + 'px, ' + translate.y + 'px, 0) scale(' + scale + ')';
     if (stageEl) {
-      stageEl.style.touchAction = scale > 1 ? 'none' : 'pan-y';
+      if (scale > 1) {
+        stageEl.style.touchAction = 'none';
+      } else {
+        stageEl.style.touchAction = '';
+      }
     }
   }
 

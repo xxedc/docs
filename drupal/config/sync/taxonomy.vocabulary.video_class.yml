@@ -1,9 +1,9 @@
-uuid: 7c2f8d5a-3b1e-4a9f-8d2c-6e5b4c3a2d1f
+uuid: 60e31154-2ef5-44a2-bdbc-89c8056b498d
 langcode: zh-hans
 status: true
-dependencies: {}
+dependencies: {  }
 name: 视频分类
 vid: video_class
-description: 视频内容分类（电影、电视剧、动漫、短视频等）
-weight: -7
+description: null
+weight: 0
 new_revision: false

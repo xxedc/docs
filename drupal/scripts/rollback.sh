@@ -44,7 +44,7 @@ echo -e "${BLUE}📦 可用备份列表（最近7个，时间倒序）:${NC}"
 echo "──────────────────────────────────────────────"
 
 # 获取备份列表（时间倒序）
-mapfile -t BACKUPS < <(find "$BACKUP_DIR" -name "backup-*.tar.gz" | sort -r | head -7)
+mapfile -t BACKUPS < <(find "$BACKUP_DIR" -name "backup-*.tar.gz" | sort -r | head -30)
 
 if [ ${#BACKUPS[@]} -eq 0 ]; then
     log_error "没有找到备份文件！"

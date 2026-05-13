@@ -10,6 +10,6 @@ processors:
   ed8466b3-6fec-406a-9eaf-a308886e81b5:
     id: imageapi_optimize_webp
     data:
-      quality: '75'
+      quality: '10'
     weight: 1
     uuid: ed8466b3-6fec-406a-9eaf-a308886e81b5

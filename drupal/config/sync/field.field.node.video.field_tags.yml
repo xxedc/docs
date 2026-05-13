@@ -11,7 +11,7 @@ field_name: field_tags
 entity_type: node
 bundle: video
 label: 标签
-description: '请输入一个逗号分割的列表。如：动作、爱情、科幻'
+description: '请输入一个逗号分割的列表。如：Amsterdam, Mexico City, "Cleveland, Ohio"。'
 required: false
 translatable: false
 default_value: {  }
@@ -22,8 +22,8 @@ settings:
     target_bundles:
       video_tags: video_tags
     sort:
-      field: name
+      field: _none
       direction: asc
     auto_create: true
-    auto_create_bundle: video_tags
+    auto_create_bundle: tags
 field_type: entity_reference

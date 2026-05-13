@@ -234,7 +234,7 @@
 
 /* mobile search toggle */
 .xedc-navbar__search-toggle { display:none; }
-.xedc-mobile-search { display:none !important; }
+.xedc-mobile-search { display:none; }
 @media (max-width: 640px) {
   .xedc-navbar__search-toggle {
     display:inline-flex;
@@ -246,6 +246,6 @@
     background: transparent;
     color: var(--foreground);
   }
-  .xedc-mobile-search.is-open { display:block !important; border-bottom:1px solid var(--border); }
+  .xedc-mobile-search.is-open { display:block; border-bottom:1px solid var(--border); }
   .xedc-mobile-search .xedc-container { padding: 0 12px 10px; }
 }

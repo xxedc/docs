@@ -11,6 +11,7 @@ dependencies:
     - field.field.node.video.field_like_count
     - field.field.node.video.field_quality
     - field.field.node.video.field_tags
+    - field.field.node.video.field_video_class
     - field.field.node.video.field_video_file
     - field.field.node.video.field_video_url
     - field.field.node.video.field_view_count
@@ -98,6 +99,15 @@ content:
       link: true
     third_party_settings: {  }
     weight: 0
+    region: content
+  field_video_class:
+    type: entity_reference_entity_view
+    label: above
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    weight: 15
     region: content
   field_video_file:
     type: file_default

@@ -1,0 +1,29 @@
+uuid: e41c11d9-2184-415c-9373-36b9f8c82aef
+langcode: zh-hans
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_video_class
+    - media.type.video
+    - node.type.video
+id: node.video.field_video_class
+field_name: field_video_class
+entity_type: node
+bundle: video
+label: 视频多媒体
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:media'
+  handler_settings:
+    target_bundles:
+      video: video
+    sort:
+      field: created
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

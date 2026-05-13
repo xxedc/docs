@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
+    - field.field.node.image_post.comment
     - field.field.node.image_post.field_allow_download
     - field.field.node.image_post.field_category
     - field.field.node.image_post.field_cover_image
@@ -58,6 +59,7 @@ content:
     weight: 100
     region: content
 hidden:
+  comment: true
   field_allow_download: true
   field_category: true
   field_cover_image: true

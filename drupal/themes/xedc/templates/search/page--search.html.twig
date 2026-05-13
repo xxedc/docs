@@ -1,1 +1,134 @@
-The beautified full search page template
+{#
+  page--search.html.twig — 搜索结果页
+#}
+{% set q = search_query|default('') %}
+{% set _logo_html = (site_name|default('DCXE'))|replace({'X': '<span class="xedc-logo-x">X</span>'}) %}
+
+<header class="xedc-navbar" role="banner">
+  <div class="xedc-container xedc-flex xedc-flex-between" style="height:56px;">
+    <a href="{{ url('<front>') }}" class="xedc-navbar__logo">
+      <span class="xedc-navbar__logo-text">{{ _logo_html|raw }}</span>
+    </a>
+    <div class="xedc-navbar__search" style="flex:1;max-width:480px;margin-inline:var(--space-4);">
+      <form action="/search" method="get" role="search">
+        <input type="search" name="q" value="{{ q }}"
+               placeholder="搜索视频、图片、文章..."
+               class="xedc-search-input" aria-label="搜索" autofocus />
+        <button type="submit" class="xedc-search-btn" aria-label="搜索">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+        </button>
+      </form>
+    </div>
+    <div class="xedc-flex xedc-items-center xedc-gap-2">
+      {% include 'xedc:theme-toggle' %}
+      {% if is_logged_in %}
+        {% set _hues = [220, 280, 155, 30, 340, 190, 320, 55] %}
+        {% set _trigger %}
+          <div class="xedc-navbar__avatar" aria-label="个人中心">
+            {% if current_user_picture %}
+              <img class="xedc-avatar xedc-avatar--sm xedc-avatar--img"
+                   src="{{ current_user_picture }}"
+                   alt="{{ current_user_name }}" />
+            {% else %}
+              <div class="xedc-avatar xedc-avatar--sm"
+                   style="background:oklch(0.62 0.16 {{ _hues[(current_user_name|default('U')|length) % 8] }});">
+                {{ (current_user_name|default('U'))|slice(0,1)|upper }}
+              </div>
+            {% endif %}
+          </div>
+        {% endset %}
+        {% set _items %}
+          <a class="xedc-dropdown__item" href="/user/{{ current_user.id() }}">👤 个人中心</a>
+          <a class="xedc-dropdown__item" href="/user/{{ current_user.id() }}?tab=history">🕒 浏览历史</a>
+          <a class="xedc-dropdown__item" href="/user/{{ current_user.id() }}?tab=collects">🔖 收藏</a>
+          <a class="xedc-dropdown__item" href="/user/{{ current_user.id() }}?tab=posts">✍️ 我的文章</a>
+          <div class="xedc-dropdown__separator"></div>
+          <a class="xedc-dropdown__item" href="/user/{{ current_user.id() }}/edit">⚙️ 设置</a>
+          <a class="xedc-dropdown__item xedc-dropdown__item--destructive" href="/user/logout">退出登录</a>
+        {% endset %}
+        {% include 'xedc:dropdown' with { id: 'xedc-user-menu', align: 'right', trigger: _trigger, items: _items, extra_classes: 'xedc-dropdown--user' } only %}
+      {% else %}
+        <a href="/user/login" class="xedc-btn xedc-btn--default xedc-btn--sm">登录</a>
+      {% endif %}
+    </div>
+  </div>
+</header>
+
+<main class="xedc-search-page xedc-container" id="main-content">
+
+  {# 搜索词显示 #}
+  {% if q %}
+    <div class="xedc-search-page__header">
+      <h1 class="xedc-search-page__title">
+        「<span class="xedc-search-keyword">{{ q }}</span>」的搜索结果
+      </h1>
+    </div>
+  {% endif %}
+
+  {# 结果分类 Tab #}
+  <div class="xedc-search-tabs" role="tablist">
+    <a href="/search?q={{ q }}" class="xedc-tab is-active" role="tab">综合</a>
+    <a href="/videos?search={{ q }}" class="xedc-tab" role="tab">视频</a>
+    <a href="/images?search={{ q }}" class="xedc-tab" role="tab">图片</a>
+    <a href="/articles?search={{ q }}" class="xedc-tab" role="tab">文章</a>
+  </div>
+
+  <div class="xedc-search-page__layout">
+
+    {# 搜索结果列表 #}
+    <div class="xedc-search-page__results">
+      {% if page.content %}
+        {{ page.content }}
+      {% elseif q %}
+        <div class="xedc-empty-state">
+          <div class="xedc-empty-state__icon">🔍</div>
+          <h3 class="xedc-empty-state__title">没有找到相关内容</h3>
+          <p class="xedc-text-sm xedc-text-muted">试试其他关键词，或者浏览热门内容</p>
+          <a href="{{ url('<front>') }}" class="xedc-btn xedc-btn--default xedc-btn--md"
+             style="margin-top:var(--space-4);">回首页看看</a>
+        </div>
+      {% else %}
+        <div class="xedc-search-page__hot">
+          <h3 class="xedc-sidebar__title">🔥 热门搜索</h3>
+          {{ drupal_view('hot_rank', 'block_1') }}
+        </div>
+      {% endif %}
+    </div>
+
+    {# 右侧过滤器 #}
+    <aside class="xedc-search-page__filters">
+      <div class="xedc-sidebar__widget">
+        <h3 class="xedc-sidebar__title">筛选</h3>
+        <div class="xedc-search-filter">
+          <p class="xedc-text-xs xedc-text-muted" style="margin-bottom:var(--space-2);">发布时间</p>
+          <div class="xedc-flex xedc-gap-2" style="flex-wrap:wrap;">
+            <a href="/search?q={{ q }}&time=day"   class="xedc-btn xedc-btn--outline xedc-btn--sm">今天</a>
+            <a href="/search?q={{ q }}&time=week"  class="xedc-btn xedc-btn--outline xedc-btn--sm">本周</a>
+            <a href="/search?q={{ q }}&time=month" class="xedc-btn xedc-btn--outline xedc-btn--sm">本月</a>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+</main>
+
+<footer class="xedc-site-footer" role="contentinfo">
+  <div class="xedc-container xedc-site-footer__inner">
+    <div class="xedc-site-footer__top">
+      <a href="{{ url('<front>') }}" class="xedc-site-footer__brand">{{ _logo_html|raw }}</a>
+      <nav class="xedc-site-footer__nav" aria-label="底部导航">
+        {{ drupal_menu('footer') }}
+      </nav>
+    </div>
+    <div class="xedc-site-footer__bottom">
+      <span class="xedc-site-footer__copy">© {{ "now"|date("Y") }} {{ site_name }}. All rights reserved.</span>
+      <span class="xedc-site-footer__powered">
+        Powered by
+        <a href="https://www.drupal.org" target="_blank" rel="noopener">Drupal</a>
+      </span>
+    </div>
+  </div>
+</footer>
