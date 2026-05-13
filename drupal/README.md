@@ -4,18 +4,18 @@
 
 ---
 
-## 📦 项目信息
+## 项目信息
 
-- 🌐 站点地址：tlte.top  
-- 📁 Drupal 根目录：`/var/www/html/drupal11/web/`  
-- 🎨 自定义主题：`xedc`（`themes/custom/xedc`）  
-- 🧩 自定义模块：`xedc_core`（`modules/custom/xedc_core`）  
-- 📂 仓库地址：https://github.com/xxedc/docs  
-- 📌 项目代码目录：`drupal/`
+- 站点地址：tlte.top  
+- Drupal 根目录：/var/www/html/drupal11/web/  
+- 自定义主题：xedc（themes/custom/xedc）  
+- 自定义模块：xedc_core（modules/custom/xedc_core）  
+- 仓库地址：https://github.com/xxedc/docs  
+- 项目代码目录：drupal/
 
 ---
 
-## 📁 目录结构
+## 目录结构
 
 ```
 drupal/
@@ -40,7 +40,7 @@ drupal/
 
 ---
 
-## 🚀 快速开始
+## 快速开始
 
 ### 初始化服务器
 
@@ -68,7 +68,7 @@ bash /opt/dc-repo/drupal/scripts/rollback.sh
 
 ---
 
-## 🎨 主题模式
+## 主题模式
 
 ```html
 <html data-theme="light">
@@ -82,7 +82,7 @@ bash /opt/dc-repo/drupal/scripts/rollback.sh
 
 ---
 
-## 🧠 设计原则
+## 设计原则
 
 - 配置与代码分离
 - 支持回滚
@@ -91,6 +91,31 @@ bash /opt/dc-repo/drupal/scripts/rollback.sh
 
 ---
 
-## 📄 License
+## Alist 集成（新增）
+
+**Drupal + Alist 深度集成指南** 已创建：`drupal/alist-integration.md`
+
+包含：
+- WebDAV / API 双种集成方案
+- Docker Compose 示例
+- 自定义模块模板
+- 与 `drupal/DC.md` 完全对齐
+- 同步脚本与安全最佳实践
+
+**快速开始**：
+```bash
+# 查看详细集成文档
+cat drupal/alist-integration.md
+```
+
+---
+
+## Docker 部署支持（新增）
+
+推荐使用 Docker Compose 部署 Drupal + Alist + Caddy，详见 `drupal/alist-integration.md` 中的完整示例。
+
+---
+
+## License
 
 MIT
